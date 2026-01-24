@@ -145,7 +145,6 @@ export function ActionForm({ actionId, onSubmit, onCancel }: ActionFormProps) {
 
       <div className="form-fields">
         {schema.fields.map((field) => {
-          const isEditingLabel = editingLabels[field.variableName] !== undefined;
           const displayLabel = getFieldLabel(field);
           const hasError = !!errors[field.variableName];
 
