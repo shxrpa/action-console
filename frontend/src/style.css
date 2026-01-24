@@ -48,6 +48,8 @@ body {
   width: 100%;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 16px;
 }
 
 .header-title {
@@ -121,6 +123,101 @@ body {
   font-size: 16px;
   color: var(--text-secondary);
   line-height: 1.6;
+}
+
+/* Workspace Selector */
+.workspace-selector {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.workspace-dropdown {
+  padding: 8px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.btn-create-workspace {
+  padding: 8px 16px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.btn-create-workspace:hover {
+  background-color: #1d4ed8;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: var(--bg-color);
+  padding: 24px;
+  border-radius: 8px;
+  min-width: 400px;
+  max-width: 90vw;
+}
+
+.modal-content h3 {
+  margin-bottom: 16px;
+  font-size: 20px;
+}
+
+.workspace-name-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 14px;
+  margin-bottom: 16px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+}
+
+.modal-actions button {
+  padding: 8px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.modal-actions button:last-child {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.modal-actions button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* Responsive design */
