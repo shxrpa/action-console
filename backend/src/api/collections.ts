@@ -19,14 +19,21 @@ const upload = multer({
 });
 
 // POST /api/collections/import - Import Postman collection
-router.post('/import', upload.single('file'), async (req, res) => {
+router.post('/import', upload.single('file'), (req, res) => {
   try {
+    console.log('Import request received:', {
+      hasFile: !!req.file,
+      fileName: req.file?.originalname,
+      workspaceId: req.body.workspaceId,
+    });
+
     if (!req.file) {
       return res.status(400).json({ error: 'No file provided' });
     }
 
     const workspaceId = req.body.workspaceId;
     if (!workspaceId || typeof workspaceId !== 'string') {
+      console.error('Missing workspaceId:', req.body);
       return res.status(400).json({ error: 'workspaceId is required' });
     }
 
@@ -35,16 +42,24 @@ router.post('/import', upload.single('file'), async (req, res) => {
     try {
       const fileContent = req.file.buffer.toString('utf-8');
       collectionData = JSON.parse(fileContent);
+      console.log('JSON parsed successfully, validating collection...');
     } catch (error) {
-      return res.status(400).json({ error: 'Invalid JSON file' });
+      console.error('JSON parse error:', error);
+      return res.status(400).json({ error: `Invalid JSON file: ${error instanceof Error ? error.message : 'Parse error'}` });
     }
 
     // Validate Postman Collection
     if (!PostmanParser.validateCollection(collectionData)) {
+      console.error('Collection validation failed:', {
+        hasInfo: !!(collectionData as Record<string, unknown>).info,
+        hasItem: !!(collectionData as Record<string, unknown>).item,
+      });
       return res.status(400).json({ 
         error: 'Invalid Postman Collection format. The file must be a valid Postman Collection JSON with "info" and "item" fields.' 
       });
     }
+    
+    console.log('Collection validated, starting import...');
 
     const collection = collectionData as PostmanCollection;
 
