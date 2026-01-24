@@ -1,5 +1,5 @@
 import db from '../db/database';
-import type { Workspace, CreateWorkspaceRequest, UpdateWorkspaceRequest } from '../../shared/types';
+import type { Workspace, CreateWorkspaceRequest, UpdateWorkspaceRequest } from '../types';
 
 export class WorkspaceModel {
   static create(data: CreateWorkspaceRequest): Workspace {

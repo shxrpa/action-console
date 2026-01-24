@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import { WorkspaceModel } from '../models/Workspace';
-import type { CreateWorkspaceRequest, UpdateWorkspaceRequest } from '../../shared/types';
+import type { CreateWorkspaceRequest, UpdateWorkspaceRequest } from '../types';
 
 const router = Router();
 
