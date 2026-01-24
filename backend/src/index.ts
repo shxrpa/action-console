@@ -1,0 +1,28 @@
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import { runMigrations } from './db/migrations';
+import workspacesRouter from './api/workspaces';
+
+dotenv.config();
+
+// Initialize database
+runMigrations();
+
+const app = express();
+const PORT = process.env.PORT || 3001;
+
+app.use(cors());
+app.use(express.json());
+
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', message: 'Action Console API is running' });
+});
+
+// API routes
+app.use('/api/workspaces', workspacesRouter);
+
+app.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
