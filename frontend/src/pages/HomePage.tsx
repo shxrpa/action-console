@@ -1,8 +1,33 @@
-function HomePage() {
+import { useState, useContext } from 'react';
+import FileUpload from '../components/FileUpload';
+import { importCollection } from '../services/api';
+import { WorkspaceContext } from '../contexts/WorkspaceContext';
 
-  const handleImportClick = () => {
-    // TODO: Navigate to import page when implemented
-    alert('Import collection feature coming soon!');
+function HomePage() {
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
+  const { selectedWorkspaceId } = useContext(WorkspaceContext) || { selectedWorkspaceId: null };
+
+  const handleFileSelect = async (file: File) => {
+    setUploadError(null);
+    setUploadSuccess(null);
+
+    if (!selectedWorkspaceId) {
+      setUploadError('Please select a workspace first');
+      return;
+    }
+
+    try {
+      const result = await importCollection(file, selectedWorkspaceId);
+      setUploadSuccess(`Collection "${result.name}" imported successfully! (${result.requestCount} requests)`);
+      // Navigate to collections page after a short delay
+      setTimeout(() => {
+        window.location.href = '/collections';
+      }, 1500);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Failed to import collection';
+      setUploadError(message);
+    }
   };
 
   return (
@@ -33,9 +58,11 @@ function HomePage() {
         <p className="empty-state-subtitle">
           Get started by importing your first Postman collection.
         </p>
-        <button className="btn-import-collection" onClick={handleImportClick}>
-          Import Collection
-        </button>
+        <div className="import-section">
+          <FileUpload onFileSelect={handleFileSelect} />
+          {uploadError && <div className="error-message">{uploadError}</div>}
+          {uploadSuccess && <div className="success-message">{uploadSuccess}</div>}
+        </div>
       </div>
     </div>
   );

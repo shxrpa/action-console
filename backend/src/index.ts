@@ -3,6 +3,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import { runMigrations } from './db/migrations';
 import workspacesRouter from './api/workspaces';
+import collectionsRouter from './api/collections';
 
 dotenv.config();
 
@@ -22,6 +23,7 @@ app.get('/health', (req, res) => {
 
 // API routes
 app.use('/api/workspaces', workspacesRouter);
+app.use('/api/collections', collectionsRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

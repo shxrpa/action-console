@@ -1,8 +1,11 @@
-import { useState } from 'react';
+import { useContext } from 'react';
 import WorkspaceSelector from './WorkspaceSelector';
+import { WorkspaceContext } from '../contexts/WorkspaceContext';
 
 function Header() {
-  const [selectedWorkspaceId, setSelectedWorkspaceId] = useState<string | null>(null);
+  const context = useContext(WorkspaceContext);
+  const selectedWorkspaceId = context?.selectedWorkspaceId || null;
+  const setSelectedWorkspaceId = context?.setSelectedWorkspaceId || (() => {});
 
   return (
     <header className="header">
