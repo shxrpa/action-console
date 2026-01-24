@@ -67,12 +67,7 @@ export function SetupWizard({ action, missingVariables, onComplete, onCancel }: 
 
   const handleNext = () => {
     if (step === 1) {
-      // Validate all fields are filled
-      const allFilled = missingVariables.every((name) => formData[name]?.value.trim());
-      if (!allFilled) {
-        alert('Please fill in all required variables');
-        return;
-      }
+      // Step 1 is just a review - no validation needed, just proceed to step 2
       setStep(2);
     }
   };
@@ -80,6 +75,13 @@ export function SetupWizard({ action, missingVariables, onComplete, onCancel }: 
   const handleSave = async () => {
     if (!selectedWorkspaceId) {
       alert('No workspace selected');
+      return;
+    }
+
+    // Validate all fields are filled before saving
+    const allFilled = missingVariables.every((name) => formData[name]?.value?.trim());
+    if (!allFilled) {
+      alert('Please fill in all required variables');
       return;
     }
 
