@@ -7,6 +7,7 @@ import collectionsRouter from './api/collections';
 import actionsRouter from './api/actions';
 import variablesRouter from './api/variables';
 import environmentsRouter from './api/environments';
+import formsRouter from './api/forms';
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use('/api/collections', collectionsRouter);
 app.use('/api/actions', actionsRouter);
 app.use('/api/variables', variablesRouter);
 app.use('/api/environments', environmentsRouter);
+app.use('/api/forms', formsRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

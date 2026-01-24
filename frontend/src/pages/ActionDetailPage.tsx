@@ -4,6 +4,7 @@ import { getActionDetails } from '../services/api';
 import { useWorkspace } from '../contexts/WorkspaceContext';
 import { useEnvironment } from '../contexts/EnvironmentContext';
 import { SetupWizard } from '../components/SetupWizard';
+import { ActionForm } from '../components/ActionForm';
 import type { Action } from '../services/api';
 
 function ActionDetailPage() {
@@ -15,6 +16,7 @@ function ActionDetailPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showWizard, setShowWizard] = useState(false);
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     if (actionId) {
@@ -50,9 +52,15 @@ function ActionDetailPage() {
     if (action?.missingVariables && action.missingVariables.length > 0) {
       setShowWizard(true);
     } else {
-      // TODO: Actually run the action (next story)
-      alert('Action execution will be available in the next story');
+      // Show form for variable configuration
+      setShowForm(true);
     }
+  };
+
+  const handleFormSubmit = (values: Record<string, string>) => {
+    console.log('Form submitted with values:', values);
+    // TODO: Pass to execution engine (next story)
+    alert('Action execution will be available in the next story. Form values: ' + JSON.stringify(values));
   };
 
   const handleWizardComplete = () => {
@@ -218,21 +226,33 @@ function ActionDetailPage() {
           </div>
         )}
 
-        <div className="detail-section">
-          <button
-            className="btn-run-action"
-            onClick={handleRunAction}
-            disabled={!selectedWorkspaceId}
-            title={!selectedWorkspaceId ? 'Please select a workspace first' : undefined}
-          >
-            Run Action
-          </button>
-          {action.missingVariables && action.missingVariables.length > 0 && (
-            <p className="missing-vars-hint">
-              ⚠️ {action.missingVariables.length} required variable(s) need to be configured before running
-            </p>
-          )}
-        </div>
+        {showForm && (
+          <div className="detail-section">
+            <ActionForm
+              actionId={action.id}
+              onSubmit={handleFormSubmit}
+              onCancel={() => setShowForm(false)}
+            />
+          </div>
+        )}
+
+        {!showForm && (
+          <div className="detail-section">
+            <button
+              className="btn-run-action"
+              onClick={handleRunAction}
+              disabled={!selectedWorkspaceId}
+              title={!selectedWorkspaceId ? 'Please select a workspace first' : undefined}
+            >
+              Run Action
+            </button>
+            {action.missingVariables && action.missingVariables.length > 0 && (
+              <p className="missing-vars-hint">
+                ⚠️ {action.missingVariables.length} required variable(s) need to be configured before running
+              </p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

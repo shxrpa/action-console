@@ -230,3 +230,38 @@ export async function getActionDetails(
   }
   return response.json();
 }
+
+// Form API
+export interface FormField {
+  variableName: string;
+  label: string;
+  inputType: 'text' | 'password' | 'number';
+  defaultValue: string;
+  required: boolean;
+  locations: Array<'url' | 'header' | 'body'>;
+}
+
+export interface FormSchema {
+  fields: FormField[];
+}
+
+export async function getFormSchema(
+  actionId: string,
+  workspaceId?: string,
+  environmentId?: string | null | undefined
+): Promise<FormSchema> {
+  const params = new URLSearchParams();
+  if (workspaceId) {
+    params.append('workspaceId', workspaceId);
+  }
+  if (environmentId !== undefined && environmentId !== null) {
+    params.append('environmentId', environmentId);
+  }
+  const queryString = params.toString();
+  const url = `${API_BASE_URL}/forms/${actionId}${queryString ? `?${queryString}` : ''}`;
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error('Failed to fetch form schema');
+  }
+  return response.json();
+}
