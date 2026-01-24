@@ -135,6 +135,38 @@ router.post('/import', upload.single('file'), (req, res) => {
 
     const createdRequests = RequestModel.createMany(requestsWithFolderIds);
 
+    // Import collection-level variables into Variable Wallet
+    if (collection.variable && Array.isArray(collection.variable) && collection.variable.length > 0) {
+      console.log(`Importing ${collection.variable.length} collection-level variables...`);
+      for (const postmanVar of collection.variable) {
+        try {
+          // Check if variable already exists (by name)
+          const existing = VariableModel.findByName(workspaceId, postmanVar.key, null);
+          if (!existing && postmanVar.value) {
+            // Determine if it's a secret based on variable name
+            const isSecret = /secret|password|token|key|api[_-]?key/i.test(postmanVar.key);
+            
+            VariableModel.create(
+              {
+                name: postmanVar.key,
+                value: postmanVar.value || '',
+                isSecret,
+                scope: 'workspace', // Collection variables are workspace-level
+                environmentId: null,
+              },
+              workspaceId
+            );
+            console.log(`Imported variable: ${postmanVar.key}`);
+          } else if (existing) {
+            console.log(`Variable ${postmanVar.key} already exists, skipping`);
+          }
+        } catch (error) {
+          console.error(`Error importing variable ${postmanVar.key}:`, error);
+          // Continue with other variables
+        }
+      }
+    }
+
     // Run analysis on all requests
     for (const request of createdRequests) {
       try {
