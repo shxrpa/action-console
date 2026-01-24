@@ -50,7 +50,7 @@ export function runMigrations() {
       collectionId TEXT NOT NULL,
       rawJson TEXT NOT NULL,
       variables TEXT,
-      risk TEXT CHECK(risk IN ('Safe', 'Write', 'Dangerous')),
+      risk TEXT NOT NULL CHECK(risk IN ('Safe', 'Write', 'Dangerous')) DEFAULT 'Write',
       hasScripts INTEGER DEFAULT 0,
       warnings TEXT,
       FOREIGN KEY (collectionId) REFERENCES collections(id) ON DELETE CASCADE,

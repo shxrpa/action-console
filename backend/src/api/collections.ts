@@ -121,10 +121,20 @@ router.post('/import', upload.single('file'), async (req, res) => {
     for (const request of createdRequests) {
       try {
         const analysis = CollectionAnalyzer.analyzeRequest(request, request.rawJson);
+        // Ensure risk is always set (analysis should always return a risk)
+        if (!analysis.risk) {
+          analysis.risk = 'Write'; // Fallback default
+        }
         RequestModel.updateAnalysis(request.id, analysis);
       } catch (error) {
         console.error(`Error analyzing request ${request.id}:`, error);
-        // Continue with other requests even if one fails
+        // If analysis fails, set default risk
+        RequestModel.updateAnalysis(request.id, {
+          variables: [],
+          risk: 'Write',
+          hasScripts: false,
+          warnings: ['Analysis failed - using default risk level'],
+        });
       }
     }
 

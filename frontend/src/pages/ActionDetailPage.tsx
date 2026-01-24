@@ -15,7 +15,7 @@ interface Request {
   headers: string;
   body: string | null;
   variables?: string;
-  risk?: 'Safe' | 'Write' | 'Dangerous';
+  risk: 'Safe' | 'Write' | 'Dangerous';
   hasScripts?: boolean;
   warnings?: string;
 }
@@ -126,14 +126,12 @@ function ActionDetailPage() {
               <span className="info-label">URL:</span>
               <code className="info-value">{request.url}</code>
             </div>
-            {request.risk && (
-              <div className="info-item">
-                <span className="info-label">Risk Level:</span>
-                <span className={`risk-badge risk-${request.risk.toLowerCase()}`}>
-                  {request.risk}
-                </span>
-              </div>
-            )}
+            <div className="info-item">
+              <span className="info-label">Risk Level:</span>
+              <span className={`risk-badge risk-${request.risk.toLowerCase()}`}>
+                {request.risk}
+              </span>
+            </div>
             {request.hasScripts && (
               <div className="info-item">
                 <span className="info-label">Scripts:</span>

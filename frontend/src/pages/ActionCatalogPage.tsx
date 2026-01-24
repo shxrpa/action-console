@@ -7,7 +7,7 @@ interface Action {
   description: string;
   method: string;
   url: string;
-  risk: 'Safe' | 'Write' | 'Dangerous' | null;
+  risk: 'Safe' | 'Write' | 'Dangerous';
   hasScripts: boolean;
   requiredVariablesCount: number;
   totalVariablesCount: number;
@@ -191,11 +191,9 @@ function ActionCatalogPage() {
                     </div>
                     <p className="action-description">{action.description}</p>
                     <div className="action-meta">
-                      {action.risk && (
-                        <span className={`risk-badge risk-${action.risk.toLowerCase()}`}>
-                          {action.risk}
-                        </span>
-                      )}
+                      <span className={`risk-badge risk-${action.risk.toLowerCase()}`}>
+                        {action.risk}
+                      </span>
                       {action.hasScripts && (
                         <span className="script-badge" title="Contains scripts">
                           ⚠️ Scripts

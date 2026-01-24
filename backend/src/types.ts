@@ -44,7 +44,7 @@ export interface Request {
   rawJson: string; // Full request JSON for reference
   // Analysis metadata
   variables?: string; // JSON string of VariableRef[]
-  risk?: 'Safe' | 'Write' | 'Dangerous';
+  risk: 'Safe' | 'Write' | 'Dangerous'; // Always required
   hasScripts?: boolean;
   warnings?: string; // JSON string of string[]
 }
