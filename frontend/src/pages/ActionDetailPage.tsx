@@ -31,7 +31,7 @@ function ActionDetailPage() {
       const actionData = await getActionDetails(
         actionId,
         selectedWorkspaceId || undefined,
-        selectedEnvironmentId
+        selectedEnvironmentId ?? undefined
       );
       setAction(actionData);
       
