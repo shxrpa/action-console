@@ -1,5 +1,5 @@
 import db from '../db/database';
-import type { Collection, Folder, Request } from '../types';
+import type { Collection, Folder, Request, VariableRef } from '../types';
 
 export class CollectionModel {
   static create(data: {
