@@ -1,0 +1,175 @@
+.setup-wizard-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.setup-wizard {
+  background: var(--bg-primary);
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.wizard-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.wizard-header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+
+.wizard-close {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  line-height: 1;
+  padding: 0;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.wizard-close:hover {
+  color: var(--text-primary);
+}
+
+.wizard-progress {
+  display: flex;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  gap: 1rem;
+}
+
+.progress-step {
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  background: var(--bg-secondary);
+}
+
+.progress-step.active {
+  background: var(--primary-color);
+  color: white;
+}
+
+.wizard-step {
+  padding: 1.5rem;
+}
+
+.wizard-step h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.wizard-step p {
+  margin: 0 0 1rem 0;
+  color: var(--text-secondary);
+}
+
+.missing-variables-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 1.5rem 0;
+}
+
+.missing-variables-list li {
+  padding: 0.75rem;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+
+.missing-variables-list li strong {
+  display: block;
+  margin-bottom: 0.25rem;
+}
+
+.variable-locations {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.wizard-form {
+  margin-bottom: 1.5rem;
+}
+
+.wizard-form .form-group {
+  margin-bottom: 1rem;
+}
+
+.wizard-form label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.wizard-form .required {
+  color: #ef4444;
+  margin-left: 0.25rem;
+}
+
+.input-with-toggle {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.input-with-toggle input[type="text"],
+.input-with-toggle input[type="password"] {
+  flex: 1;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.secret-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  white-space: nowrap;
+}
+
+.secret-toggle input[type="checkbox"] {
+  margin: 0;
+}
+
+.wizard-form select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 0.875rem;
+}
+
+.wizard-actions {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}

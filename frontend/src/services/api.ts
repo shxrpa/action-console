@@ -182,3 +182,51 @@ export async function deleteEnvironment(environmentId: string): Promise<void> {
     throw new Error('Failed to delete environment');
   }
 }
+
+// Action API
+export interface Action {
+  id: string;
+  name: string;
+  description: string;
+  method: string;
+  url: string;
+  risk: 'Safe' | 'Write' | 'Dangerous' | null;
+  hasScripts: boolean;
+  requiredVariablesCount: number;
+  totalVariablesCount: number;
+  folderPath: string;
+  folderId: string | null;
+  collectionId: string;
+  variables?: VariableRef[];
+  warnings?: string[];
+  headers?: Array<{ key: string; value: string }>;
+  body?: string | null;
+  missingVariables?: string[];
+}
+
+export interface VariableRef {
+  name: string;
+  required: boolean;
+  locations: Array<'url' | 'header' | 'body'>;
+}
+
+export async function getActionDetails(
+  actionId: string,
+  workspaceId?: string,
+  environmentId?: string | null | undefined
+): Promise<Action> {
+  const params = new URLSearchParams();
+  if (workspaceId) {
+    params.append('workspaceId', workspaceId);
+  }
+  if (environmentId !== undefined && environmentId !== null) {
+    params.append('environmentId', environmentId);
+  }
+  const queryString = params.toString();
+  const url = `${API_BASE_URL}/actions/${actionId}${queryString ? `?${queryString}` : ''}`;
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error('Failed to fetch action details');
+  }
+  return response.json();
+}

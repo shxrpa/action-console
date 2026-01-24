@@ -1,55 +1,44 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-
-interface VariableRef {
-  name: string;
-  required: boolean;
-  locations: Array<'url' | 'header' | 'body'>;
-}
-
-interface Request {
-  id: string;
-  name: string;
-  method: string;
-  url: string;
-  headers: string;
-  body: string | null;
-  variables?: string;
-  risk: 'Safe' | 'Write' | 'Dangerous';
-  hasScripts?: boolean;
-  warnings?: string;
-}
+import { getActionDetails } from '../services/api';
+import { useWorkspace } from '../contexts/WorkspaceContext';
+import { useEnvironment } from '../contexts/EnvironmentContext';
+import { SetupWizard } from '../components/SetupWizard';
+import type { Action } from '../services/api';
 
 function ActionDetailPage() {
-  const { collectionId, actionId } = useParams<{ collectionId: string; actionId: string }>();
+  const { actionId } = useParams<{ actionId: string }>();
   const navigate = useNavigate();
-  const [request, setRequest] = useState<Request | null>(null);
+  const { selectedWorkspaceId } = useWorkspace();
+  const { selectedEnvironmentId } = useEnvironment();
+  const [action, setAction] = useState<Action | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showWizard, setShowWizard] = useState(false);
 
   useEffect(() => {
-    if (actionId && collectionId) {
+    if (actionId) {
       loadAction();
     }
-  }, [actionId, collectionId]);
+  }, [actionId, selectedWorkspaceId, selectedEnvironmentId]);
 
   const loadAction = async () => {
-    if (!actionId || !collectionId) return;
+    if (!actionId) return;
 
     try {
       setIsLoading(true);
       setError(null);
-      const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
-      const response = await fetch(`${API_BASE_URL}/collections/${collectionId}`);
-      if (!response.ok) {
-        throw new Error('Failed to load collection');
+      const actionData = await getActionDetails(
+        actionId,
+        selectedWorkspaceId || undefined,
+        selectedEnvironmentId
+      );
+      setAction(actionData);
+      
+      // Show wizard if there are missing variables
+      if (actionData.missingVariables && actionData.missingVariables.length > 0) {
+        setShowWizard(true);
       }
-      const collection = await response.json();
-      const foundRequest = collection.requests.find((r: Request) => r.id === actionId);
-      if (!foundRequest) {
-        throw new Error('Action not found');
-      }
-      setRequest(foundRequest);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to load action');
     } finally {
@@ -57,16 +46,19 @@ function ActionDetailPage() {
     }
   };
 
-  const formatHeaders = (headersJson: string) => {
-    try {
-      const headers = JSON.parse(headersJson);
-      if (Array.isArray(headers)) {
-        return headers;
-      }
-      return [];
-    } catch {
-      return [];
+  const handleRunAction = () => {
+    if (action?.missingVariables && action.missingVariables.length > 0) {
+      setShowWizard(true);
+    } else {
+      // TODO: Actually run the action (next story)
+      alert('Action execution will be available in the next story');
     }
+  };
+
+  const handleWizardComplete = () => {
+    setShowWizard(false);
+    // Reload action to get updated missing variables
+    loadAction();
   };
 
   const formatBody = (body: string | null) => {
@@ -87,29 +79,36 @@ function ActionDetailPage() {
     );
   }
 
-  if (error || !request) {
+  if (error || !action) {
     return (
       <div className="action-detail-page">
         <div className="error-message">{error || 'Action not found'}</div>
-        <button onClick={() => navigate(`/collections/${collectionId}/actions`)}>
-          Back to Catalog
-        </button>
+        <button onClick={() => navigate('/actions')}>Back to Catalog</button>
       </div>
     );
   }
 
-  const variables: VariableRef[] = request.variables ? JSON.parse(request.variables) : [];
-  const warnings: string[] = request.warnings ? JSON.parse(request.warnings) : [];
-  const headers = formatHeaders(request.headers);
-  const formattedBody = formatBody(request.body);
+  const variables = action.variables || [];
+  const warnings = action.warnings || [];
+  const headers = action.headers || [];
+  const formattedBody = formatBody(action.body);
 
   return (
     <div className="action-detail-page">
+      {showWizard && action.missingVariables && (
+        <SetupWizard
+          action={action}
+          missingVariables={action.missingVariables}
+          onComplete={handleWizardComplete}
+          onCancel={() => setShowWizard(false)}
+        />
+      )}
+
       <div className="detail-header">
-        <button className="back-button" onClick={() => navigate(`/collections/${collectionId}/actions`)}>
+        <button className="back-button" onClick={() => navigate('/actions')}>
           ← Back to Catalog
         </button>
-        <h2>{request.name}</h2>
+        <h2>{action.name}</h2>
       </div>
 
       <div className="detail-content">
@@ -118,24 +117,32 @@ function ActionDetailPage() {
           <div className="info-grid">
             <div className="info-item">
               <span className="info-label">Method:</span>
-              <span className={`method-badge method-${request.method.toLowerCase()}`}>
-                {request.method}
+              <span className={`method-badge method-${action.method.toLowerCase()}`}>
+                {action.method}
               </span>
             </div>
             <div className="info-item">
               <span className="info-label">URL:</span>
-              <code className="info-value">{request.url}</code>
+              <code className="info-value">{action.url}</code>
             </div>
             <div className="info-item">
               <span className="info-label">Risk Level:</span>
-              <span className={`risk-badge risk-${request.risk.toLowerCase()}`}>
-                {request.risk}
+              <span className={`risk-badge risk-${(action.risk || 'Write').toLowerCase()}`}>
+                {action.risk || 'Write'}
               </span>
             </div>
-            {request.hasScripts && (
+            {action.hasScripts && (
               <div className="info-item">
                 <span className="info-label">Scripts:</span>
                 <span className="script-badge">⚠️ Contains scripts</span>
+              </div>
+            )}
+            {action.missingVariables && action.missingVariables.length > 0 && (
+              <div className="info-item">
+                <span className="info-label">Status:</span>
+                <span className="missing-vars-badge">
+                  ⚠️ {action.missingVariables.length} required variable(s) missing
+                </span>
               </div>
             )}
           </div>
@@ -207,10 +214,19 @@ function ActionDetailPage() {
         )}
 
         <div className="detail-section">
-          <button className="btn-run-action" disabled title="Coming in next story">
+          <button
+            className="btn-run-action"
+            onClick={handleRunAction}
+            disabled={!selectedWorkspaceId}
+            title={!selectedWorkspaceId ? 'Please select a workspace first' : undefined}
+          >
             Run Action
           </button>
-          <p className="coming-soon">Action execution will be available in the next story</p>
+          {action.missingVariables && action.missingVariables.length > 0 && (
+            <p className="missing-vars-hint">
+              ⚠️ {action.missingVariables.length} required variable(s) need to be configured before running
+            </p>
+          )}
         </div>
       </div>
     </div>
