@@ -103,8 +103,8 @@ export class RequestModel {
     }>
   ): Request[] {
     const insert = db.prepare(
-      `INSERT INTO requests (id, name, method, url, headers, body, folderId, collectionId, rawJson) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO requests (id, name, method, url, headers, body, folderId, collectionId, rawJson, risk) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     );
 
     const created: Request[] = [];
@@ -120,7 +120,8 @@ export class RequestModel {
           request.body,
           request.folderId,
           request.collectionId,
-          request.rawJson
+          request.rawJson,
+          'Write' // Default risk, will be updated by analysis
         );
         created.push({
           id,
