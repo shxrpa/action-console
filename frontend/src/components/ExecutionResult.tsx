@@ -40,7 +40,7 @@ export function ExecutionResult({ result, onClose, onRunAgain }: ExecutionResult
         <div className="summary-item">
           <span className="summary-label">Status:</span>
           <span className={`status-code ${result.responseStatus >= 200 && result.responseStatus < 300 ? 'success' : 'error'}`}>
-            {result.responseStatus || 'N/A'}
+            {result.responseStatus > 0 ? result.responseStatus : 'N/A'}
           </span>
         </div>
         <div className="summary-item">
@@ -62,7 +62,7 @@ export function ExecutionResult({ result, onClose, onRunAgain }: ExecutionResult
           <div className="request-url">{result.resolvedRequest.url}</div>
         </div>
 
-        {result.resolvedRequest.headers.length > 0 && (
+        {Object.keys(result.resolvedRequest.headers).length > 0 && (
           <div className="request-headers">
             <h5>Headers</h5>
             <table className="headers-table">
@@ -73,11 +73,11 @@ export function ExecutionResult({ result, onClose, onRunAgain }: ExecutionResult
                 </tr>
               </thead>
               <tbody>
-                {result.resolvedRequest.headers.map((header, index) => (
+                {Object.entries(result.resolvedRequest.headers).map(([key, value], index) => (
                   <tr key={index}>
-                    <td>{header.key}</td>
+                    <td>{key}</td>
                     <td>
-                      <code>{header.value}</code>
+                      <code>{value}</code>
                     </td>
                   </tr>
                 ))}

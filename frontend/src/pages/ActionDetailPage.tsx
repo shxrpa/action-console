@@ -18,10 +18,8 @@ function ActionDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [showWizard, setShowWizard] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [executing, setExecuting] = useState(false);
-  const [executionResult, setExecutionResult] = useState<ExecutionResult | null>(null);
-  const [executionResult, setExecutionResult] = useState<ExecutionResultType | null>(null);
   const [isExecuting, setIsExecuting] = useState(false);
+  const [executionResult, setExecutionResult] = useState<ExecutionResultType | null>(null);
 
   useEffect(() => {
     if (actionId) {
@@ -69,12 +67,12 @@ function ActionDetailPage() {
     setError(null);
 
     try {
-      const result = await executeAction({
-        actionId: action.id,
-        variables: values,
-        workspaceId: selectedWorkspaceId,
-        environmentId: selectedEnvironmentId,
-      });
+      const result = await executeAction(
+        action.id,
+        selectedWorkspaceId,
+        selectedEnvironmentId,
+        values
+      );
 
       setExecutionResult(result);
       setShowForm(false);
@@ -254,6 +252,7 @@ function ActionDetailPage() {
               actionId={action.id}
               onSubmit={handleFormSubmit}
               onCancel={() => setShowForm(false)}
+              disabled={isExecuting}
             />
             {isExecuting && (
               <div className="execution-loading">
