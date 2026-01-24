@@ -61,7 +61,7 @@ function ActionDetailPage() {
     loadAction();
   };
 
-  const formatBody = (body: string | null) => {
+  const formatBody = (body: string | null | undefined) => {
     if (!body) return null;
     try {
       const parsed = JSON.parse(body);

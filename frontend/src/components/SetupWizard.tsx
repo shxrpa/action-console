@@ -92,7 +92,7 @@ export function SetupWizard({ action, missingVariables, onComplete, onCancel }: 
           value: formData[varName].value,
           isSecret: formData[varName].isSecret,
           scope,
-          environmentId: scope === 'environment' ? selectedEnvironmentId : null,
+          environmentId: scope === 'environment' ? (selectedEnvironmentId ?? null) : null,
         };
         return createVariable(selectedWorkspaceId, data);
       });
