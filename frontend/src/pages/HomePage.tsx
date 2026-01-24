@@ -1,8 +1,22 @@
-function HomePage() {
+import { useState } from 'react';
+import FileUpload from '../components/FileUpload';
 
-  const handleImportClick = () => {
-    // TODO: Navigate to import page when implemented
-    alert('Import collection feature coming soon!');
+function HomePage() {
+  const [uploadError, setUploadError] = useState<string | null>(null);
+
+  const handleFileSelect = async (file: File) => {
+    setUploadError(null);
+    try {
+      // TODO: Implement file upload to backend
+      console.log('File selected:', file.name);
+      // For now, just read the file to validate it's JSON
+      const text = await file.text();
+      JSON.parse(text); // Validate JSON
+      alert(`File "${file.name}" is valid JSON. Upload will be implemented next.`);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Invalid JSON file';
+      setUploadError(message);
+    }
   };
 
   return (
