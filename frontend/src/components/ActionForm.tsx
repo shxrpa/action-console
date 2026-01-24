@@ -35,6 +35,7 @@ export function ActionForm({ actionId, onSubmit, onCancel, disabled = false }: A
         selectedWorkspaceId || undefined,
         selectedEnvironmentId
       );
+      console.log('Loaded form schema:', formSchema);
       setSchema(formSchema);
 
       // Initialize form values with defaults

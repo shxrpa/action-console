@@ -21,7 +21,10 @@ router.get('/:actionId', (req, res) => {
 
     // Parse variables from request
     const variables = request.variables ? JSON.parse(request.variables) : [];
+    console.log(`Form generation for action ${actionId}: Found ${variables.length} variables:`, variables);
+    
     if (variables.length === 0) {
+      console.log('No variables found in request, returning empty form');
       return res.json({ fields: [] });
     }
 

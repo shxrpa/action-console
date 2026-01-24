@@ -24,10 +24,13 @@ export class FormGenerator {
     variables: VariableRef[],
     variableDefaults: Map<string, string> = new Map()
   ): FormSchema {
+    console.log(`Generating form schema for ${variables.length} variables`);
     const fields: FormField[] = variables.map((variable) => {
       const defaultValue = variableDefaults.get(variable.name) || '';
       const label = this.generateLabel(variable.name);
       const inputType = this.detectInputType(variable.name);
+
+      console.log(`  - ${variable.name}: required=${variable.required}, defaultValue=${defaultValue ? '***' : '(empty)'}, locations=${variable.locations.join(',')}`);
 
       return {
         variableName: variable.name,
@@ -39,6 +42,7 @@ export class FormGenerator {
       };
     });
 
+    console.log(`Generated ${fields.length} form fields`);
     return { fields };
   }
 
