@@ -1,7 +1,4 @@
-import { useNavigate } from 'react-router-dom';
-
 function HomePage() {
-  const navigate = useNavigate();
 
   const handleImportClick = () => {
     // TODO: Navigate to import page when implemented
