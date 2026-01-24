@@ -42,6 +42,17 @@ export interface Request {
   folderId: string | null;
   collectionId: string;
   rawJson: string; // Full request JSON for reference
+  // Analysis metadata
+  variables?: string; // JSON string of VariableRef[]
+  risk?: 'Safe' | 'Write' | 'Dangerous';
+  hasScripts?: boolean;
+  warnings?: string; // JSON string of string[]
+}
+
+export interface VariableRef {
+  name: string;
+  required: boolean;
+  locations: Array<'url' | 'header' | 'body'>;
 }
 
 // Postman Collection types

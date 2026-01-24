@@ -49,6 +49,10 @@ export function runMigrations() {
       folderId TEXT,
       collectionId TEXT NOT NULL,
       rawJson TEXT NOT NULL,
+      variables TEXT,
+      risk TEXT CHECK(risk IN ('Safe', 'Write', 'Dangerous')),
+      hasScripts INTEGER DEFAULT 0,
+      warnings TEXT,
       FOREIGN KEY (collectionId) REFERENCES collections(id) ON DELETE CASCADE,
       FOREIGN KEY (folderId) REFERENCES folders(id) ON DELETE SET NULL
     )

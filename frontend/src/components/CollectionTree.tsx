@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import RequestDetailPanel from './RequestDetailPanel';
 
 interface Folder {
   id: string;
@@ -8,12 +9,16 @@ interface Folder {
   order: number;
 }
 
-interface Request {
+export interface Request {
   id: string;
   name: string;
   method: string;
   url: string;
   folderId: string | null;
+  variables?: string; // JSON string
+  risk?: 'Safe' | 'Write' | 'Dangerous';
+  hasScripts?: boolean;
+  warnings?: string; // JSON string
 }
 
 interface CollectionDetail {
@@ -30,6 +35,7 @@ interface CollectionTreeProps {
 function CollectionTree({ collectionId }: CollectionTreeProps) {
   const [collection, setCollection] = useState<CollectionDetail | null>(null);
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set());
+  const [selectedRequest, setSelectedRequest] = useState<Request | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -121,9 +127,12 @@ function CollectionTree({ collectionId }: CollectionTreeProps) {
             {folder.children.map((child) => renderFolder(child, depth + 1))}
             {folder.requests.map((request) => (
               <li key={request.id} className="tree-item request-item" style={{ paddingLeft: `${(depth + 1) * 20}px` }}>
-                <div className="tree-node">
-                  <span className="method-badge method-{request.method.toLowerCase()}">{request.method}</span>
+                <div className="tree-node" onClick={() => setSelectedRequest(request)}>
+                  <span className={`method-badge method-${request.method.toLowerCase()}`}>{request.method}</span>
                   <span className="tree-label">{request.name}</span>
+                  {request.risk && (
+                    <span className={`risk-badge risk-${request.risk.toLowerCase()}`}>{request.risk}</span>
+                  )}
                 </div>
               </li>
             ))}
@@ -154,13 +163,19 @@ function CollectionTree({ collectionId }: CollectionTreeProps) {
         {rootFolders.map((folder) => renderFolder(folder))}
         {rootRequests.map((request) => (
           <li key={request.id} className="tree-item request-item">
-            <div className="tree-node">
+            <div className="tree-node" onClick={() => setSelectedRequest(request)}>
               <span className={`method-badge method-${request.method.toLowerCase()}`}>{request.method}</span>
               <span className="tree-label">{request.name}</span>
+              {request.risk && (
+                <span className={`risk-badge risk-${request.risk.toLowerCase()}`}>{request.risk}</span>
+              )}
             </div>
           </li>
         ))}
       </ul>
+      {selectedRequest && (
+        <RequestDetailPanel request={selectedRequest} onClose={() => setSelectedRequest(null)} />
+      )}
     </div>
   );
 }

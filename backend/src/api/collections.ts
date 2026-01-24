@@ -2,6 +2,7 @@ import { Router } from 'express';
 import multer from 'multer';
 import { CollectionModel, FolderModel, RequestModel } from '../models/Collection';
 import { PostmanParser } from '../services/postmanParser';
+import { CollectionAnalyzer } from '../services/collectionAnalyzer';
 import type { PostmanCollection } from '../types';
 
 const router = Router();
@@ -114,7 +115,18 @@ router.post('/import', upload.single('file'), async (req, res) => {
       };
     });
 
-    RequestModel.createMany(requestsWithFolderIds);
+    const createdRequests = RequestModel.createMany(requestsWithFolderIds);
+
+    // Run analysis on all requests
+    for (const request of createdRequests) {
+      try {
+        const analysis = CollectionAnalyzer.analyzeRequest(request, request.rawJson);
+        RequestModel.updateAnalysis(request.id, analysis);
+      } catch (error) {
+        console.error(`Error analyzing request ${request.id}:`, error);
+        // Continue with other requests even if one fails
+      }
+    }
 
     res.status(201).json({
       id: collectionRecord.id,
