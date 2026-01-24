@@ -261,6 +261,15 @@ body {
   font-size: 14px;
 }
 
+.success-message {
+  margin-top: 16px;
+  padding: 12px;
+  background-color: #d1fae5;
+  color: #065f46;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
 /* Workspace Selector */
 .workspace-selector {
   display: flex;

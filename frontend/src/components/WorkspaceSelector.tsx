@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import type { Workspace } from '../types';
 import { fetchWorkspaces, createWorkspace } from '../services/api';
+import { WorkspaceContext } from '../contexts/WorkspaceContext';
 
 interface WorkspaceSelectorProps {
   selectedWorkspaceId: string | null;
@@ -13,10 +14,18 @@ function WorkspaceSelector({ selectedWorkspaceId, onWorkspaceSelect }: Workspace
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [newWorkspaceName, setNewWorkspaceName] = useState('');
   const [isCreating, setIsCreating] = useState(false);
+  const context = useContext(WorkspaceContext);
 
   useEffect(() => {
     loadWorkspaces();
   }, []);
+
+  useEffect(() => {
+    // Sync with context
+    if (context && selectedWorkspaceId && context.selectedWorkspaceId !== selectedWorkspaceId) {
+      context.setSelectedWorkspaceId(selectedWorkspaceId);
+    }
+  }, [selectedWorkspaceId, context]);
 
   const loadWorkspaces = async () => {
     try {
@@ -24,7 +33,11 @@ function WorkspaceSelector({ selectedWorkspaceId, onWorkspaceSelect }: Workspace
       const data = await fetchWorkspaces();
       setWorkspaces(data);
       if (data.length > 0 && !selectedWorkspaceId) {
-        onWorkspaceSelect(data[0].id);
+        const firstId = data[0].id;
+        onWorkspaceSelect(firstId);
+        if (context) {
+          context.setSelectedWorkspaceId(firstId);
+        }
       }
     } catch (error) {
       console.error('Failed to load workspaces:', error);
@@ -41,6 +54,9 @@ function WorkspaceSelector({ selectedWorkspaceId, onWorkspaceSelect }: Workspace
       const workspace = await createWorkspace(newWorkspaceName.trim());
       setWorkspaces([workspace, ...workspaces]);
       onWorkspaceSelect(workspace.id);
+      if (context) {
+        context.setSelectedWorkspaceId(workspace.id);
+      }
       setNewWorkspaceName('');
       setShowCreateModal(false);
     } catch (error) {

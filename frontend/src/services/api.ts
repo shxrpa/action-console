@@ -30,3 +30,40 @@ export async function deleteWorkspace(id: string): Promise<void> {
     throw new Error('Failed to delete workspace');
   }
 }
+
+// Collection API
+export interface Collection {
+  id: string;
+  name: string;
+  description: string | null;
+  schemaVersion: string;
+  workspaceId: string;
+  importedAt: string;
+  requestCount?: number;
+}
+
+export async function importCollection(file: File, workspaceId: string): Promise<Collection> {
+  const formData = new FormData();
+  formData.append('file', file);
+  formData.append('workspaceId', workspaceId);
+
+  const response = await fetch(`${API_BASE_URL}/collections/import`, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({ error: 'Failed to import collection' }));
+    throw new Error(error.error || 'Failed to import collection');
+  }
+
+  return response.json();
+}
+
+export async function fetchCollections(workspaceId: string): Promise<Collection[]> {
+  const response = await fetch(`${API_BASE_URL}/collections?workspaceId=${workspaceId}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch collections');
+  }
+  return response.json();
+}

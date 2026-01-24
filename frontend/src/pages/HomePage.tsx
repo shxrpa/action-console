@@ -1,20 +1,28 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import FileUpload from '../components/FileUpload';
+import { importCollection } from '../services/api';
+import { WorkspaceContext } from '../contexts/WorkspaceContext';
 
 function HomePage() {
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [uploadSuccess, setUploadSuccess] = useState<string | null>(null);
+  const { selectedWorkspaceId } = useContext(WorkspaceContext) || { selectedWorkspaceId: null };
 
   const handleFileSelect = async (file: File) => {
     setUploadError(null);
+    setUploadSuccess(null);
+
+    if (!selectedWorkspaceId) {
+      setUploadError('Please select a workspace first');
+      return;
+    }
+
     try {
-      // TODO: Implement file upload to backend
-      console.log('File selected:', file.name);
-      // For now, just read the file to validate it's JSON
-      const text = await file.text();
-      JSON.parse(text); // Validate JSON
-      alert(`File "${file.name}" is valid JSON. Upload will be implemented next.`);
+      const result = await importCollection(file, selectedWorkspaceId);
+      setUploadSuccess(`Collection "${result.name}" imported successfully! (${result.requestCount} requests)`);
+      // TODO: Navigate to collection view or refresh collection list
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Invalid JSON file';
+      const message = error instanceof Error ? error.message : 'Failed to import collection';
       setUploadError(message);
     }
   };
@@ -50,6 +58,7 @@ function HomePage() {
         <div className="import-section">
           <FileUpload onFileSelect={handleFileSelect} />
           {uploadError && <div className="error-message">{uploadError}</div>}
+          {uploadSuccess && <div className="success-message">{uploadSuccess}</div>}
         </div>
       </div>
     </div>

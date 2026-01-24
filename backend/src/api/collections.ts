@@ -9,10 +9,10 @@ const upload = multer({
   storage: multer.memoryStorage(),
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
   fileFilter: (req, file, cb) => {
-    if (file.mimetype === 'application/json' || file.originalname.endsWith('.json')) {
+    if (file.mimetype === 'application/json' || file.originalname.toLowerCase().endsWith('.json')) {
       cb(null, true);
     } else {
-      cb(new Error('Only JSON files are allowed'));
+      cb(new Error('Only JSON files are allowed. Please upload a Postman Collection JSON file.'));
     }
   },
 });
@@ -124,7 +124,16 @@ router.post('/import', upload.single('file'), async (req, res) => {
     });
   } catch (error) {
     console.error('Error importing collection:', error);
-    res.status(500).json({ error: 'Failed to import collection' });
+    if (error instanceof Error) {
+      // Handle specific error types
+      if (error.message.includes('JSON')) {
+        return res.status(400).json({ error: 'Invalid JSON format' });
+      }
+      if (error.message.includes('Postman')) {
+        return res.status(400).json({ error: error.message });
+      }
+    }
+    res.status(500).json({ error: 'Failed to import collection. Please check the file format and try again.' });
   }
 });
 
