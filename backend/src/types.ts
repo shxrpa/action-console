@@ -96,3 +96,44 @@ export interface PostmanVariable {
   value: string;
   type?: string;
 }
+
+// Variable Wallet types
+export interface Variable {
+  id: string;
+  name: string;
+  value: string; // Encrypted if isSecret
+  isSecret: boolean;
+  scope: 'workspace' | 'environment';
+  environmentId: string | null;
+  workspaceId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Environment {
+  id: string;
+  name: string;
+  workspaceId: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateVariableRequest {
+  name: string;
+  value: string;
+  isSecret: boolean;
+  scope: 'workspace' | 'environment';
+  environmentId?: string | null;
+}
+
+export interface UpdateVariableRequest {
+  name?: string;
+  value?: string;
+  isSecret?: boolean;
+  scope?: 'workspace' | 'environment';
+  environmentId?: string | null;
+}
+
+export interface CreateEnvironmentRequest {
+  name: string;
+}

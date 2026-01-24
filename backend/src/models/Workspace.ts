@@ -1,5 +1,6 @@
 import db from '../db/database';
 import type { Workspace, CreateWorkspaceRequest, UpdateWorkspaceRequest } from '../types';
+import { EnvironmentModel } from './Environment';
 
 export class WorkspaceModel {
   static create(data: CreateWorkspaceRequest): Workspace {
@@ -10,6 +11,10 @@ export class WorkspaceModel {
       `INSERT INTO workspaces (id, name, createdAt, updatedAt) 
        VALUES (?, ?, ?, ?)`
     ).run(id, data.name, now, now);
+
+    // Create default environments
+    EnvironmentModel.create({ name: 'Sandbox' }, id);
+    EnvironmentModel.create({ name: 'Production' }, id);
 
     return this.findById(id)!;
   }
