@@ -10,6 +10,11 @@ function Sidebar() {
               Home
             </Link>
           </li>
+          <li>
+            <Link to="/collections" className="nav-link">
+              Collections
+            </Link>
+          </li>
         </ul>
       </nav>
     </aside>

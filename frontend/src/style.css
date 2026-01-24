@@ -270,6 +270,182 @@ body {
   font-size: 14px;
 }
 
+/* Collections Page */
+.collections-page {
+  padding: 24px;
+}
+
+.collections-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 24px;
+  height: calc(100vh - var(--header-height) - 48px);
+}
+
+.collections-list h2 {
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.collection-items {
+  list-style: none;
+  overflow-y: auto;
+  max-height: 100%;
+}
+
+.collection-item {
+  padding: 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.collection-item:hover {
+  border-color: var(--primary-color);
+  background-color: #f8fafc;
+}
+
+.collection-item.active {
+  border-color: var(--primary-color);
+  background-color: #eff6ff;
+}
+
+.collection-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 8px;
+}
+
+.collection-item-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.collection-meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+  background-color: var(--sidebar-bg);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.collection-description {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin: 8px 0;
+}
+
+.collection-date {
+  font-size: 12px;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.empty-collections {
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.collection-detail {
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.collection-placeholder {
+  text-align: center;
+  color: var(--text-secondary);
+  padding: 48px;
+}
+
+/* Collection Tree */
+.collection-tree h3 {
+  font-size: 20px;
+  margin-bottom: 16px;
+}
+
+.tree-root {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.tree-item {
+  list-style: none;
+  margin: 4px 0;
+}
+
+.tree-node {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.tree-node:hover {
+  background-color: var(--sidebar-bg);
+}
+
+.tree-icon {
+  font-size: 16px;
+}
+
+.tree-label {
+  font-size: 14px;
+  color: var(--text-color);
+}
+
+.tree-children {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  margin-left: 8px;
+}
+
+.method-badge {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  min-width: 40px;
+  text-align: center;
+}
+
+.method-get {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+.method-post {
+  background-color: #d1fae5;
+  color: #065f46;
+}
+
+.method-put {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+.method-patch {
+  background-color: #fce7f3;
+  color: #9f1239;
+}
+
+.method-delete {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
 /* Workspace Selector */
 .workspace-selector {
   display: flex;

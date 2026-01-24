@@ -20,7 +20,10 @@ function HomePage() {
     try {
       const result = await importCollection(file, selectedWorkspaceId);
       setUploadSuccess(`Collection "${result.name}" imported successfully! (${result.requestCount} requests)`);
-      // TODO: Navigate to collection view or refresh collection list
+      // Navigate to collections page after a short delay
+      setTimeout(() => {
+        window.location.href = '/collections';
+      }, 1500);
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Failed to import collection';
       setUploadError(message);
