@@ -19,14 +19,21 @@ const upload = multer({
 });
 
 // POST /api/collections/import - Import Postman collection
-router.post('/import', upload.single('file'), async (req, res) => {
+router.post('/import', upload.single('file'), (req, res) => {
   try {
+    console.log('Import request received:', {
+      hasFile: !!req.file,
+      fileName: req.file?.originalname,
+      workspaceId: req.body.workspaceId,
+    });
+
     if (!req.file) {
       return res.status(400).json({ error: 'No file provided' });
     }
 
     const workspaceId = req.body.workspaceId;
     if (!workspaceId || typeof workspaceId !== 'string') {
+      console.error('Missing workspaceId:', req.body);
       return res.status(400).json({ error: 'workspaceId is required' });
     }
 
@@ -35,14 +42,24 @@ router.post('/import', upload.single('file'), async (req, res) => {
     try {
       const fileContent = req.file.buffer.toString('utf-8');
       collectionData = JSON.parse(fileContent);
+      console.log('JSON parsed successfully, validating collection...');
     } catch (error) {
-      return res.status(400).json({ error: 'Invalid JSON file' });
+      console.error('JSON parse error:', error);
+      return res.status(400).json({ error: `Invalid JSON file: ${error instanceof Error ? error.message : 'Parse error'}` });
     }
 
-    // Validate Postman Collection v2.1
+    // Validate Postman Collection
     if (!PostmanParser.validateCollection(collectionData)) {
-      return res.status(400).json({ error: 'Invalid Postman Collection format. Must be v2.1' });
+      console.error('Collection validation failed:', {
+        hasInfo: !!(collectionData as Record<string, unknown>).info,
+        hasItem: !!(collectionData as Record<string, unknown>).item,
+      });
+      return res.status(400).json({ 
+        error: 'Invalid Postman Collection format. The file must be a valid Postman Collection JSON with "info" and "item" fields.' 
+      });
     }
+    
+    console.log('Collection validated, starting import...');
 
     const collection = collectionData as PostmanCollection;
 
@@ -121,10 +138,20 @@ router.post('/import', upload.single('file'), async (req, res) => {
     for (const request of createdRequests) {
       try {
         const analysis = CollectionAnalyzer.analyzeRequest(request, request.rawJson);
+        // Ensure risk is always set (analysis should always return a risk)
+        if (!analysis.risk) {
+          analysis.risk = 'Write'; // Fallback default
+        }
         RequestModel.updateAnalysis(request.id, analysis);
       } catch (error) {
         console.error(`Error analyzing request ${request.id}:`, error);
-        // Continue with other requests even if one fails
+        // If analysis fails, set default risk
+        RequestModel.updateAnalysis(request.id, {
+          variables: [],
+          risk: 'Write',
+          hasScripts: false,
+          warnings: ['Analysis failed - using default risk level'],
+        });
       }
     }
 
@@ -144,6 +171,14 @@ router.post('/import', upload.single('file'), async (req, res) => {
       if (error.message.includes('Postman')) {
         return res.status(400).json({ error: error.message });
       }
+      if (error.message.includes('Only JSON files')) {
+        return res.status(400).json({ error: error.message });
+      }
+      // Return the actual error message for debugging
+      return res.status(500).json({ 
+        error: `Failed to import collection: ${error.message}`,
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      });
     }
     res.status(500).json({ error: 'Failed to import collection. Please check the file format and try again.' });
   }

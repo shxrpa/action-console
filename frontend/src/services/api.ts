@@ -53,8 +53,10 @@ export async function importCollection(file: File, workspaceId: string): Promise
   });
 
   if (!response.ok) {
-    const error = await response.json().catch(() => ({ error: 'Failed to import collection' }));
-    throw new Error(error.error || 'Failed to import collection');
+    const errorData = await response.json().catch(() => ({ error: 'Failed to import collection' }));
+    const errorMessage = errorData.error || 'Failed to import collection';
+    console.error('Import error:', errorData);
+    throw new Error(errorMessage);
   }
 
   return response.json();

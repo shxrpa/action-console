@@ -16,7 +16,7 @@ export interface Request {
   url: string;
   folderId: string | null;
   variables?: string; // JSON string
-  risk?: 'Safe' | 'Write' | 'Dangerous';
+  risk: 'Safe' | 'Write' | 'Dangerous';
   hasScripts?: boolean;
   warnings?: string; // JSON string
 }
@@ -166,9 +166,7 @@ function CollectionTree({ collectionId }: CollectionTreeProps) {
             <div className="tree-node" onClick={() => setSelectedRequest(request)}>
               <span className={`method-badge method-${request.method.toLowerCase()}`}>{request.method}</span>
               <span className="tree-label">{request.name}</span>
-              {request.risk && (
-                <span className={`risk-badge risk-${request.risk.toLowerCase()}`}>{request.risk}</span>
-              )}
+              <span className={`risk-badge risk-${request.risk.toLowerCase()}`}>{request.risk}</span>
             </div>
           </li>
         ))}

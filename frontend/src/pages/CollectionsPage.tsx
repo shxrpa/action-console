@@ -71,6 +71,17 @@ function CollectionsPage() {
                   className={`collection-item ${selectedCollection?.id === collection.id ? 'active' : ''}`}
                   onClick={() => setSelectedCollection(collection)}
                 >
+                  <div className="collection-actions">
+                    <button
+                      className="btn-view-actions"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.location.href = `/collections/${collection.id}/actions`;
+                      }}
+                    >
+                      View Actions
+                    </button>
+                  </div>
                   <div className="collection-item-header">
                     <h3>{collection.name}</h3>
                     <span className="collection-meta">
