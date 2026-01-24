@@ -18,7 +18,6 @@ interface Action {
 function ActionCatalogPage() {
   const { collectionId } = useParams<{ collectionId: string }>();
   const navigate = useNavigate();
-  const context = useContext(WorkspaceContext);
   const [actions, setActions] = useState<Action[]>([]);
   const [filteredActions, setFilteredActions] = useState<Action[]>([]);
   const [isLoading, setIsLoading] = useState(true);
