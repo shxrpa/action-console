@@ -3,6 +3,7 @@ import multer from 'multer';
 import { CollectionModel, FolderModel, RequestModel } from '../models/Collection';
 import { PostmanParser } from '../services/postmanParser';
 import { CollectionAnalyzer } from '../services/collectionAnalyzer';
+import { VariableModel } from '../models/Variable';
 import type { PostmanCollection } from '../types';
 
 const router = Router();
