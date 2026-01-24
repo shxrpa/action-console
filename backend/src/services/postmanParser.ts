@@ -21,10 +21,12 @@ export class PostmanParser {
       return false;
     }
 
-    // Check schema version
+    // Check schema version (be lenient - accept v2.1 or v2.0, or missing schema)
     if (typeof info.schema === 'string') {
-      if (!info.schema.includes('v2.1')) {
-        return false;
+      // Accept v2.0, v2.1, or any v2.x schema
+      if (!info.schema.includes('v2')) {
+        console.warn(`Unsupported schema version: ${info.schema}. Expected v2.0 or v2.1`);
+        // Still allow it - we'll try to parse anyway
       }
     }
 

@@ -39,9 +39,11 @@ router.post('/import', upload.single('file'), async (req, res) => {
       return res.status(400).json({ error: 'Invalid JSON file' });
     }
 
-    // Validate Postman Collection v2.1
+    // Validate Postman Collection
     if (!PostmanParser.validateCollection(collectionData)) {
-      return res.status(400).json({ error: 'Invalid Postman Collection format. Must be v2.1' });
+      return res.status(400).json({ 
+        error: 'Invalid Postman Collection format. The file must be a valid Postman Collection JSON with "info" and "item" fields.' 
+      });
     }
 
     const collection = collectionData as PostmanCollection;
