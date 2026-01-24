@@ -33,9 +33,10 @@ function HomePage() {
         <p className="empty-state-subtitle">
           Get started by importing your first Postman collection.
         </p>
-        <button className="btn-import-collection" onClick={handleImportClick}>
-          Import Collection
-        </button>
+        <div className="import-section">
+          <FileUpload onFileSelect={handleFileSelect} />
+          {uploadError && <div className="error-message">{uploadError}</div>}
+        </div>
       </div>
     </div>
   );
