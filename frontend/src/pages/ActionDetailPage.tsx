@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getActionDetails } from '../services/api';
+import { getActionDetails, executeAction } from '../services/api';
 import { useWorkspace } from '../contexts/WorkspaceContext';
 import { useEnvironment } from '../contexts/EnvironmentContext';
 import { SetupWizard } from '../components/SetupWizard';
 import { ActionForm } from '../components/ActionForm';
-import type { Action } from '../services/api';
+import { ExecutionResult } from '../components/ExecutionResult';
+import type { Action, ExecutionResult as ExecutionResultType } from '../services/api';
 
 function ActionDetailPage() {
   const { actionId, collectionId } = useParams<{ actionId: string; collectionId: string }>();
@@ -17,6 +18,8 @@ function ActionDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [showWizard, setShowWizard] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [executionResult, setExecutionResult] = useState<ExecutionResultType | null>(null);
+  const [isExecuting, setIsExecuting] = useState(false);
 
   useEffect(() => {
     if (actionId) {
@@ -57,10 +60,27 @@ function ActionDetailPage() {
     }
   };
 
-  const handleFormSubmit = (values: Record<string, string>) => {
-    console.log('Form submitted with values:', values);
-    // TODO: Pass to execution engine (next story)
-    alert('Action execution will be available in the next story. Form values: ' + JSON.stringify(values));
+  const handleFormSubmit = async (values: Record<string, string>) => {
+    if (!action || !selectedWorkspaceId) return;
+
+    setIsExecuting(true);
+    setError(null);
+
+    try {
+      const result = await executeAction({
+        actionId: action.id,
+        variables: values,
+        workspaceId: selectedWorkspaceId,
+        environmentId: selectedEnvironmentId,
+      });
+
+      setExecutionResult(result);
+      setShowForm(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to execute action');
+    } finally {
+      setIsExecuting(false);
+    }
   };
 
   const handleWizardComplete = () => {
@@ -226,12 +246,38 @@ function ActionDetailPage() {
           </div>
         )}
 
-        {showForm && (
+        {showForm && !executionResult && (
           <div className="detail-section">
             <ActionForm
               actionId={action.id}
               onSubmit={handleFormSubmit}
               onCancel={() => setShowForm(false)}
+            />
+            {isExecuting && (
+              <div className="execution-loading">
+                <p>Executing action...</p>
+              </div>
+            )}
+            {error && (
+              <div className="error-message">
+                {error}
+              </div>
+            )}
+          </div>
+        )}
+
+        {executionResult && (
+          <div className="detail-section">
+            <ExecutionResult
+              result={executionResult}
+              onClose={() => {
+                setExecutionResult(null);
+                setShowForm(false);
+              }}
+              onRunAgain={() => {
+                setExecutionResult(null);
+                setShowForm(true);
+              }}
             />
           </div>
         )}
