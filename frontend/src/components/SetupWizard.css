@@ -12,13 +12,14 @@
 }
 
 .setup-wizard {
-  background: var(--bg-primary);
+  background: var(--bg-color, #ffffff);
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   width: 90%;
   max-width: 600px;
   max-height: 90vh;
   overflow-y: auto;
+  color: var(--text-color, #1e293b);
 }
 
 .wizard-header {
@@ -26,7 +27,7 @@
   justify-content: space-between;
   align-items: center;
   padding: 1.5rem;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
 }
 
 .wizard-header h2 {
@@ -40,7 +41,7 @@
   border: none;
   font-size: 2rem;
   cursor: pointer;
-  color: var(--text-secondary);
+  color: var(--text-secondary, #64748b);
   line-height: 1;
   padding: 0;
   width: 2rem;
@@ -51,13 +52,13 @@
 }
 
 .wizard-close:hover {
-  color: var(--text-primary);
+  color: var(--text-color, #1e293b);
 }
 
 .wizard-progress {
   display: flex;
   padding: 1rem 1.5rem;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
   gap: 1rem;
 }
 
@@ -65,12 +66,12 @@
   padding: 0.5rem 1rem;
   border-radius: 4px;
   font-size: 0.875rem;
-  color: var(--text-secondary);
-  background: var(--bg-secondary);
+  color: var(--text-secondary, #64748b);
+  background: var(--sidebar-bg, #f8fafc);
 }
 
 .progress-step.active {
-  background: var(--primary-color);
+  background: var(--primary-color, #2563eb);
   color: white;
 }
 
@@ -86,7 +87,7 @@
 
 .wizard-step p {
   margin: 0 0 1rem 0;
-  color: var(--text-secondary);
+  color: var(--text-secondary, #64748b);
 }
 
 .missing-variables-list {
@@ -97,8 +98,8 @@
 
 .missing-variables-list li {
   padding: 0.75rem;
-  background: var(--bg-secondary);
-  border: 1px solid var(--border-color);
+  background: var(--sidebar-bg, #f8fafc);
+  border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 4px;
   margin-bottom: 0.5rem;
 }
@@ -110,7 +111,7 @@
 
 .variable-locations {
   font-size: 0.875rem;
-  color: var(--text-secondary);
+  color: var(--text-secondary, #64748b);
 }
 
 .wizard-form {
@@ -143,9 +144,11 @@
 .input-with-toggle input[type="password"] {
   flex: 1;
   padding: 0.5rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 4px;
   font-size: 0.875rem;
+  background: var(--bg-color, #ffffff);
+  color: var(--text-color, #1e293b);
 }
 
 .secret-toggle {
@@ -163,9 +166,11 @@
 .wizard-form select {
   width: 100%;
   padding: 0.5rem;
-  border: 1px solid var(--border-color);
+  border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 4px;
   font-size: 0.875rem;
+  background: var(--bg-color, #ffffff);
+  color: var(--text-color, #1e293b);
 }
 
 .wizard-actions {

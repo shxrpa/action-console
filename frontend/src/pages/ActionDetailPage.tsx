@@ -7,7 +7,7 @@ import { SetupWizard } from '../components/SetupWizard';
 import type { Action } from '../services/api';
 
 function ActionDetailPage() {
-  const { actionId } = useParams<{ actionId: string }>();
+  const { actionId, collectionId } = useParams<{ actionId: string; collectionId: string }>();
   const navigate = useNavigate();
   const { selectedWorkspaceId } = useWorkspace();
   const { selectedEnvironmentId } = useEnvironment();
@@ -83,7 +83,9 @@ function ActionDetailPage() {
     return (
       <div className="action-detail-page">
         <div className="error-message">{error || 'Action not found'}</div>
-        <button onClick={() => navigate('/actions')}>Back to Catalog</button>
+        <button onClick={() => navigate(collectionId ? `/collections/${collectionId}/actions` : '/collections')}>
+          Back to Catalog
+        </button>
       </div>
     );
   }
@@ -105,7 +107,10 @@ function ActionDetailPage() {
       )}
 
       <div className="detail-header">
-        <button className="back-button" onClick={() => navigate('/actions')}>
+        <button
+          className="back-button"
+          onClick={() => navigate(collectionId ? `/collections/${collectionId}/actions` : '/collections')}
+        >
           ← Back to Catalog
         </button>
         <h2>{action.name}</h2>
