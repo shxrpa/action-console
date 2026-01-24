@@ -67,8 +67,6 @@ function CollectionTree({ collectionId }: CollectionTreeProps) {
     setExpandedFolders(newExpanded);
   };
 
-  type FolderNode = Folder & { children: FolderNode[]; requests: Request[] };
-
   const buildTree = (): { rootFolders: FolderNode[]; rootRequests: Request[] } => {
     if (!collection) return { rootFolders: [], rootRequests: [] };
 
@@ -105,7 +103,7 @@ function CollectionTree({ collectionId }: CollectionTreeProps) {
 
   type FolderNode = Folder & { children: FolderNode[]; requests: Request[] };
 
-  const renderFolder = (folder: FolderNode, depth: number = 0) => {
+  const renderFolder = (folder: FolderNode, depth: number = 0): JSX.Element => {
     const isExpanded = expandedFolders.has(folder.id);
     const hasChildren = folder.children.length > 0 || folder.requests.length > 0;
 
