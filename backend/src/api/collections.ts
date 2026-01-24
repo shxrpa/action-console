@@ -171,13 +171,19 @@ router.post('/import', upload.single('file'), (req, res) => {
     for (const request of createdRequests) {
       try {
         const analysis = CollectionAnalyzer.analyzeRequest(request, request.rawJson);
+        console.log(`Analysis for request "${request.name}" (${request.id}):`, {
+          variableCount: analysis.variables.length,
+          variables: analysis.variables.map(v => ({ name: v.name, required: v.required, locations: v.locations })),
+          risk: analysis.risk,
+          hasScripts: analysis.hasScripts,
+        });
         // Ensure risk is always set (analysis should always return a risk)
         if (!analysis.risk) {
           analysis.risk = 'Write'; // Fallback default
         }
         RequestModel.updateAnalysis(request.id, analysis);
       } catch (error) {
-        console.error(`Error analyzing request ${request.id}:`, error);
+        console.error(`Error analyzing request ${request.id} (${request.name}):`, error);
         // If analysis fails, set default risk
         RequestModel.updateAnalysis(request.id, {
           variables: [],
