@@ -182,7 +182,6 @@ function CollectionTree({ collectionId }: CollectionTreeProps) {
       {selectedRequest && (
         <RequestDetailPanel request={selectedRequest} onClose={() => setSelectedRequest(null)} />
       )}
-      </ul>
     </div>
   );
 }
