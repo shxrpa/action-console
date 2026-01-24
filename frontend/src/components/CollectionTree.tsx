@@ -9,13 +9,7 @@ interface Folder {
   order: number;
 }
 
-interface VariableRef {
-  name: string;
-  required: boolean;
-  locations: Array<'url' | 'header' | 'body'>;
-}
-
-interface Request {
+export interface Request {
   id: string;
   name: string;
   method: string;
