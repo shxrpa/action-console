@@ -67,11 +67,13 @@ function CollectionTree({ collectionId }: CollectionTreeProps) {
     setExpandedFolders(newExpanded);
   };
 
-  const buildTree = () => {
-    if (!collection) return [];
+  type FolderNode = Folder & { children: FolderNode[]; requests: Request[] };
 
-    const folderMap = new Map<string, Folder & { children: Folder[]; requests: Request[] }>();
-    const rootFolders: Array<Folder & { children: Folder[]; requests: Request[] }> = [];
+  const buildTree = (): { rootFolders: FolderNode[]; rootRequests: Request[] } => {
+    if (!collection) return { rootFolders: [], rootRequests: [] };
+
+    const folderMap = new Map<string, FolderNode>();
+    const rootFolders: FolderNode[] = [];
 
     // Create folder map
     collection.folders.forEach((folder) => {
@@ -101,7 +103,9 @@ function CollectionTree({ collectionId }: CollectionTreeProps) {
     return { rootFolders, rootRequests };
   };
 
-  const renderFolder = (folder: Folder & { children: Folder[]; requests: Request[] }, depth: number = 0) => {
+  type FolderNode = Folder & { children: FolderNode[]; requests: Request[] };
+
+  const renderFolder = (folder: FolderNode, depth: number = 0) => {
     const isExpanded = expandedFolders.has(folder.id);
     const hasChildren = folder.children.length > 0 || folder.requests.length > 0;
 
