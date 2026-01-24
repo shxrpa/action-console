@@ -140,6 +140,28 @@ export class RequestModel {
     return created;
   }
 
+  static updateAnalysis(requestId: string, analysis: {
+    variables: VariableRef[];
+    risk: 'Safe' | 'Write' | 'Dangerous';
+    hasScripts: boolean;
+    warnings: string[];
+  }): boolean {
+    const result = db
+      .prepare(
+        `UPDATE requests 
+         SET variables = ?, risk = ?, hasScripts = ?, warnings = ? 
+         WHERE id = ?`
+      )
+      .run(
+        JSON.stringify(analysis.variables),
+        analysis.risk,
+        analysis.hasScripts ? 1 : 0,
+        JSON.stringify(analysis.warnings),
+        requestId
+      );
+    return result.changes > 0;
+  }
+
   static findByCollection(collectionId: string): Request[] {
     const rows = db.prepare('SELECT * FROM requests WHERE collectionId = ?').all(collectionId) as Request[];
     return rows;
