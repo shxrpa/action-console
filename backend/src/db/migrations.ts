@@ -1,4 +1,5 @@
 import db from './database';
+import crypto from 'crypto';
 
 export function runMigrations() {
   // Workspace table

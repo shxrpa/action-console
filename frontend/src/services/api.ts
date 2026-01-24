@@ -69,3 +69,116 @@ export async function fetchCollections(workspaceId: string): Promise<Collection[
   }
   return response.json();
 }
+
+// Variable Wallet API
+import type {
+  Variable,
+  Environment,
+  CreateVariableRequest,
+  UpdateVariableRequest,
+  CreateEnvironmentRequest,
+} from '../types';
+
+export async function listVariables(workspaceId: string, environmentId?: string | null): Promise<Variable[]> {
+  const params = new URLSearchParams({ workspaceId });
+  if (environmentId) {
+    params.append('environmentId', environmentId);
+  }
+  const response = await fetch(`${API_BASE_URL}/variables?${params}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch variables');
+  }
+  return response.json();
+}
+
+export async function getVariable(variableId: string, decrypt = false): Promise<Variable> {
+  const params = decrypt ? '?decrypt=true' : '';
+  const response = await fetch(`${API_BASE_URL}/variables/${variableId}${params}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch variable');
+  }
+  return response.json();
+}
+
+export async function createVariable(workspaceId: string, data: CreateVariableRequest): Promise<Variable> {
+  const response = await fetch(`${API_BASE_URL}/variables`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ...data, workspaceId }),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to create variable');
+  }
+  return response.json();
+}
+
+export async function updateVariable(variableId: string, data: UpdateVariableRequest): Promise<Variable> {
+  const response = await fetch(`${API_BASE_URL}/variables/${variableId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to update variable');
+  }
+  return response.json();
+}
+
+export async function deleteVariable(variableId: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/variables/${variableId}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to delete variable');
+  }
+}
+
+// Environment API
+export async function listEnvironments(workspaceId: string): Promise<Environment[]> {
+  const response = await fetch(`${API_BASE_URL}/environments?workspaceId=${workspaceId}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch environments');
+  }
+  return response.json();
+}
+
+export async function getEnvironment(environmentId: string): Promise<Environment> {
+  const response = await fetch(`${API_BASE_URL}/environments/${environmentId}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch environment');
+  }
+  return response.json();
+}
+
+export async function createEnvironment(workspaceId: string, data: CreateEnvironmentRequest): Promise<Environment> {
+  const response = await fetch(`${API_BASE_URL}/environments`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ ...data, workspaceId }),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to create environment');
+  }
+  return response.json();
+}
+
+export async function updateEnvironment(environmentId: string, name: string): Promise<Environment> {
+  const response = await fetch(`${API_BASE_URL}/environments/${environmentId}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ name }),
+  });
+  if (!response.ok) {
+    throw new Error('Failed to update environment');
+  }
+  return response.json();
+}
+
+export async function deleteEnvironment(environmentId: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/environments/${environmentId}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to delete environment');
+  }
+}

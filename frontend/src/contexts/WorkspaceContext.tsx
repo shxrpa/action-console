@@ -1,4 +1,4 @@
-import { createContext, useState } from 'react';
+import { createContext, useState, useContext } from 'react';
 import type { ReactNode } from 'react';
 
 interface WorkspaceContextType {
@@ -20,4 +20,12 @@ export function WorkspaceProvider({ children }: WorkspaceProviderProps) {
       {children}
     </WorkspaceContext.Provider>
   );
+}
+
+export function useWorkspace() {
+  const context = useContext(WorkspaceContext);
+  if (!context) {
+    throw new Error('useWorkspace must be used within a WorkspaceProvider');
+  }
+  return context;
 }

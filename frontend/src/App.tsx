@@ -5,18 +5,23 @@ import CollectionsPage from './pages/CollectionsPage';
 import ActionCatalogPage from './pages/ActionCatalogPage';
 import ActionDetailPage from './pages/ActionDetailPage';
 import { WorkspaceProvider } from './contexts/WorkspaceContext';
+import { EnvironmentProvider } from './contexts/EnvironmentContext';
+import { VariableWallet } from './components/VariableWallet';
 
 function App() {
   return (
     <WorkspaceProvider>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/collections" element={<CollectionsPage />} />
-          <Route path="/collections/:collectionId/actions" element={<ActionCatalogPage />} />
-          <Route path="/collections/:collectionId/actions/:actionId" element={<ActionDetailPage />} />
-        </Routes>
-      </Layout>
+      <EnvironmentProvider>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/collections" element={<CollectionsPage />} />
+            <Route path="/collections/:collectionId/actions" element={<ActionCatalogPage />} />
+            <Route path="/collections/:collectionId/actions/:actionId" element={<ActionDetailPage />} />
+            <Route path="/variables" element={<VariableWallet />} />
+          </Routes>
+        </Layout>
+      </EnvironmentProvider>
     </WorkspaceProvider>
   );
 }

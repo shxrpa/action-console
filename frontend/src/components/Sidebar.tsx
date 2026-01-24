@@ -15,6 +15,11 @@ function Sidebar() {
               Collections
             </Link>
           </li>
+          <li>
+            <Link to="/variables" className="nav-link">
+              Variable Wallet
+            </Link>
+          </li>
         </ul>
       </nav>
     </aside>
