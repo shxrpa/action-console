@@ -1,5 +1,6 @@
 import { useContext } from 'react';
 import WorkspaceSelector from './WorkspaceSelector';
+import { EnvironmentSelector } from './EnvironmentSelector';
 import { WorkspaceContext } from '../contexts/WorkspaceContext';
 
 function Header() {
@@ -11,10 +12,13 @@ function Header() {
     <header className="header">
       <div className="header-content">
         <h1 className="header-title">Action Console</h1>
-        <WorkspaceSelector
-          selectedWorkspaceId={selectedWorkspaceId}
-          onWorkspaceSelect={setSelectedWorkspaceId}
-        />
+        <div className="header-actions">
+          <WorkspaceSelector
+            selectedWorkspaceId={selectedWorkspaceId}
+            onWorkspaceSelect={setSelectedWorkspaceId}
+          />
+          <EnvironmentSelector />
+        </div>
       </div>
     </header>
   );

@@ -1,4 +1,5 @@
 import db from './database';
+import crypto from 'crypto';
 
 export function runMigrations() {
   // Workspace table
@@ -58,6 +59,36 @@ export function runMigrations() {
     )
   `);
 
+  // Environment table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS environments (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      workspaceId TEXT NOT NULL,
+      createdAt TEXT NOT NULL,
+      updatedAt TEXT NOT NULL,
+      FOREIGN KEY (workspaceId) REFERENCES workspaces(id) ON DELETE CASCADE
+    )
+  `);
+
+  // Variable table
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS variables (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      value TEXT NOT NULL,
+      isSecret INTEGER DEFAULT 0,
+      scope TEXT NOT NULL CHECK(scope IN ('workspace', 'environment')),
+      environmentId TEXT,
+      workspaceId TEXT NOT NULL,
+      createdAt TEXT NOT NULL,
+      updatedAt TEXT NOT NULL,
+      FOREIGN KEY (workspaceId) REFERENCES workspaces(id) ON DELETE CASCADE,
+      FOREIGN KEY (environmentId) REFERENCES environments(id) ON DELETE CASCADE,
+      UNIQUE(workspaceId, environmentId, name)
+    )
+  `);
+
   // Create indexes
   db.exec(`
     CREATE INDEX IF NOT EXISTS idx_collections_workspace ON collections(workspaceId);
@@ -65,6 +96,10 @@ export function runMigrations() {
     CREATE INDEX IF NOT EXISTS idx_folders_parent ON folders(parentId);
     CREATE INDEX IF NOT EXISTS idx_requests_collection ON requests(collectionId);
     CREATE INDEX IF NOT EXISTS idx_requests_folder ON requests(folderId);
+    CREATE INDEX IF NOT EXISTS idx_environments_workspace ON environments(workspaceId);
+    CREATE INDEX IF NOT EXISTS idx_variables_workspace ON variables(workspaceId);
+    CREATE INDEX IF NOT EXISTS idx_variables_environment ON variables(environmentId);
+    CREATE INDEX IF NOT EXISTS idx_variables_name ON variables(name);
   `);
 
   // Add analysis columns to existing requests table if they don't exist
@@ -87,6 +122,33 @@ export function runMigrations() {
   } catch (error) {
     console.error('Error adding analysis columns:', error);
     // Continue anyway - columns might already exist
+  }
+
+  // Create default environments for existing workspaces
+  try {
+    const workspaces = db.prepare('SELECT id FROM workspaces').all() as Array<{ id: string }>;
+    for (const workspace of workspaces) {
+      const existingEnvs = db.prepare('SELECT COUNT(*) as count FROM environments WHERE workspaceId = ?').get(workspace.id) as { count: number };
+      if (existingEnvs.count === 0) {
+        const now = new Date().toISOString();
+        db.prepare('INSERT INTO environments (id, name, workspaceId, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)').run(
+          crypto.randomUUID(),
+          'Sandbox',
+          workspace.id,
+          now,
+          now
+        );
+        db.prepare('INSERT INTO environments (id, name, workspaceId, createdAt, updatedAt) VALUES (?, ?, ?, ?, ?)').run(
+          crypto.randomUUID(),
+          'Production',
+          workspace.id,
+          now,
+          now
+        );
+      }
+    }
+  } catch (error) {
+    console.error('Error creating default environments:', error);
   }
 
   console.log('Database migrations completed');

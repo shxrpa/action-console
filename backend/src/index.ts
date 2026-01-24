@@ -5,6 +5,8 @@ import { runMigrations } from './db/migrations';
 import workspacesRouter from './api/workspaces';
 import collectionsRouter from './api/collections';
 import actionsRouter from './api/actions';
+import variablesRouter from './api/variables';
+import environmentsRouter from './api/environments';
 
 dotenv.config();
 
@@ -26,6 +28,8 @@ app.get('/health', (req, res) => {
 app.use('/api/workspaces', workspacesRouter);
 app.use('/api/collections', collectionsRouter);
 app.use('/api/actions', actionsRouter);
+app.use('/api/variables', variablesRouter);
+app.use('/api/environments', environmentsRouter);
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

@@ -1,0 +1,31 @@
+.environment-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.environment-selector label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+.environment-selector select {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.environment-selector select:hover {
+  border-color: var(--primary-color);
+}
+
+.environment-selector select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.1);
+}

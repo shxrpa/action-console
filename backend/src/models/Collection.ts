@@ -169,6 +169,11 @@ export class RequestModel {
     return rows;
   }
 
+  static findById(id: string): Request | null {
+    const row = db.prepare('SELECT * FROM requests WHERE id = ?').get(id) as Request | undefined;
+    return row || null;
+  }
+
   static countByCollection(collectionId: string): number {
     const result = db.prepare('SELECT COUNT(*) as count FROM requests WHERE collectionId = ?').get(collectionId) as {
       count: number;
