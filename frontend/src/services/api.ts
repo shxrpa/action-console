@@ -267,6 +267,46 @@ export async function getFormSchema(
 }
 
 // Execution API
+export interface ExecutionResult {
+  resolvedRequest: {
+    method: string;
+    url: string;
+    headers: Record<string, string>;
+    body: string | null;
+  };
+  responseStatus: number;
+  responseHeaders: Record<string, string>;
+  responseBody: string;
+  success: boolean;
+  error: string | null;
+  executionDuration: number;
+}
+
+export async function executeAction(
+  actionId: string,
+  workspaceId: string,
+  environmentId: string | null,
+  formValues: Record<string, string>
+): Promise<ExecutionResult> {
+  const response = await fetch(`${API_BASE_URL}/execute/${actionId}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      workspaceId,
+      environmentId,
+      formValues,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ error: 'Failed to execute action' }));
+    throw new Error(errorData.error || 'Failed to execute action');
+  }
+
+  return response.json();
+}
+
+// Execution API
 export interface ExecutionRequest {
   actionId: string;
   variables: Record<string, string>;

@@ -1,18 +1,24 @@
 /**
  * Substitutes variables in a template string
- * Replaces {{variable}} with actual values
+ * Replaces {{variable}} with values from the variables map
  */
-export function substituteVariables(template: string, variables: Map<string, string>): string {
-  if (!template) return template;
+export function substituteVariables(
+  template: string,
+  variables: Map<string, string>
+): string {
+  if (!template) {
+    return template;
+  }
 
-  // Replace all {{variable}} occurrences
+  // Match {{variable}} pattern (case-insensitive, allows whitespace)
   return template.replace(/\{\{([^}]+)\}\}/g, (match, varName) => {
-    const trimmedName = varName.trim();
-    const value = variables.get(trimmedName);
+    const trimmedVarName = varName.trim();
+    const value = variables.get(trimmedVarName);
     
-    if (value === undefined || value === null) {
-      // Missing variable - return empty string or throw error?
-      // For now, return empty string and let validation catch required ones
+    if (value === undefined) {
+      // Variable not found - return empty string or throw error?
+      // For now, return empty string to allow partial substitution
+      console.warn(`Variable ${trimmedVarName} not found in variables map`);
       return '';
     }
     
@@ -21,29 +27,28 @@ export function substituteVariables(template: string, variables: Map<string, str
 }
 
 /**
- * Substitutes variables in URL components
+ * Validates that all required variables are present
  */
-export function substituteUrl(url: string, variables: Map<string, string>): string {
-  return substituteVariables(url, variables);
-}
-
-/**
- * Substitutes variables in header values
- */
-export function substituteHeaders(
-  headers: Array<{ key: string; value: string }>,
+export function validateRequiredVariables(
+  template: string,
   variables: Map<string, string>
-): Array<{ key: string; value: string }> {
-  return headers.map((header) => ({
-    key: header.key,
-    value: substituteVariables(header.value, variables),
-  }));
-}
-
-/**
- * Substitutes variables in body content
- */
-export function substituteBody(body: string | null, variables: Map<string, string>): string | null {
-  if (!body) return body;
-  return substituteVariables(body, variables);
+): { valid: boolean; missing: string[] } {
+  const missing: string[] = [];
+  const variablePattern = /\{\{([^}]+)\}\}/g;
+  const matches = template.matchAll(variablePattern);
+  
+  for (const match of matches) {
+    const varName = match[1].trim();
+    if (!variables.has(varName)) {
+      missing.push(varName);
+    }
+  }
+  
+  // Remove duplicates
+  const uniqueMissing = Array.from(new Set(missing));
+  
+  return {
+    valid: uniqueMissing.length === 0,
+    missing: uniqueMissing,
+  };
 }

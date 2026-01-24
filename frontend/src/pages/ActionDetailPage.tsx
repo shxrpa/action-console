@@ -18,6 +18,8 @@ function ActionDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [showWizard, setShowWizard] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [executing, setExecuting] = useState(false);
+  const [executionResult, setExecutionResult] = useState<ExecutionResult | null>(null);
   const [executionResult, setExecutionResult] = useState<ExecutionResultType | null>(null);
   const [isExecuting, setIsExecuting] = useState(false);
 

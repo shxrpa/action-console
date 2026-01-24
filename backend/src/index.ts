@@ -8,6 +8,7 @@ import actionsRouter from './api/actions';
 import variablesRouter from './api/variables';
 import environmentsRouter from './api/environments';
 import formsRouter from './api/forms';
+import executeRouter from './api/execute';
 import executionRouter from './api/execution';
 
 dotenv.config();
@@ -33,6 +34,7 @@ app.use('/api/actions', actionsRouter);
 app.use('/api/variables', variablesRouter);
 app.use('/api/environments', environmentsRouter);
 app.use('/api/forms', formsRouter);
+app.use('/api/execute', executeRouter);
 app.use('/api/execution', executionRouter);
 
 app.listen(PORT, () => {

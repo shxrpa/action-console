@@ -9,9 +9,10 @@ interface ActionFormProps {
   actionId: string;
   onSubmit: (values: Record<string, string>) => void;
   onCancel?: () => void;
+  disabled?: boolean;
 }
 
-export function ActionForm({ actionId, onSubmit, onCancel }: ActionFormProps) {
+export function ActionForm({ actionId, onSubmit, onCancel, disabled = false }: ActionFormProps) {
   const { selectedWorkspaceId } = useWorkspace();
   const { selectedEnvironmentId } = useEnvironment();
   const [schema, setSchema] = useState<FormSchema | null>(null);
@@ -191,11 +192,11 @@ export function ActionForm({ actionId, onSubmit, onCancel }: ActionFormProps) {
       </div>
 
       <div className="form-actions">
-        <button type="submit" className="btn btn-primary">
-          Run Action
+        <button type="submit" className="btn btn-primary" disabled={disabled}>
+          {disabled ? 'Executing...' : 'Run Action'}
         </button>
         {onCancel && (
-          <button type="button" className="btn btn-secondary" onClick={onCancel}>
+          <button type="button" className="btn btn-secondary" onClick={onCancel} disabled={disabled}>
             Cancel
           </button>
         )}
