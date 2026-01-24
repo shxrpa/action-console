@@ -132,7 +132,7 @@ export class RequestModel {
           folderId: request.folderId,
           collectionId: request.collectionId,
           rawJson: request.rawJson,
-          risk: request.risk || 'Write', // Ensure risk is always set
+          risk: 'Write', // Default risk, will be updated by analysis
         });
       }
     });
