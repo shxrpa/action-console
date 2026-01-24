@@ -154,6 +154,14 @@ router.post('/import', upload.single('file'), async (req, res) => {
       if (error.message.includes('Postman')) {
         return res.status(400).json({ error: error.message });
       }
+      if (error.message.includes('Only JSON files')) {
+        return res.status(400).json({ error: error.message });
+      }
+      // Return the actual error message for debugging
+      return res.status(500).json({ 
+        error: `Failed to import collection: ${error.message}`,
+        details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      });
     }
     res.status(500).json({ error: 'Failed to import collection. Please check the file format and try again.' });
   }
