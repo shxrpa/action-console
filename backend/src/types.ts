@@ -53,6 +53,7 @@ export interface VariableRef {
   name: string;
   required: boolean;
   locations: Array<'url' | 'header' | 'body'>;
+  description?: string; // Description from Postman collection
 }
 
 // Postman Collection types
@@ -87,7 +88,8 @@ export interface PostmanRequest {
     raw?: string;
     host?: string[];
     path?: string[];
-    query?: Array<{ key: string; value: string }>;
+    query?: Array<{ key: string; value: string; description?: string }>;
+    variable?: Array<{ key: string; value: string; description?: string }>;
   };
 }
 

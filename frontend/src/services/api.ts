@@ -208,6 +208,7 @@ export interface VariableRef {
   name: string;
   required: boolean;
   locations: Array<'url' | 'header' | 'body'>;
+  description?: string;
 }
 
 export async function getActionDetails(
@@ -263,5 +264,46 @@ export async function getFormSchema(
   if (!response.ok) {
     throw new Error('Failed to fetch form schema');
   }
+  return response.json();
+}
+
+// Execution API
+export interface ExecutionResult {
+  success: boolean;
+  resolvedRequest: {
+    method: string;
+    url: string;
+    headers: Array<{ key: string; value: string }>;
+    body: string | null;
+  };
+  responseStatus: number;
+  responseHeaders: Record<string, string>;
+  responseBody: string;
+  executionDuration: number;
+  error: string | null;
+}
+
+export async function executeAction(
+  requestId: string,
+  variables: Record<string, string>,
+  workspaceId: string,
+  environmentId?: string | null
+): Promise<ExecutionResult> {
+  const response = await fetch(`${API_BASE_URL}/execute`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      requestId,
+      variables,
+      workspaceId,
+      environmentId: environmentId || null,
+    }),
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ error: 'Failed to execute action' }));
+    throw new Error(errorData.error || 'Failed to execute action');
+  }
+
   return response.json();
 }
