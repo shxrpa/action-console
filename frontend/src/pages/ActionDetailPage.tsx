@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getActionDetails } from '../services/api';
+import { getActionDetails, executeAction, type ExecutionResult } from '../services/api';
 import { useWorkspace } from '../contexts/WorkspaceContext';
 import { useEnvironment } from '../contexts/EnvironmentContext';
 import { SetupWizard } from '../components/SetupWizard';
 import { ActionForm } from '../components/ActionForm';
+import { ExecutionResult as ExecutionResultComponent } from '../components/ExecutionResult';
 import type { Action } from '../services/api';
 
 function ActionDetailPage() {
@@ -17,6 +18,8 @@ function ActionDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [showWizard, setShowWizard] = useState(false);
   const [showForm, setShowForm] = useState(false);
+  const [executionResult, setExecutionResult] = useState<ExecutionResult | null>(null);
+  const [isExecuting, setIsExecuting] = useState(false);
 
   useEffect(() => {
     if (actionId) {
@@ -57,10 +60,28 @@ function ActionDetailPage() {
     }
   };
 
-  const handleFormSubmit = (values: Record<string, string>) => {
-    console.log('Form submitted with values:', values);
-    // TODO: Pass to execution engine (next story)
-    alert('Action execution will be available in the next story. Form values: ' + JSON.stringify(values));
+  const handleFormSubmit = async (values: Record<string, string>) => {
+    if (!action || !selectedWorkspaceId) {
+      return;
+    }
+
+    setIsExecuting(true);
+    setError(null);
+
+    try {
+      const result = await executeAction(
+        action.id,
+        values,
+        selectedWorkspaceId,
+        selectedEnvironmentId
+      );
+      setExecutionResult(result);
+      setShowForm(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to execute action');
+    } finally {
+      setIsExecuting(false);
+    }
   };
 
   const handleWizardComplete = () => {
@@ -236,15 +257,30 @@ function ActionDetailPage() {
           </div>
         )}
 
-        {!showForm && (
+        {executionResult && (
+          <div className="detail-section">
+            <ExecutionResultComponent result={executionResult} />
+            <button
+              className="btn btn-secondary"
+              onClick={() => {
+                setExecutionResult(null);
+                setShowForm(false);
+              }}
+            >
+              Run Again
+            </button>
+          </div>
+        )}
+
+        {!showForm && !executionResult && (
           <div className="detail-section">
             <button
               className="btn-run-action"
               onClick={handleRunAction}
-              disabled={!selectedWorkspaceId}
+              disabled={!selectedWorkspaceId || isExecuting}
               title={!selectedWorkspaceId ? 'Please select a workspace first' : undefined}
             >
-              Run Action
+              {isExecuting ? 'Executing...' : 'Run Action'}
             </button>
             {action.missingVariables && action.missingVariables.length > 0 && (
               <p className="missing-vars-hint">

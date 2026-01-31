@@ -1,0 +1,1523 @@
+{
+  "info": {
+    "_postman_id": "89d74745-17c2-49fa-87c4-c89a842dba3f",
+    "name": "ESPN Fantasy API",
+    "description": "Unofficial ESPN Fantasy API for retrieving fantasy sports data from fantasy.espn.com. This API is not officially supported by ESPN and may change without notice.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "26233883"
+  },
+  "item": [
+    {
+      "name": "apis",
+      "item": [
+        {
+          "name": "v3",
+          "item": [
+            {
+              "name": "games",
+              "item": [
+                {
+                  "name": "ffl",
+                  "item": [
+                    {
+                      "name": "seasons",
+                      "item": [
+                        {
+                          "name": "{year}",
+                          "item": [
+                            {
+                              "name": "segments",
+                              "item": [
+                                {
+                                  "name": "{segment}",
+                                  "item": [
+                                    {
+                                      "name": "leagues",
+                                      "item": [
+                                        {
+                                          "name": "{leagueId}",
+                                          "item": [
+                                            {
+                                              "name": "teams",
+                                              "item": [
+                                                {
+                                                  "name": "{teamId}",
+                                                  "item": [
+                                                    {
+                                                      "name": "Get Fantasy Football Team",
+                                                      "request": {
+                                                        "method": "GET",
+                                                        "header": [
+                                                          {
+                                                            "key": "Accept",
+                                                            "value": "application/json"
+                                                          }
+                                                        ],
+                                                        "url": {
+                                                          "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year/segments/:segment/leagues/:leagueId/teams/:teamId?view=mRoster",
+                                                          "host": [
+                                                            "{{baseUrl}}"
+                                                          ],
+                                                          "path": [
+                                                            "apis",
+                                                            "v3",
+                                                            "games",
+                                                            "ffl",
+                                                            "seasons",
+                                                            ":year",
+                                                            "segments",
+                                                            ":segment",
+                                                            "leagues",
+                                                            ":leagueId",
+                                                            "teams",
+                                                            ":teamId"
+                                                          ],
+                                                          "query": [
+                                                            {
+                                                              "key": "view",
+                                                              "value": "mRoster",
+                                                              "description": "The data view to retrieve"
+                                                            }
+                                                          ],
+                                                          "variable": [
+                                                            {
+                                                              "key": "year",
+                                                              "value": "2023",
+                                                              "description": "(Required) The season year"
+                                                            },
+                                                            {
+                                                              "key": "segment",
+                                                              "value": "0",
+                                                              "description": "(Required) The league segment (0 for regular season)"
+                                                            },
+                                                            {
+                                                              "key": "leagueId",
+                                                              "value": "12345678",
+                                                              "description": "(Required) The ID of the fantasy football league"
+                                                            },
+                                                            {
+                                                              "key": "teamId",
+                                                              "value": "1",
+                                                              "description": "(Required) The ID of the fantasy team"
+                                                            }
+                                                          ]
+                                                        },
+                                                        "description": "Retrieve detailed information for a specific fantasy football team"
+                                                      },
+                                                      "response": [
+                                                        {
+                                                          "name": "Successful response",
+                                                          "originalRequest": {
+                                                            "method": "GET",
+                                                            "header": [
+                                                              {
+                                                                "key": "Accept",
+                                                                "value": "application/json"
+                                                              }
+                                                            ],
+                                                            "url": {
+                                                              "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year/segments/:segment/leagues/:leagueId/teams/:teamId?view=mRoster",
+                                                              "host": [
+                                                                "{{baseUrl}}"
+                                                              ],
+                                                              "path": [
+                                                                "apis",
+                                                                "v3",
+                                                                "games",
+                                                                "ffl",
+                                                                "seasons",
+                                                                ":year",
+                                                                "segments",
+                                                                ":segment",
+                                                                "leagues",
+                                                                ":leagueId",
+                                                                "teams",
+                                                                ":teamId"
+                                                              ],
+                                                              "query": [
+                                                                {
+                                                                  "description": "The data view to retrieve",
+                                                                  "key": "view",
+                                                                  "value": "mRoster"
+                                                                }
+                                                              ],
+                                                              "variable": [
+                                                                {
+                                                                  "key": "year"
+                                                                },
+                                                                {
+                                                                  "key": "segment"
+                                                                },
+                                                                {
+                                                                  "key": "leagueId"
+                                                                },
+                                                                {
+                                                                  "key": "teamId"
+                                                                }
+                                                              ]
+                                                            }
+                                                          },
+                                                          "status": "OK",
+                                                          "code": 200,
+                                                          "_postman_previewlanguage": "json",
+                                                          "header": [
+                                                            {
+                                                              "key": "Content-Type",
+                                                              "value": "application/json"
+                                                            }
+                                                          ],
+                                                          "cookie": [],
+                                                          "body": "{\n  \"team\": {\n    \"id\": 1,\n    \"name\": \"Example Team\",\n    \"abbreviation\": \"TEAM1\",\n    \"location\": \"Example\",\n    \"nickname\": \"Team\",\n    \"logo\": \"https://example.com/logo.png\",\n    \"ownerId\": \"{123456789-ABCD-EF12-3456-7890ABCDEF12}\",\n    \"primaryOwner\": \"{123456789-ABCD-EF12-3456-7890ABCDEF12}\",\n    \"draftDayProjectedRank\": 5,\n    \"currentProjectedRank\": 3,\n    \"playoffSeed\": 0,\n    \"points\": 108.5,\n    \"pointsAdjusted\": 108.5,\n    \"pointsAgainst\": 95.2,\n    \"divisionId\": 0,\n    \"record\": {\n      \"overall\": {\n        \"wins\": 1,\n        \"losses\": 0,\n        \"percentage\": 1,\n        \"ties\": 0,\n        \"pointsFor\": 108.5,\n        \"pointsAgainst\": 95.2\n      },\n      \"division\": {\n        \"wins\": 1,\n        \"losses\": 0,\n        \"percentage\": 1,\n        \"ties\": 0,\n        \"pointsFor\": 108.5,\n        \"pointsAgainst\": 95.2\n      },\n      \"home\": {\n        \"wins\": 1,\n        \"losses\": 0,\n        \"percentage\": 1,\n        \"ties\": 0,\n        \"pointsFor\": 108.5,\n        \"pointsAgainst\": 95.2\n      },\n      \"away\": {\n        \"wins\": 1,\n        \"losses\": 0,\n        \"percentage\": 1,\n        \"ties\": 0,\n        \"pointsFor\": 108.5,\n        \"pointsAgainst\": 95.2\n      }\n    },\n    \"roster\": {\n      \"entries\": [\n        {\n          \"playerId\": 3139477,\n          \"playerPoolEntry\": {\n            \"id\": 3139477,\n            \"player\": {\n              \"id\": 3139477,\n              \"fullName\": \"Patrick Mahomes\",\n              \"defaultPositionId\": 1,\n              \"proTeamId\": 12,\n              \"eligibleSlots\": [\n                0,\n                20,\n                21\n              ],\n              \"firstName\": \"Patrick\",\n              \"lastName\": \"Mahomes\",\n              \"active\": true,\n              \"injuryStatus\": \"ACTIVE\",\n              \"stats\": [\n                {\n                  \"seasonId\": 2023,\n                  \"scoringPeriodId\": 1,\n                  \"stats\": {\n                    \"0\": 25,\n                    \"1\": 38,\n                    \"3\": 297,\n                    \"4\": 3\n                  },\n                  \"seasonValue\": 2023,\n                  \"statSourceId\": 0,\n                  \"statSplitTypeId\": 0\n                },\n                {\n                  \"seasonId\": 2023,\n                  \"scoringPeriodId\": 1,\n                  \"stats\": {\n                    \"0\": 25,\n                    \"1\": 38,\n                    \"3\": 297,\n                    \"4\": 3\n                  },\n                  \"seasonValue\": 2023,\n                  \"statSourceId\": 0,\n                  \"statSplitTypeId\": 0\n                }\n              ]\n            },\n            \"ratings\": {\n              \"key_0\": {\n                \"positionalRanking\": 1,\n                \"totalRanking\": 15,\n                \"totalRating\": 8.5\n              },\n              \"key_1\": {\n                \"positionalRanking\": 1,\n                \"totalRanking\": 15,\n                \"totalRating\": 8.5\n              }\n            },\n            \"appliedStatTotal\": 22.4\n          },\n          \"lineupSlotId\": 0,\n          \"status\": \"ACTIVE\",\n          \"acquisitionDate\": \"2023-08-31T23:45:00Z\",\n          \"acquisitionType\": \"DRAFT\"\n        },\n        {\n          \"playerId\": 3139477,\n          \"playerPoolEntry\": {\n            \"id\": 3139477,\n            \"player\": {\n              \"id\": 3139477,\n              \"fullName\": \"Patrick Mahomes\",\n              \"defaultPositionId\": 1,\n              \"proTeamId\": 12,\n              \"eligibleSlots\": [\n                0,\n                20,\n                21\n              ],\n              \"firstName\": \"Patrick\",\n              \"lastName\": \"Mahomes\",\n              \"active\": true,\n              \"injuryStatus\": \"ACTIVE\",\n              \"stats\": [\n                {\n                  \"seasonId\": 2023,\n                  \"scoringPeriodId\": 1,\n                  \"stats\": {\n                    \"0\": 25,\n                    \"1\": 38,\n                    \"3\": 297,\n                    \"4\": 3\n                  },\n                  \"seasonValue\": 2023,\n                  \"statSourceId\": 0,\n                  \"statSplitTypeId\": 0\n                },\n                {\n                  \"seasonId\": 2023,\n                  \"scoringPeriodId\": 1,\n                  \"stats\": {\n                    \"0\": 25,\n                    \"1\": 38,\n                    \"3\": 297,\n                    \"4\": 3\n                  },\n                  \"seasonValue\": 2023,\n                  \"statSourceId\": 0,\n                  \"statSplitTypeId\": 0\n                }\n              ]\n            },\n            \"ratings\": {\n              \"key_0\": {\n                \"positionalRanking\": 1,\n                \"totalRanking\": 15,\n                \"totalRating\": 8.5\n              },\n              \"key_1\": {\n                \"positionalRanking\": 1,\n                \"totalRanking\": 15,\n                \"totalRating\": 8.5\n              }\n            },\n            \"appliedStatTotal\": 22.4\n          },\n          \"lineupSlotId\": 0,\n          \"status\": \"ACTIVE\",\n          \"acquisitionDate\": \"2023-08-31T23:45:00Z\",\n          \"acquisitionType\": \"DRAFT\"\n        }\n      ],\n      \"lineupSlotCounts\": {\n        \"key_0\": 8981,\n        \"key_1\": 1556,\n        \"key_2\": 8595\n      }\n    },\n    \"transactionCounter\": {\n      \"acquisitions\": 5,\n      \"drops\": 5,\n      \"trades\": 1,\n      \"moveToActive\": 8,\n      \"moveToIR\": 0\n    }\n  }\n}"
+                                                        },
+                                                        {
+                                                          "name": "Bad request",
+                                                          "originalRequest": {
+                                                            "method": "GET",
+                                                            "header": [
+                                                              {
+                                                                "key": "Accept",
+                                                                "value": "application/json"
+                                                              }
+                                                            ],
+                                                            "url": {
+                                                              "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year/segments/:segment/leagues/:leagueId/teams/:teamId?view=mRoster",
+                                                              "host": [
+                                                                "{{baseUrl}}"
+                                                              ],
+                                                              "path": [
+                                                                "apis",
+                                                                "v3",
+                                                                "games",
+                                                                "ffl",
+                                                                "seasons",
+                                                                ":year",
+                                                                "segments",
+                                                                ":segment",
+                                                                "leagues",
+                                                                ":leagueId",
+                                                                "teams",
+                                                                ":teamId"
+                                                              ],
+                                                              "query": [
+                                                                {
+                                                                  "description": "The data view to retrieve",
+                                                                  "key": "view",
+                                                                  "value": "mRoster"
+                                                                }
+                                                              ],
+                                                              "variable": [
+                                                                {
+                                                                  "key": "year"
+                                                                },
+                                                                {
+                                                                  "key": "segment"
+                                                                },
+                                                                {
+                                                                  "key": "leagueId"
+                                                                },
+                                                                {
+                                                                  "key": "teamId"
+                                                                }
+                                                              ]
+                                                            }
+                                                          },
+                                                          "status": "Bad Request",
+                                                          "code": 400,
+                                                          "_postman_previewlanguage": "json",
+                                                          "header": [
+                                                            {
+                                                              "key": "Content-Type",
+                                                              "value": "application/json"
+                                                            }
+                                                          ],
+                                                          "cookie": [],
+                                                          "body": "{\n  \"error\": {\n    \"code\": 9198,\n    \"message\": \"string\"\n  }\n}"
+                                                        },
+                                                        {
+                                                          "name": "Unauthorized (for private leagues)",
+                                                          "originalRequest": {
+                                                            "method": "GET",
+                                                            "header": [
+                                                              {
+                                                                "key": "Accept",
+                                                                "value": "application/json"
+                                                              }
+                                                            ],
+                                                            "url": {
+                                                              "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year/segments/:segment/leagues/:leagueId/teams/:teamId?view=mRoster",
+                                                              "host": [
+                                                                "{{baseUrl}}"
+                                                              ],
+                                                              "path": [
+                                                                "apis",
+                                                                "v3",
+                                                                "games",
+                                                                "ffl",
+                                                                "seasons",
+                                                                ":year",
+                                                                "segments",
+                                                                ":segment",
+                                                                "leagues",
+                                                                ":leagueId",
+                                                                "teams",
+                                                                ":teamId"
+                                                              ],
+                                                              "query": [
+                                                                {
+                                                                  "description": "The data view to retrieve",
+                                                                  "key": "view",
+                                                                  "value": "mRoster"
+                                                                }
+                                                              ],
+                                                              "variable": [
+                                                                {
+                                                                  "key": "year"
+                                                                },
+                                                                {
+                                                                  "key": "segment"
+                                                                },
+                                                                {
+                                                                  "key": "leagueId"
+                                                                },
+                                                                {
+                                                                  "key": "teamId"
+                                                                }
+                                                              ]
+                                                            }
+                                                          },
+                                                          "status": "Unauthorized",
+                                                          "code": 401,
+                                                          "_postman_previewlanguage": "json",
+                                                          "header": [
+                                                            {
+                                                              "key": "Content-Type",
+                                                              "value": "application/json"
+                                                            }
+                                                          ],
+                                                          "cookie": [],
+                                                          "body": "{\n  \"error\": {\n    \"code\": 9198,\n    \"message\": \"string\"\n  }\n}"
+                                                        },
+                                                        {
+                                                          "name": "Team not found",
+                                                          "originalRequest": {
+                                                            "method": "GET",
+                                                            "header": [
+                                                              {
+                                                                "key": "Accept",
+                                                                "value": "application/json"
+                                                              }
+                                                            ],
+                                                            "url": {
+                                                              "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year/segments/:segment/leagues/:leagueId/teams/:teamId?view=mRoster",
+                                                              "host": [
+                                                                "{{baseUrl}}"
+                                                              ],
+                                                              "path": [
+                                                                "apis",
+                                                                "v3",
+                                                                "games",
+                                                                "ffl",
+                                                                "seasons",
+                                                                ":year",
+                                                                "segments",
+                                                                ":segment",
+                                                                "leagues",
+                                                                ":leagueId",
+                                                                "teams",
+                                                                ":teamId"
+                                                              ],
+                                                              "query": [
+                                                                {
+                                                                  "description": "The data view to retrieve",
+                                                                  "key": "view",
+                                                                  "value": "mRoster"
+                                                                }
+                                                              ],
+                                                              "variable": [
+                                                                {
+                                                                  "key": "year"
+                                                                },
+                                                                {
+                                                                  "key": "segment"
+                                                                },
+                                                                {
+                                                                  "key": "leagueId"
+                                                                },
+                                                                {
+                                                                  "key": "teamId"
+                                                                }
+                                                              ]
+                                                            }
+                                                          },
+                                                          "status": "Not Found",
+                                                          "code": 404,
+                                                          "_postman_previewlanguage": "json",
+                                                          "header": [
+                                                            {
+                                                              "key": "Content-Type",
+                                                              "value": "application/json"
+                                                            }
+                                                          ],
+                                                          "cookie": [],
+                                                          "body": "{\n  \"error\": {\n    \"code\": 9198,\n    \"message\": \"string\"\n  }\n}"
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "name": "players",
+                                              "item": [
+                                                {
+                                                  "name": "available",
+                                                  "item": [
+                                                    {
+                                                      "name": "Get Available Players",
+                                                      "request": {
+                                                        "method": "GET",
+                                                        "header": [
+                                                          {
+                                                            "key": "Accept",
+                                                            "value": "application/json"
+                                                          }
+                                                        ],
+                                                        "url": {
+                                                          "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year/segments/:segment/leagues/:leagueId/players/available?scoringPeriodId=1",
+                                                          "host": [
+                                                            "{{baseUrl}}"
+                                                          ],
+                                                          "path": [
+                                                            "apis",
+                                                            "v3",
+                                                            "games",
+                                                            "ffl",
+                                                            "seasons",
+                                                            ":year",
+                                                            "segments",
+                                                            ":segment",
+                                                            "leagues",
+                                                            ":leagueId",
+                                                            "players",
+                                                            "available"
+                                                          ],
+                                                          "query": [
+                                                            {
+                                                              "key": "scoringPeriodId",
+                                                              "value": "1",
+                                                              "description": "The scoring period (week) ID"
+                                                            }
+                                                          ],
+                                                          "variable": [
+                                                            {
+                                                              "key": "year",
+                                                              "value": "2023",
+                                                              "description": "(Required) The season year"
+                                                            },
+                                                            {
+                                                              "key": "segment",
+                                                              "value": "0",
+                                                              "description": "(Required) The league segment (0 for regular season)"
+                                                            },
+                                                            {
+                                                              "key": "leagueId",
+                                                              "value": "12345678",
+                                                              "description": "(Required) The ID of the fantasy football league"
+                                                            }
+                                                          ]
+                                                        },
+                                                        "description": "Retrieve list of available players in a fantasy football league"
+                                                      },
+                                                      "response": [
+                                                        {
+                                                          "name": "Successful response",
+                                                          "originalRequest": {
+                                                            "method": "GET",
+                                                            "header": [
+                                                              {
+                                                                "key": "Accept",
+                                                                "value": "application/json"
+                                                              }
+                                                            ],
+                                                            "url": {
+                                                              "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year/segments/:segment/leagues/:leagueId/players/available?scoringPeriodId=1",
+                                                              "host": [
+                                                                "{{baseUrl}}"
+                                                              ],
+                                                              "path": [
+                                                                "apis",
+                                                                "v3",
+                                                                "games",
+                                                                "ffl",
+                                                                "seasons",
+                                                                ":year",
+                                                                "segments",
+                                                                ":segment",
+                                                                "leagues",
+                                                                ":leagueId",
+                                                                "players",
+                                                                "available"
+                                                              ],
+                                                              "query": [
+                                                                {
+                                                                  "description": "The scoring period (week) ID",
+                                                                  "key": "scoringPeriodId",
+                                                                  "value": "1"
+                                                                }
+                                                              ],
+                                                              "variable": [
+                                                                {
+                                                                  "key": "year"
+                                                                },
+                                                                {
+                                                                  "key": "segment"
+                                                                },
+                                                                {
+                                                                  "key": "leagueId"
+                                                                }
+                                                              ]
+                                                            }
+                                                          },
+                                                          "status": "OK",
+                                                          "code": 200,
+                                                          "_postman_previewlanguage": "json",
+                                                          "header": [
+                                                            {
+                                                              "key": "Content-Type",
+                                                              "value": "application/json"
+                                                            }
+                                                          ],
+                                                          "cookie": [],
+                                                          "body": "{\n  \"players\": [\n    {\n      \"id\": 3139477,\n      \"player\": {\n        \"id\": 3139477,\n        \"fullName\": \"Patrick Mahomes\",\n        \"defaultPositionId\": 1,\n        \"proTeamId\": 12,\n        \"eligibleSlots\": [\n          0,\n          20,\n          21\n        ],\n        \"firstName\": \"Patrick\",\n        \"lastName\": \"Mahomes\",\n        \"active\": true,\n        \"injuryStatus\": \"ACTIVE\",\n        \"stats\": [\n          {\n            \"seasonId\": 2023,\n            \"scoringPeriodId\": 1,\n            \"stats\": {\n              \"0\": 25,\n              \"1\": 38,\n              \"3\": 297,\n              \"4\": 3\n            },\n            \"seasonValue\": 2023,\n            \"statSourceId\": 0,\n            \"statSplitTypeId\": 0\n          },\n          {\n            \"seasonId\": 2023,\n            \"scoringPeriodId\": 1,\n            \"stats\": {\n              \"0\": 25,\n              \"1\": 38,\n              \"3\": 297,\n              \"4\": 3\n            },\n            \"seasonValue\": 2023,\n            \"statSourceId\": 0,\n            \"statSplitTypeId\": 0\n          }\n        ]\n      },\n      \"ratings\": {\n        \"key_0\": {\n          \"positionalRanking\": 1,\n          \"totalRanking\": 15,\n          \"totalRating\": 8.5\n        }\n      },\n      \"appliedStatTotal\": 22.4\n    },\n    {\n      \"id\": 3139477,\n      \"player\": {\n        \"id\": 3139477,\n        \"fullName\": \"Patrick Mahomes\",\n        \"defaultPositionId\": 1,\n        \"proTeamId\": 12,\n        \"eligibleSlots\": [\n          0,\n          20,\n          21\n        ],\n        \"firstName\": \"Patrick\",\n        \"lastName\": \"Mahomes\",\n        \"active\": true,\n        \"injuryStatus\": \"ACTIVE\",\n        \"stats\": [\n          {\n            \"seasonId\": 2023,\n            \"scoringPeriodId\": 1,\n            \"stats\": {\n              \"0\": 25,\n              \"1\": 38,\n              \"3\": 297,\n              \"4\": 3\n            },\n            \"seasonValue\": 2023,\n            \"statSourceId\": 0,\n            \"statSplitTypeId\": 0\n          },\n          {\n            \"seasonId\": 2023,\n            \"scoringPeriodId\": 1,\n            \"stats\": {\n              \"0\": 25,\n              \"1\": 38,\n              \"3\": 297,\n              \"4\": 3\n            },\n            \"seasonValue\": 2023,\n            \"statSourceId\": 0,\n            \"statSplitTypeId\": 0\n          }\n        ]\n      },\n      \"ratings\": {\n        \"key_0\": {\n          \"positionalRanking\": 1,\n          \"totalRanking\": 15,\n          \"totalRating\": 8.5\n        },\n        \"key_1\": {\n          \"positionalRanking\": 1,\n          \"totalRanking\": 15,\n          \"totalRating\": 8.5\n        }\n      },\n      \"appliedStatTotal\": 22.4\n    }\n  ],\n  \"scoringPeriodId\": 1\n}"
+                                                        },
+                                                        {
+                                                          "name": "Bad request",
+                                                          "originalRequest": {
+                                                            "method": "GET",
+                                                            "header": [
+                                                              {
+                                                                "key": "Accept",
+                                                                "value": "application/json"
+                                                              }
+                                                            ],
+                                                            "url": {
+                                                              "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year/segments/:segment/leagues/:leagueId/players/available?scoringPeriodId=1",
+                                                              "host": [
+                                                                "{{baseUrl}}"
+                                                              ],
+                                                              "path": [
+                                                                "apis",
+                                                                "v3",
+                                                                "games",
+                                                                "ffl",
+                                                                "seasons",
+                                                                ":year",
+                                                                "segments",
+                                                                ":segment",
+                                                                "leagues",
+                                                                ":leagueId",
+                                                                "players",
+                                                                "available"
+                                                              ],
+                                                              "query": [
+                                                                {
+                                                                  "description": "The scoring period (week) ID",
+                                                                  "key": "scoringPeriodId",
+                                                                  "value": "1"
+                                                                }
+                                                              ],
+                                                              "variable": [
+                                                                {
+                                                                  "key": "year"
+                                                                },
+                                                                {
+                                                                  "key": "segment"
+                                                                },
+                                                                {
+                                                                  "key": "leagueId"
+                                                                }
+                                                              ]
+                                                            }
+                                                          },
+                                                          "status": "Bad Request",
+                                                          "code": 400,
+                                                          "_postman_previewlanguage": "json",
+                                                          "header": [
+                                                            {
+                                                              "key": "Content-Type",
+                                                              "value": "application/json"
+                                                            }
+                                                          ],
+                                                          "cookie": [],
+                                                          "body": "{\n  \"error\": {\n    \"code\": 9198,\n    \"message\": \"string\"\n  }\n}"
+                                                        },
+                                                        {
+                                                          "name": "Unauthorized (for private leagues)",
+                                                          "originalRequest": {
+                                                            "method": "GET",
+                                                            "header": [
+                                                              {
+                                                                "key": "Accept",
+                                                                "value": "application/json"
+                                                              }
+                                                            ],
+                                                            "url": {
+                                                              "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year/segments/:segment/leagues/:leagueId/players/available?scoringPeriodId=1",
+                                                              "host": [
+                                                                "{{baseUrl}}"
+                                                              ],
+                                                              "path": [
+                                                                "apis",
+                                                                "v3",
+                                                                "games",
+                                                                "ffl",
+                                                                "seasons",
+                                                                ":year",
+                                                                "segments",
+                                                                ":segment",
+                                                                "leagues",
+                                                                ":leagueId",
+                                                                "players",
+                                                                "available"
+                                                              ],
+                                                              "query": [
+                                                                {
+                                                                  "description": "The scoring period (week) ID",
+                                                                  "key": "scoringPeriodId",
+                                                                  "value": "1"
+                                                                }
+                                                              ],
+                                                              "variable": [
+                                                                {
+                                                                  "key": "year"
+                                                                },
+                                                                {
+                                                                  "key": "segment"
+                                                                },
+                                                                {
+                                                                  "key": "leagueId"
+                                                                }
+                                                              ]
+                                                            }
+                                                          },
+                                                          "status": "Unauthorized",
+                                                          "code": 401,
+                                                          "_postman_previewlanguage": "json",
+                                                          "header": [
+                                                            {
+                                                              "key": "Content-Type",
+                                                              "value": "application/json"
+                                                            }
+                                                          ],
+                                                          "cookie": [],
+                                                          "body": "{\n  \"error\": {\n    \"code\": 9198,\n    \"message\": \"string\"\n  }\n}"
+                                                        },
+                                                        {
+                                                          "name": "League not found",
+                                                          "originalRequest": {
+                                                            "method": "GET",
+                                                            "header": [
+                                                              {
+                                                                "key": "Accept",
+                                                                "value": "application/json"
+                                                              }
+                                                            ],
+                                                            "url": {
+                                                              "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year/segments/:segment/leagues/:leagueId/players/available?scoringPeriodId=1",
+                                                              "host": [
+                                                                "{{baseUrl}}"
+                                                              ],
+                                                              "path": [
+                                                                "apis",
+                                                                "v3",
+                                                                "games",
+                                                                "ffl",
+                                                                "seasons",
+                                                                ":year",
+                                                                "segments",
+                                                                ":segment",
+                                                                "leagues",
+                                                                ":leagueId",
+                                                                "players",
+                                                                "available"
+                                                              ],
+                                                              "query": [
+                                                                {
+                                                                  "description": "The scoring period (week) ID",
+                                                                  "key": "scoringPeriodId",
+                                                                  "value": "1"
+                                                                }
+                                                              ],
+                                                              "variable": [
+                                                                {
+                                                                  "key": "year"
+                                                                },
+                                                                {
+                                                                  "key": "segment"
+                                                                },
+                                                                {
+                                                                  "key": "leagueId"
+                                                                }
+                                                              ]
+                                                            }
+                                                          },
+                                                          "status": "Not Found",
+                                                          "code": 404,
+                                                          "_postman_previewlanguage": "json",
+                                                          "header": [
+                                                            {
+                                                              "key": "Content-Type",
+                                                              "value": "application/json"
+                                                            }
+                                                          ],
+                                                          "cookie": [],
+                                                          "body": "{\n  \"error\": {\n    \"code\": 9198,\n    \"message\": \"string\"\n  }\n}"
+                                                        }
+                                                      ]
+                                                    }
+                                                  ]
+                                                }
+                                              ]
+                                            },
+                                            {
+                                              "name": "Get Fantasy Football League",
+                                              "request": {
+                                                "method": "GET",
+                                                "header": [
+                                                  {
+                                                    "key": "Accept",
+                                                    "value": "application/json"
+                                                  }
+                                                ],
+                                                "url": {
+                                                  "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year/segments/:segment/leagues/:leagueId?view=mTeam",
+                                                  "host": [
+                                                    "{{baseUrl}}"
+                                                  ],
+                                                  "path": [
+                                                    "apis",
+                                                    "v3",
+                                                    "games",
+                                                    "ffl",
+                                                    "seasons",
+                                                    ":year",
+                                                    "segments",
+                                                    ":segment",
+                                                    "leagues",
+                                                    ":leagueId"
+                                                  ],
+                                                  "query": [
+                                                    {
+                                                      "key": "view",
+                                                      "value": "mTeam",
+                                                      "description": "The data view to retrieve"
+                                                    }
+                                                  ],
+                                                  "variable": [
+                                                    {
+                                                      "key": "year",
+                                                      "value": "2023",
+                                                      "description": "(Required) The season year"
+                                                    },
+                                                    {
+                                                      "key": "segment",
+                                                      "value": "0",
+                                                      "description": "(Required) The league segment (0 for regular season)"
+                                                    },
+                                                    {
+                                                      "key": "leagueId",
+                                                      "value": "12345678",
+                                                      "description": "(Required) The ID of the fantasy football league"
+                                                    }
+                                                  ]
+                                                },
+                                                "description": "Retrieve detailed information for a specific fantasy football league"
+                                              },
+                                              "response": [
+                                                {
+                                                  "name": "Successful response",
+                                                  "originalRequest": {
+                                                    "method": "GET",
+                                                    "header": [
+                                                      {
+                                                        "key": "Accept",
+                                                        "value": "application/json"
+                                                      }
+                                                    ],
+                                                    "url": {
+                                                      "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year/segments/:segment/leagues/:leagueId?view=mTeam",
+                                                      "host": [
+                                                        "{{baseUrl}}"
+                                                      ],
+                                                      "path": [
+                                                        "apis",
+                                                        "v3",
+                                                        "games",
+                                                        "ffl",
+                                                        "seasons",
+                                                        ":year",
+                                                        "segments",
+                                                        ":segment",
+                                                        "leagues",
+                                                        ":leagueId"
+                                                      ],
+                                                      "query": [
+                                                        {
+                                                          "description": "The data view to retrieve",
+                                                          "key": "view",
+                                                          "value": "mTeam"
+                                                        }
+                                                      ],
+                                                      "variable": [
+                                                        {
+                                                          "key": "year"
+                                                        },
+                                                        {
+                                                          "key": "segment"
+                                                        },
+                                                        {
+                                                          "key": "leagueId"
+                                                        }
+                                                      ]
+                                                    }
+                                                  },
+                                                  "status": "OK",
+                                                  "code": 200,
+                                                  "_postman_previewlanguage": "json",
+                                                  "header": [
+                                                    {
+                                                      "key": "Content-Type",
+                                                      "value": "application/json"
+                                                    }
+                                                  ],
+                                                  "cookie": [],
+                                                  "body": "{\n  \"gameId\": 1,\n  \"id\": 12345678,\n  \"name\": \"Example League\",\n  \"seasonId\": 2023,\n  \"segmentId\": 0,\n  \"abbreviation\": \"EXL\",\n  \"isPublic\": false,\n  \"settings\": {\n    \"name\": \"Example League\",\n    \"size\": 10,\n    \"draftSettings\": {\n      \"type\": 1,\n      \"slotCount\": 16,\n      \"date\": \"2023-08-31T23:00:00Z\",\n      \"timePerSelection\": 90\n    },\n    \"rosterSettings\": {\n      \"lineupSlotCounts\": {\n        \"0\": 1,\n        \"2\": 2,\n        \"4\": 2,\n        \"6\": 1,\n        \"20\": 1,\n        \"21\": 7,\n        \"23\": 1\n      },\n      \"positionLimits\": {\n        \"key_0\": 4751\n      },\n      \"locktime\": 0\n    },\n    \"scheduleSettings\": {\n      \"matchupPeriodCount\": 14,\n      \"playoffTeamCount\": 6,\n      \"matchupPeriodLength\": 1,\n      \"playoffMatchupPeriodLength\": 1\n    },\n    \"scoringSettings\": {\n      \"scoringType\": 1,\n      \"matchupTieRule\": 0,\n      \"homeTeamBonus\": 0,\n      \"isCustomScoring\": true,\n      \"isDefaultPositionScoring\": false,\n      \"statSettings\": {\n        \"stats\": {\n          \"key_0\": {\n            \"id\": 42,\n            \"points\": 4,\n            \"name\": \"Passing TD\",\n            \"isActive\": true\n          },\n          \"key_1\": {\n            \"id\": 42,\n            \"points\": 4,\n            \"name\": \"Passing TD\",\n            \"isActive\": true\n          }\n        }\n      }\n    },\n    \"tradeSettings\": {\n      \"deadlineDate\": \"2023-11-10T17:00:00Z\",\n      \"vetoPeriod\": 1,\n      \"vetoVotesRequired\": 4\n    },\n    \"waiverSettings\": {\n      \"processDay\": 3,\n      \"acquisitionType\": 1,\n      \"processHour\": 8,\n      \"acquisitionLimit\": -1\n    }\n  },\n  \"status\": {\n    \"currentMatchupPeriod\": 1,\n    \"isActive\": true,\n    \"currentScoringPeriod\": 1,\n    \"latestScoringPeriod\": 1,\n    \"teamsJoined\": 10,\n    \"waiverLastExecutionDate\": \"2015-11-24T04:26:57.638Z\"\n  },\n  \"teams\": [\n    {\n      \"id\": 1,\n      \"name\": \"Example Team\",\n      \"abbreviation\": \"TEAM1\",\n      \"location\": \"Example\",\n      \"nickname\": \"Team\",\n      \"logo\": \"https://example.com/logo.png\",\n      \"ownerId\": \"{123456789-ABCD-EF12-3456-7890ABCDEF12}\",\n      \"primaryOwner\": \"{123456789-ABCD-EF12-3456-7890ABCDEF12}\",\n      \"draftDayProjectedRank\": 5,\n      \"currentProjectedRank\": 3,\n      \"playoffSeed\": 0,\n      \"points\": 108.5,\n      \"pointsAdjusted\": 108.5,\n      \"pointsAgainst\": 95.2,\n      \"divisionId\": 0,\n      \"record\": {\n        \"overall\": {\n          \"wins\": 1,\n          \"losses\": 0,\n          \"percentage\": 1,\n          \"ties\": 0,\n          \"pointsFor\": 108.5,\n          \"pointsAgainst\": 95.2\n        },\n        \"division\": {\n          \"wins\": 1,\n          \"losses\": 0,\n          \"percentage\": 1,\n          \"ties\": 0,\n          \"pointsFor\": 108.5,\n          \"pointsAgainst\": 95.2\n        },\n        \"home\": {\n          \"wins\": 1,\n          \"losses\": 0,\n          \"percentage\": 1,\n          \"ties\": 0,\n          \"pointsFor\": 108.5,\n          \"pointsAgainst\": 95.2\n        },\n        \"away\": {\n          \"wins\": 1,\n          \"losses\": 0,\n          \"percentage\": 1,\n          \"ties\": 0,\n          \"pointsFor\": 108.5,\n          \"pointsAgainst\": 95.2\n        }\n      },\n      \"roster\": {\n        \"entries\": [\n          {\n            \"playerId\": 3139477,\n            \"playerPoolEntry\": {\n              \"id\": 3139477,\n              \"player\": {\n                \"id\": 3139477,\n                \"fullName\": \"Patrick Mahomes\",\n                \"defaultPositionId\": 1,\n                \"proTeamId\": 12,\n                \"eligibleSlots\": [\n                  0,\n                  20,\n                  21\n                ],\n                \"firstName\": \"Patrick\",\n                \"lastName\": \"Mahomes\",\n                \"active\": true,\n                \"injuryStatus\": \"ACTIVE\",\n                \"stats\": [\n                  {\n                    \"seasonId\": 2023,\n                    \"scoringPeriodId\": 1,\n                    \"stats\": {\n                      \"0\": 25,\n                      \"1\": 38,\n                      \"3\": 297,\n                      \"4\": 3\n                    },\n                    \"seasonValue\": 2023,\n                    \"statSourceId\": 0,\n                    \"statSplitTypeId\": 0\n                  },\n                  {\n                    \"seasonId\": 2023,\n                    \"scoringPeriodId\": 1,\n                    \"stats\": {\n                      \"0\": 25,\n                      \"1\": 38,\n                      \"3\": 297,\n                      \"4\": 3\n                    },\n                    \"seasonValue\": 2023,\n                    \"statSourceId\": 0,\n                    \"statSplitTypeId\": 0\n                  }\n                ]\n              },\n              \"ratings\": {\n                \"key_0\": {\n                  \"positionalRanking\": 1,\n                  \"totalRanking\": 15,\n                  \"totalRating\": 8.5\n                }\n              },\n              \"appliedStatTotal\": 22.4\n            },\n            \"lineupSlotId\": 0,\n            \"status\": \"ACTIVE\",\n            \"acquisitionDate\": \"2023-08-31T23:45:00Z\",\n            \"acquisitionType\": \"DRAFT\"\n          },\n          {\n            \"playerId\": 3139477,\n            \"playerPoolEntry\": {\n              \"id\": 3139477,\n              \"player\": {\n                \"id\": 3139477,\n                \"fullName\": \"Patrick Mahomes\",\n                \"defaultPositionId\": 1,\n                \"proTeamId\": 12,\n                \"eligibleSlots\": [\n                  0,\n                  20,\n                  21\n                ],\n                \"firstName\": \"Patrick\",\n                \"lastName\": \"Mahomes\",\n                \"active\": true,\n                \"injuryStatus\": \"ACTIVE\",\n                \"stats\": [\n                  {\n                    \"seasonId\": 2023,\n                    \"scoringPeriodId\": 1,\n                    \"stats\": {\n                      \"0\": 25,\n                      \"1\": 38,\n                      \"3\": 297,\n                      \"4\": 3\n                    },\n                    \"seasonValue\": 2023,\n                    \"statSourceId\": 0,\n                    \"statSplitTypeId\": 0\n                  },\n                  {\n                    \"seasonId\": 2023,\n                    \"scoringPeriodId\": 1,\n                    \"stats\": {\n                      \"0\": 25,\n                      \"1\": 38,\n                      \"3\": 297,\n                      \"4\": 3\n                    },\n                    \"seasonValue\": 2023,\n                    \"statSourceId\": 0,\n                    \"statSplitTypeId\": 0\n                  }\n                ]\n              },\n              \"ratings\": {\n                \"key_0\": {\n                  \"positionalRanking\": 1,\n                  \"totalRanking\": 15,\n                  \"totalRating\": 8.5\n                }\n              },\n              \"appliedStatTotal\": 22.4\n            },\n            \"lineupSlotId\": 0,\n            \"status\": \"ACTIVE\",\n            \"acquisitionDate\": \"2023-08-31T23:45:00Z\",\n            \"acquisitionType\": \"DRAFT\"\n          }\n        ],\n        \"lineupSlotCounts\": {\n          \"key_0\": 763,\n          \"key_1\": 5298,\n          \"key_2\": 7782\n        }\n      },\n      \"transactionCounter\": {\n        \"acquisitions\": 5,\n        \"drops\": 5,\n        \"trades\": 1,\n        \"moveToActive\": 8,\n        \"moveToIR\": 0\n      }\n    },\n    {\n      \"id\": 1,\n      \"name\": \"Example Team\",\n      \"abbreviation\": \"TEAM1\",\n      \"location\": \"Example\",\n      \"nickname\": \"Team\",\n      \"logo\": \"https://example.com/logo.png\",\n      \"ownerId\": \"{123456789-ABCD-EF12-3456-7890ABCDEF12}\",\n      \"primaryOwner\": \"{123456789-ABCD-EF12-3456-7890ABCDEF12}\",\n      \"draftDayProjectedRank\": 5,\n      \"currentProjectedRank\": 3,\n      \"playoffSeed\": 0,\n      \"points\": 108.5,\n      \"pointsAdjusted\": 108.5,\n      \"pointsAgainst\": 95.2,\n      \"divisionId\": 0,\n      \"record\": {\n        \"overall\": {\n          \"wins\": 1,\n          \"losses\": 0,\n          \"percentage\": 1,\n          \"ties\": 0,\n          \"pointsFor\": 108.5,\n          \"pointsAgainst\": 95.2\n        },\n        \"division\": {\n          \"wins\": 1,\n          \"losses\": 0,\n          \"percentage\": 1,\n          \"ties\": 0,\n          \"pointsFor\": 108.5,\n          \"pointsAgainst\": 95.2\n        },\n        \"home\": {\n          \"wins\": 1,\n          \"losses\": 0,\n          \"percentage\": 1,\n          \"ties\": 0,\n          \"pointsFor\": 108.5,\n          \"pointsAgainst\": 95.2\n        },\n        \"away\": {\n          \"wins\": 1,\n          \"losses\": 0,\n          \"percentage\": 1,\n          \"ties\": 0,\n          \"pointsFor\": 108.5,\n          \"pointsAgainst\": 95.2\n        }\n      },\n      \"roster\": {\n        \"entries\": [\n          {\n            \"playerId\": 3139477,\n            \"playerPoolEntry\": {\n              \"id\": 3139477,\n              \"player\": {\n                \"id\": 3139477,\n                \"fullName\": \"Patrick Mahomes\",\n                \"defaultPositionId\": 1,\n                \"proTeamId\": 12,\n                \"eligibleSlots\": [\n                  0,\n                  20,\n                  21\n                ],\n                \"firstName\": \"Patrick\",\n                \"lastName\": \"Mahomes\",\n                \"active\": true,\n                \"injuryStatus\": \"ACTIVE\",\n                \"stats\": [\n                  {\n                    \"seasonId\": 2023,\n                    \"scoringPeriodId\": 1,\n                    \"stats\": {\n                      \"0\": 25,\n                      \"1\": 38,\n                      \"3\": 297,\n                      \"4\": 3\n                    },\n                    \"seasonValue\": 2023,\n                    \"statSourceId\": 0,\n                    \"statSplitTypeId\": 0\n                  },\n                  {\n                    \"seasonId\": 2023,\n                    \"scoringPeriodId\": 1,\n                    \"stats\": {\n                      \"0\": 25,\n                      \"1\": 38,\n                      \"3\": 297,\n                      \"4\": 3\n                    },\n                    \"seasonValue\": 2023,\n                    \"statSourceId\": 0,\n                    \"statSplitTypeId\": 0\n                  }\n                ]\n              },\n              \"ratings\": {\n                \"key_0\": {\n                  \"positionalRanking\": 1,\n                  \"totalRanking\": 15,\n                  \"totalRating\": 8.5\n                },\n                \"key_1\": {\n                  \"positionalRanking\": 1,\n                  \"totalRanking\": 15,\n                  \"totalRating\": 8.5\n                },\n                \"key_2\": {\n                  \"positionalRanking\": 1,\n                  \"totalRanking\": 15,\n                  \"totalRating\": 8.5\n                }\n              },\n              \"appliedStatTotal\": 22.4\n            },\n            \"lineupSlotId\": 0,\n            \"status\": \"ACTIVE\",\n            \"acquisitionDate\": \"2023-08-31T23:45:00Z\",\n            \"acquisitionType\": \"DRAFT\"\n          },\n          {\n            \"playerId\": 3139477,\n            \"playerPoolEntry\": {\n              \"id\": 3139477,\n              \"player\": {\n                \"id\": 3139477,\n                \"fullName\": \"Patrick Mahomes\",\n                \"defaultPositionId\": 1,\n                \"proTeamId\": 12,\n                \"eligibleSlots\": [\n                  0,\n                  20,\n                  21\n                ],\n                \"firstName\": \"Patrick\",\n                \"lastName\": \"Mahomes\",\n                \"active\": true,\n                \"injuryStatus\": \"ACTIVE\",\n                \"stats\": [\n                  {\n                    \"seasonId\": 2023,\n                    \"scoringPeriodId\": 1,\n                    \"stats\": {\n                      \"0\": 25,\n                      \"1\": 38,\n                      \"3\": 297,\n                      \"4\": 3\n                    },\n                    \"seasonValue\": 2023,\n                    \"statSourceId\": 0,\n                    \"statSplitTypeId\": 0\n                  },\n                  {\n                    \"seasonId\": 2023,\n                    \"scoringPeriodId\": 1,\n                    \"stats\": {\n                      \"0\": 25,\n                      \"1\": 38,\n                      \"3\": 297,\n                      \"4\": 3\n                    },\n                    \"seasonValue\": 2023,\n                    \"statSourceId\": 0,\n                    \"statSplitTypeId\": 0\n                  }\n                ]\n              },\n              \"ratings\": {\n                \"key_0\": {\n                  \"positionalRanking\": 1,\n                  \"totalRanking\": 15,\n                  \"totalRating\": 8.5\n                },\n                \"key_1\": {\n                  \"positionalRanking\": 1,\n                  \"totalRanking\": 15,\n                  \"totalRating\": 8.5\n                }\n              },\n              \"appliedStatTotal\": 22.4\n            },\n            \"lineupSlotId\": 0,\n            \"status\": \"ACTIVE\",\n            \"acquisitionDate\": \"2023-08-31T23:45:00Z\",\n            \"acquisitionType\": \"DRAFT\"\n          }\n        ],\n        \"lineupSlotCounts\": {\n          \"key_0\": 9678,\n          \"key_1\": 944,\n          \"key_2\": 6770,\n          \"key_3\": 4590,\n          \"key_4\": 5982\n        }\n      },\n      \"transactionCounter\": {\n        \"acquisitions\": 5,\n        \"drops\": 5,\n        \"trades\": 1,\n        \"moveToActive\": 8,\n        \"moveToIR\": 0\n      }\n    }\n  ],\n  \"members\": [\n    {\n      \"id\": \"{123456789-ABCD-EF12-3456-7890ABCDEF12}\",\n      \"displayName\": \"User123\",\n      \"firstName\": \"John\",\n      \"lastName\": \"Doe\",\n      \"isLeagueManager\": true,\n      \"isLeagueCreator\": true,\n      \"email\": \"user@example.com\"\n    },\n    {\n      \"id\": \"{123456789-ABCD-EF12-3456-7890ABCDEF12}\",\n      \"displayName\": \"User123\",\n      \"firstName\": \"John\",\n      \"lastName\": \"Doe\",\n      \"isLeagueManager\": true,\n      \"isLeagueCreator\": true,\n      \"email\": \"user@example.com\"\n    }\n  ],\n  \"schedule\": [\n    {\n      \"id\": 1,\n      \"matchupPeriodId\": 1,\n      \"home\": {\n        \"teamId\": 1,\n        \"totalPoints\": 108.5,\n        \"totalPointsLive\": 108.5\n      },\n      \"away\": {\n        \"teamId\": 1,\n        \"totalPoints\": 108.5,\n        \"totalPointsLive\": 108.5\n      },\n      \"winner\": \"HOME\"\n    },\n    {\n      \"id\": 1,\n      \"matchupPeriodId\": 1,\n      \"home\": {\n        \"teamId\": 1,\n        \"totalPoints\": 108.5,\n        \"totalPointsLive\": 108.5\n      },\n      \"away\": {\n        \"teamId\": 1,\n        \"totalPoints\": 108.5,\n        \"totalPointsLive\": 108.5\n      },\n      \"winner\": \"HOME\"\n    }\n  ],\n  \"communication\": {\n    \"lastRead\": 1630464000000,\n    \"topics\": [\n      {\n        \"id\": \"topic-1234\",\n        \"type\": \"GROUP\",\n        \"date\": 1630464000000,\n        \"messages\": [\n          {\n            \"id\": \"message-5678\",\n            \"topicId\": \"topic-1234\",\n            \"date\": 1630464000000,\n            \"membershipId\": \"{123456789-ABCD-EF12-3456-7890ABCDEF12}\",\n            \"text\": \"Good luck everyone this season!\"\n          },\n          {\n            \"id\": \"message-5678\",\n            \"topicId\": \"topic-1234\",\n            \"date\": 1630464000000,\n            \"membershipId\": \"{123456789-ABCD-EF12-3456-7890ABCDEF12}\",\n            \"text\": \"Good luck everyone this season!\"\n          }\n        ]\n      },\n      {\n        \"id\": \"topic-1234\",\n        \"type\": \"GROUP\",\n        \"date\": 1630464000000,\n        \"messages\": [\n          {\n            \"id\": \"message-5678\",\n            \"topicId\": \"topic-1234\",\n            \"date\": 1630464000000,\n            \"membershipId\": \"{123456789-ABCD-EF12-3456-7890ABCDEF12}\",\n            \"text\": \"Good luck everyone this season!\"\n          },\n          {\n            \"id\": \"message-5678\",\n            \"topicId\": \"topic-1234\",\n            \"date\": 1630464000000,\n            \"membershipId\": \"{123456789-ABCD-EF12-3456-7890ABCDEF12}\",\n            \"text\": \"Good luck everyone this season!\"\n          }\n        ]\n      }\n    ]\n  }\n}"
+                                                },
+                                                {
+                                                  "name": "Bad request",
+                                                  "originalRequest": {
+                                                    "method": "GET",
+                                                    "header": [
+                                                      {
+                                                        "key": "Accept",
+                                                        "value": "application/json"
+                                                      }
+                                                    ],
+                                                    "url": {
+                                                      "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year/segments/:segment/leagues/:leagueId?view=mTeam",
+                                                      "host": [
+                                                        "{{baseUrl}}"
+                                                      ],
+                                                      "path": [
+                                                        "apis",
+                                                        "v3",
+                                                        "games",
+                                                        "ffl",
+                                                        "seasons",
+                                                        ":year",
+                                                        "segments",
+                                                        ":segment",
+                                                        "leagues",
+                                                        ":leagueId"
+                                                      ],
+                                                      "query": [
+                                                        {
+                                                          "description": "The data view to retrieve",
+                                                          "key": "view",
+                                                          "value": "mTeam"
+                                                        }
+                                                      ],
+                                                      "variable": [
+                                                        {
+                                                          "key": "year"
+                                                        },
+                                                        {
+                                                          "key": "segment"
+                                                        },
+                                                        {
+                                                          "key": "leagueId"
+                                                        }
+                                                      ]
+                                                    }
+                                                  },
+                                                  "status": "Bad Request",
+                                                  "code": 400,
+                                                  "_postman_previewlanguage": "json",
+                                                  "header": [
+                                                    {
+                                                      "key": "Content-Type",
+                                                      "value": "application/json"
+                                                    }
+                                                  ],
+                                                  "cookie": [],
+                                                  "body": "{\n  \"error\": {\n    \"code\": 9198,\n    \"message\": \"string\"\n  }\n}"
+                                                },
+                                                {
+                                                  "name": "Unauthorized (for private leagues)",
+                                                  "originalRequest": {
+                                                    "method": "GET",
+                                                    "header": [
+                                                      {
+                                                        "key": "Accept",
+                                                        "value": "application/json"
+                                                      }
+                                                    ],
+                                                    "url": {
+                                                      "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year/segments/:segment/leagues/:leagueId?view=mTeam",
+                                                      "host": [
+                                                        "{{baseUrl}}"
+                                                      ],
+                                                      "path": [
+                                                        "apis",
+                                                        "v3",
+                                                        "games",
+                                                        "ffl",
+                                                        "seasons",
+                                                        ":year",
+                                                        "segments",
+                                                        ":segment",
+                                                        "leagues",
+                                                        ":leagueId"
+                                                      ],
+                                                      "query": [
+                                                        {
+                                                          "description": "The data view to retrieve",
+                                                          "key": "view",
+                                                          "value": "mTeam"
+                                                        }
+                                                      ],
+                                                      "variable": [
+                                                        {
+                                                          "key": "year"
+                                                        },
+                                                        {
+                                                          "key": "segment"
+                                                        },
+                                                        {
+                                                          "key": "leagueId"
+                                                        }
+                                                      ]
+                                                    }
+                                                  },
+                                                  "status": "Unauthorized",
+                                                  "code": 401,
+                                                  "_postman_previewlanguage": "json",
+                                                  "header": [
+                                                    {
+                                                      "key": "Content-Type",
+                                                      "value": "application/json"
+                                                    }
+                                                  ],
+                                                  "cookie": [],
+                                                  "body": "{\n  \"error\": {\n    \"code\": 9198,\n    \"message\": \"string\"\n  }\n}"
+                                                },
+                                                {
+                                                  "name": "League not found",
+                                                  "originalRequest": {
+                                                    "method": "GET",
+                                                    "header": [
+                                                      {
+                                                        "key": "Accept",
+                                                        "value": "application/json"
+                                                      }
+                                                    ],
+                                                    "url": {
+                                                      "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year/segments/:segment/leagues/:leagueId?view=mTeam",
+                                                      "host": [
+                                                        "{{baseUrl}}"
+                                                      ],
+                                                      "path": [
+                                                        "apis",
+                                                        "v3",
+                                                        "games",
+                                                        "ffl",
+                                                        "seasons",
+                                                        ":year",
+                                                        "segments",
+                                                        ":segment",
+                                                        "leagues",
+                                                        ":leagueId"
+                                                      ],
+                                                      "query": [
+                                                        {
+                                                          "description": "The data view to retrieve",
+                                                          "key": "view",
+                                                          "value": "mTeam"
+                                                        }
+                                                      ],
+                                                      "variable": [
+                                                        {
+                                                          "key": "year"
+                                                        },
+                                                        {
+                                                          "key": "segment"
+                                                        },
+                                                        {
+                                                          "key": "leagueId"
+                                                        }
+                                                      ]
+                                                    }
+                                                  },
+                                                  "status": "Not Found",
+                                                  "code": 404,
+                                                  "_postman_previewlanguage": "json",
+                                                  "header": [
+                                                    {
+                                                      "key": "Content-Type",
+                                                      "value": "application/json"
+                                                    }
+                                                  ],
+                                                  "cookie": [],
+                                                  "body": "{\n  \"error\": {\n    \"code\": 9198,\n    \"message\": \"string\"\n  }\n}"
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "name": "leaguedefaults",
+                                      "item": [
+                                        {
+                                          "name": "{scoringPeriodId}",
+                                          "item": [
+                                            {
+                                              "name": "Get Fantasy Player Details with Defaults",
+                                              "request": {
+                                                "method": "GET",
+                                                "header": [
+                                                  {
+                                                    "key": "X-Fantasy-Filter",
+                                                    "value": "{\"players\":{\"limit\":50,\"sortDraftRanks\":{\"sortPriority\":100,\"sortAsc\":true,\"value\":\"STANDARD\"}}}",
+                                                    "description": "JSON filter for player limits and other criteria.\nNote: When using limit, you must also provide a sort criteria.\n"
+                                                  },
+                                                  {
+                                                    "key": "Accept",
+                                                    "value": "application/json"
+                                                  }
+                                                ],
+                                                "url": {
+                                                  "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year/segments/:segment/leaguedefaults/:scoringPeriodId?view=kona_player_info",
+                                                  "host": [
+                                                    "{{baseUrl}}"
+                                                  ],
+                                                  "path": [
+                                                    "apis",
+                                                    "v3",
+                                                    "games",
+                                                    "ffl",
+                                                    "seasons",
+                                                    ":year",
+                                                    "segments",
+                                                    ":segment",
+                                                    "leaguedefaults",
+                                                    ":scoringPeriodId"
+                                                  ],
+                                                  "query": [
+                                                    {
+                                                      "key": "view",
+                                                      "value": "kona_player_info",
+                                                      "description": "The data view to retrieve"
+                                                    }
+                                                  ],
+                                                  "variable": [
+                                                    {
+                                                      "key": "year",
+                                                      "value": "2025",
+                                                      "description": "(Required) The season year"
+                                                    },
+                                                    {
+                                                      "key": "segment",
+                                                      "value": "0",
+                                                      "description": "(Required) The league segment (0 for regular season)"
+                                                    },
+                                                    {
+                                                      "key": "scoringPeriodId",
+                                                      "value": "1",
+                                                      "description": "(Required) The scoring period ID (use 1 for standard PPR leagues)"
+                                                    }
+                                                  ]
+                                                },
+                                                "description": "Retrieve detailed fantasy player information with league default settings.\nThis endpoint returns player data with additional fantasy-specific information\nlike draft values, keeper values, and ratings.\n"
+                                              },
+                                              "response": [
+                                                {
+                                                  "name": "Successful response",
+                                                  "originalRequest": {
+                                                    "method": "GET",
+                                                    "header": [
+                                                      {
+                                                        "description": "JSON filter for player limits and other criteria.\nNote: When using limit, you must also provide a sort criteria.\n",
+                                                        "key": "X-Fantasy-Filter",
+                                                        "value": "{\"players\":{\"limit\":50,\"sortDraftRanks\":{\"sortPriority\":100,\"sortAsc\":true,\"value\":\"STANDARD\"}}}"
+                                                      },
+                                                      {
+                                                        "key": "Accept",
+                                                        "value": "application/json"
+                                                      }
+                                                    ],
+                                                    "url": {
+                                                      "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year/segments/:segment/leaguedefaults/:scoringPeriodId?view=kona_player_info",
+                                                      "host": [
+                                                        "{{baseUrl}}"
+                                                      ],
+                                                      "path": [
+                                                        "apis",
+                                                        "v3",
+                                                        "games",
+                                                        "ffl",
+                                                        "seasons",
+                                                        ":year",
+                                                        "segments",
+                                                        ":segment",
+                                                        "leaguedefaults",
+                                                        ":scoringPeriodId"
+                                                      ],
+                                                      "query": [
+                                                        {
+                                                          "description": "The data view to retrieve",
+                                                          "key": "view",
+                                                          "value": "kona_player_info"
+                                                        }
+                                                      ],
+                                                      "variable": [
+                                                        {
+                                                          "key": "year"
+                                                        },
+                                                        {
+                                                          "key": "segment"
+                                                        },
+                                                        {
+                                                          "key": "scoringPeriodId"
+                                                        }
+                                                      ]
+                                                    }
+                                                  },
+                                                  "status": "OK",
+                                                  "code": 200,
+                                                  "_postman_previewlanguage": "json",
+                                                  "header": [
+                                                    {
+                                                      "key": "Content-Type",
+                                                      "value": "application/json"
+                                                    }
+                                                  ],
+                                                  "cookie": [],
+                                                  "body": "{\n  \"players\": [\n    {\n      \"id\": \"string\",\n      \"draftAuctionValue\": 8736.364774635664,\n      \"keeperValue\": 5867.780871580892,\n      \"keeperValueFuture\": 3322.047584675676,\n      \"lineupLocked\": false,\n      \"onTeamId\": 3066,\n      \"player\": {\n        \"active\": false,\n        \"defaultPositionId\": 750,\n        \"draftRanksByRankType\": {\n          \"key_0\": {\n            \"auctionValue\": 9864.996445149374,\n            \"published\": false,\n            \"rank\": 7406,\n            \"rankSourceId\": 1403,\n            \"rankType\": \"string\",\n            \"slotId\": 6240\n          },\n          \"key_1\": {\n            \"auctionValue\": 3011.362721893136,\n            \"published\": false,\n            \"rank\": 720,\n            \"rankSourceId\": 5110,\n            \"rankType\": \"string\",\n            \"slotId\": 833\n          },\n          \"key_2\": {\n            \"auctionValue\": 6636.5964351622915,\n            \"published\": true,\n            \"rank\": 9462,\n            \"rankSourceId\": 4902,\n            \"rankType\": \"string\",\n            \"slotId\": 9597\n          }\n        },\n        \"droppable\": true,\n        \"eligibleSlots\": [\n          5059,\n          6283\n        ],\n        \"firstName\": \"string\",\n        \"fullName\": \"string\",\n        \"id\": 7543,\n        \"injured\": false,\n        \"injuryStatus\": \"string\",\n        \"jersey\": \"string\",\n        \"lastName\": \"string\",\n        \"ownership\": {\n          \"activityLevel\": \"string\",\n          \"auctionValueAverage\": 4043.8757653735233,\n          \"auctionValueAverageChange\": 8586.122208752111,\n          \"averageDraftPosition\": 8119.557605861322,\n          \"averageDraftPositionPercentChange\": 4208.33885598874,\n          \"date\": \"string\",\n          \"leagueType\": 6802,\n          \"percentChange\": 1729.1774179649576,\n          \"percentOwned\": 4781.501274965967,\n          \"percentStarted\": 8012.5753532721665\n        },\n        \"proTeamId\": 6109,\n        \"stats\": [\n          {\n            \"externalId\": \"string\",\n            \"id\": \"string\",\n            \"proTeamId\": 3101,\n            \"scoringPeriodId\": 5549,\n            \"seasonId\": 6791,\n            \"statSourceId\": 9687,\n            \"statSplitTypeId\": 1993,\n            \"stats\": {\n              \"key_0\": 8083.798344690885,\n              \"key_1\": 2106.831396418649\n            }\n          },\n          {\n            \"externalId\": \"string\",\n            \"id\": \"string\",\n            \"proTeamId\": 2768,\n            \"scoringPeriodId\": 6818,\n            \"seasonId\": 6678,\n            \"statSourceId\": 646,\n            \"statSplitTypeId\": 3884,\n            \"stats\": {\n              \"key_0\": 9571.477998161583,\n              \"key_1\": 3287.6203712208853\n            }\n          }\n        ]\n      },\n      \"ratings\": {\n        \"key_0\": {\n          \"positionalRanking\": 785.0525472003267,\n          \"totalRanking\": 5086.641569223114,\n          \"totalRating\": 435.8587122101465\n        },\n        \"key_1\": {\n          \"positionalRanking\": 7617.287396398815,\n          \"totalRanking\": 8892.924142242848,\n          \"totalRating\": 390.50470066530175\n        }\n      },\n      \"rosterLocked\": false,\n      \"status\": \"string\",\n      \"tradeLocked\": true,\n      \"waiverProcessDate\": 4354\n    },\n    {\n      \"id\": \"string\",\n      \"draftAuctionValue\": 4335.326409841909,\n      \"keeperValue\": 2126.197113895774,\n      \"keeperValueFuture\": 6906.229790500098,\n      \"lineupLocked\": false,\n      \"onTeamId\": 8278,\n      \"player\": {\n        \"active\": true,\n        \"defaultPositionId\": 8770,\n        \"draftRanksByRankType\": {\n          \"key_0\": {\n            \"auctionValue\": 2313.9300438449673,\n            \"published\": false,\n            \"rank\": 7704,\n            \"rankSourceId\": 8625,\n            \"rankType\": \"string\",\n            \"slotId\": 8867\n          }\n        },\n        \"droppable\": false,\n        \"eligibleSlots\": [\n          6019,\n          3365\n        ],\n        \"firstName\": \"string\",\n        \"fullName\": \"string\",\n        \"id\": 2167,\n        \"injured\": false,\n        \"injuryStatus\": \"string\",\n        \"jersey\": \"string\",\n        \"lastName\": \"string\",\n        \"ownership\": {\n          \"activityLevel\": \"string\",\n          \"auctionValueAverage\": 9751.399123871772,\n          \"auctionValueAverageChange\": 2449.572104305353,\n          \"averageDraftPosition\": 9019.883335922405,\n          \"averageDraftPositionPercentChange\": 988.4289328861606,\n          \"date\": \"string\",\n          \"leagueType\": 2939,\n          \"percentChange\": 1434.5260608325195,\n          \"percentOwned\": 6343.657792865422,\n          \"percentStarted\": 1551.6939003941354\n        },\n        \"proTeamId\": 8220,\n        \"stats\": [\n          {\n            \"externalId\": \"string\",\n            \"id\": \"string\",\n            \"proTeamId\": 1361,\n            \"scoringPeriodId\": 1949,\n            \"seasonId\": 6341,\n            \"statSourceId\": 9274,\n            \"statSplitTypeId\": 3526,\n            \"stats\": {\n              \"key_0\": 7895.283309798761,\n              \"key_1\": 262.9905908393648,\n              \"key_2\": 7455.197499302777\n            }\n          },\n          {\n            \"externalId\": \"string\",\n            \"id\": \"string\",\n            \"proTeamId\": 2767,\n            \"scoringPeriodId\": 274,\n            \"seasonId\": 4484,\n            \"statSourceId\": 3972,\n            \"statSplitTypeId\": 5576,\n            \"stats\": {\n              \"key_0\": 9904.774343188781,\n              \"key_1\": 7135.540804154536\n            }\n          }\n        ]\n      },\n      \"ratings\": {\n        \"key_0\": {\n          \"positionalRanking\": 6784.340093151173,\n          \"totalRanking\": 9207.262057904187,\n          \"totalRating\": 3093.4626061828108\n        }\n      },\n      \"rosterLocked\": false,\n      \"status\": \"string\",\n      \"tradeLocked\": true,\n      \"waiverProcessDate\": 7844\n    }\n  ]\n}"
+                                                },
+                                                {
+                                                  "name": "Bad request",
+                                                  "originalRequest": {
+                                                    "method": "GET",
+                                                    "header": [
+                                                      {
+                                                        "description": "JSON filter for player limits and other criteria.\nNote: When using limit, you must also provide a sort criteria.\n",
+                                                        "key": "X-Fantasy-Filter",
+                                                        "value": "{\"players\":{\"limit\":50,\"sortDraftRanks\":{\"sortPriority\":100,\"sortAsc\":true,\"value\":\"STANDARD\"}}}"
+                                                      },
+                                                      {
+                                                        "key": "Accept",
+                                                        "value": "application/json"
+                                                      }
+                                                    ],
+                                                    "url": {
+                                                      "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year/segments/:segment/leaguedefaults/:scoringPeriodId?view=kona_player_info",
+                                                      "host": [
+                                                        "{{baseUrl}}"
+                                                      ],
+                                                      "path": [
+                                                        "apis",
+                                                        "v3",
+                                                        "games",
+                                                        "ffl",
+                                                        "seasons",
+                                                        ":year",
+                                                        "segments",
+                                                        ":segment",
+                                                        "leaguedefaults",
+                                                        ":scoringPeriodId"
+                                                      ],
+                                                      "query": [
+                                                        {
+                                                          "description": "The data view to retrieve",
+                                                          "key": "view",
+                                                          "value": "kona_player_info"
+                                                        }
+                                                      ],
+                                                      "variable": [
+                                                        {
+                                                          "key": "year"
+                                                        },
+                                                        {
+                                                          "key": "segment"
+                                                        },
+                                                        {
+                                                          "key": "scoringPeriodId"
+                                                        }
+                                                      ]
+                                                    }
+                                                  },
+                                                  "status": "Bad Request",
+                                                  "code": 400,
+                                                  "_postman_previewlanguage": "json",
+                                                  "header": [
+                                                    {
+                                                      "key": "Content-Type",
+                                                      "value": "application/json"
+                                                    }
+                                                  ],
+                                                  "cookie": [],
+                                                  "body": "{\n  \"error\": {\n    \"code\": 9198,\n    \"message\": \"string\"\n  }\n}"
+                                                }
+                                              ]
+                                            }
+                                          ]
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "name": "players",
+                              "item": [
+                                {
+                                  "name": "Get Fantasy Football Players",
+                                  "request": {
+                                    "method": "GET",
+                                    "header": [
+                                      {
+                                        "key": "X-Fantasy-Filter",
+                                        "value": "{\"players\":{\"limit\":3000}}",
+                                        "description": "JSON filter for player limits and other criteria.\nExample: {\"players\":{\"limit\":3000}}\nNote: The limit parameter may not always be respected by the API.\n"
+                                      },
+                                      {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year/players?view=kona_player_info&scoringPeriodId=0",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "apis",
+                                        "v3",
+                                        "games",
+                                        "ffl",
+                                        "seasons",
+                                        ":year",
+                                        "players"
+                                      ],
+                                      "query": [
+                                        {
+                                          "key": "view",
+                                          "value": "kona_player_info",
+                                          "description": "The data view to retrieve"
+                                        },
+                                        {
+                                          "key": "scoringPeriodId",
+                                          "value": "0",
+                                          "description": "The scoring period (week) to get player data for.\nUse 0 for preseason/current data. Used with players_wl view to get ownership percentages.\n"
+                                        }
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "year",
+                                          "value": "2024",
+                                          "description": "(Required) The season year"
+                                        }
+                                      ]
+                                    },
+                                    "description": "Retrieve a list of fantasy football players with various statistics and information.\n\nNote: The X-Fantasy-Filter header can be used to limit the number of players returned.\nWithout it, the API returns all players (typically 2000+). The limit in the filter\ndoesn't always work as expected - some views ignore it and return all players.\n"
+                                  },
+                                  "response": [
+                                    {
+                                      "name": "Successful response",
+                                      "originalRequest": {
+                                        "method": "GET",
+                                        "header": [
+                                          {
+                                            "description": "JSON filter for player limits and other criteria.\nExample: {\"players\":{\"limit\":3000}}\nNote: The limit parameter may not always be respected by the API.\n",
+                                            "key": "X-Fantasy-Filter",
+                                            "value": "{\"players\":{\"limit\":3000}}"
+                                          },
+                                          {
+                                            "key": "Accept",
+                                            "value": "application/json"
+                                          }
+                                        ],
+                                        "url": {
+                                          "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year/players?view=kona_player_info&scoringPeriodId=0",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "apis",
+                                            "v3",
+                                            "games",
+                                            "ffl",
+                                            "seasons",
+                                            ":year",
+                                            "players"
+                                          ],
+                                          "query": [
+                                            {
+                                              "description": "The data view to retrieve",
+                                              "key": "view",
+                                              "value": "kona_player_info"
+                                            },
+                                            {
+                                              "description": "The scoring period (week) to get player data for.\nUse 0 for preseason/current data. Used with players_wl view to get ownership percentages.\n",
+                                              "key": "scoringPeriodId",
+                                              "value": "0"
+                                            }
+                                          ],
+                                          "variable": [
+                                            {
+                                              "key": "year"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "status": "OK",
+                                      "code": 200,
+                                      "_postman_previewlanguage": "json",
+                                      "header": [
+                                        {
+                                          "key": "Content-Type",
+                                          "value": "application/json"
+                                        }
+                                      ],
+                                      "cookie": [],
+                                      "body": "[\n  {\n    \"active\": true,\n    \"defaultPositionId\": 7332,\n    \"draftRanksByRankType\": {\n      \"key_0\": {\n        \"auctionValue\": 9566.375918733082,\n        \"published\": true,\n        \"rank\": 1733,\n        \"rankSourceId\": 2555,\n        \"rankType\": \"string\",\n        \"slotId\": 3424\n      },\n      \"key_1\": {\n        \"auctionValue\": 4853.169486008919,\n        \"published\": true,\n        \"rank\": 3779,\n        \"rankSourceId\": 6923,\n        \"rankType\": \"string\",\n        \"slotId\": 1298\n      }\n    },\n    \"droppable\": false,\n    \"eligibleSlots\": [\n      4795,\n      2154\n    ],\n    \"firstName\": \"str\",\n    \"fullName\": \"string\",\n    \"id\": 2959,\n    \"injured\": true,\n    \"injuryStatus\": \"string\",\n    \"jersey\": \"string\",\n    \"lastName\": \"string\",\n    \"ownership\": {\n      \"activityLevel\": \"string\",\n      \"auctionValueAverage\": 1907.201528581124,\n      \"auctionValueAverageChange\": 73.09484210115346,\n      \"averageDraftPosition\": 1618.5949416092703,\n      \"averageDraftPositionPercentChange\": 2871.1489086928,\n      \"date\": \"st\",\n      \"leagueType\": 4974,\n      \"percentChange\": 8889.418485917071,\n      \"percentOwned\": 4635.743488003385,\n      \"percentStarted\": 6159.204880846867\n    },\n    \"proTeamId\": 2749,\n    \"stats\": [\n      {\n        \"externalId\": \"string\",\n        \"id\": \"string\",\n        \"proTeamId\": 6506,\n        \"scoringPeriodId\": 7387,\n        \"seasonId\": 9478,\n        \"statSourceId\": 1596,\n        \"statSplitTypeId\": 7930,\n        \"stats\": {\n          \"key_0\": 5796.509118316011\n        }\n      },\n      {\n        \"externalId\": \"string\",\n        \"id\": \"string\",\n        \"proTeamId\": 3900,\n        \"scoringPeriodId\": 5794,\n        \"seasonId\": 5147,\n        \"statSourceId\": 3515,\n        \"statSplitTypeId\": 1819,\n        \"stats\": {\n          \"key_0\": 6882.850252553596\n        }\n      }\n    ]\n  },\n  {\n    \"active\": true,\n    \"defaultPositionId\": 8637,\n    \"draftRanksByRankType\": {\n      \"key_0\": {\n        \"auctionValue\": 8516.055515502252,\n        \"published\": false,\n        \"rank\": 6392,\n        \"rankSourceId\": 6643,\n        \"rankType\": \"string\",\n        \"slotId\": 8561\n      },\n      \"key_1\": {\n        \"auctionValue\": 8106.858310929244,\n        \"published\": false,\n        \"rank\": 7191,\n        \"rankSourceId\": 9931,\n        \"rankType\": \"string\",\n        \"slotId\": 8727\n      },\n      \"key_2\": {\n        \"auctionValue\": 7895.158952861456,\n        \"published\": true,\n        \"rank\": 7225,\n        \"rankSourceId\": 9982,\n        \"rankType\": \"string\",\n        \"slotId\": 4257\n      },\n      \"key_3\": {\n        \"auctionValue\": 6578.864688335533,\n        \"published\": false,\n        \"rank\": 63,\n        \"rankSourceId\": 4119,\n        \"rankType\": \"string\",\n        \"slotId\": 6875\n      }\n    },\n    \"droppable\": true,\n    \"eligibleSlots\": [\n      8506,\n      2595\n    ],\n    \"firstName\": \"string\",\n    \"fullName\": \"string\",\n    \"id\": 9774,\n    \"injured\": false,\n    \"injuryStatus\": \"string\",\n    \"jersey\": \"string\",\n    \"lastName\": \"string\",\n    \"ownership\": {\n      \"activityLevel\": \"string\",\n      \"auctionValueAverage\": 1588.5442006597361,\n      \"auctionValueAverageChange\": 2284.601404345339,\n      \"averageDraftPosition\": 5888.489189114809,\n      \"averageDraftPositionPercentChange\": 9303.110261284197,\n      \"date\": \"string\",\n      \"leagueType\": 5387,\n      \"percentChange\": 5859.545440167122,\n      \"percentOwned\": 761.736735917733,\n      \"percentStarted\": 5676.039125865124\n    },\n    \"proTeamId\": 5524,\n    \"stats\": [\n      {\n        \"externalId\": \"string\",\n        \"id\": \"string\",\n        \"proTeamId\": 6620,\n        \"scoringPeriodId\": 1897,\n        \"seasonId\": 2584,\n        \"statSourceId\": 5264,\n        \"statSplitTypeId\": 6442,\n        \"stats\": {\n          \"key_0\": 2456.7317521426203,\n          \"key_1\": 8848.888201929674\n        }\n      },\n      {\n        \"externalId\": \"string\",\n        \"id\": \"string\",\n        \"proTeamId\": 7796,\n        \"scoringPeriodId\": 1527,\n        \"seasonId\": 6743,\n        \"statSourceId\": 1342,\n        \"statSplitTypeId\": 3510,\n        \"stats\": {\n          \"key_0\": 2023.100554855133\n        }\n      }\n    ]\n  }\n]"
+                                    },
+                                    {
+                                      "name": "Bad request",
+                                      "originalRequest": {
+                                        "method": "GET",
+                                        "header": [
+                                          {
+                                            "description": "JSON filter for player limits and other criteria.\nExample: {\"players\":{\"limit\":3000}}\nNote: The limit parameter may not always be respected by the API.\n",
+                                            "key": "X-Fantasy-Filter",
+                                            "value": "{\"players\":{\"limit\":3000}}"
+                                          },
+                                          {
+                                            "key": "Accept",
+                                            "value": "application/json"
+                                          }
+                                        ],
+                                        "url": {
+                                          "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year/players?view=kona_player_info&scoringPeriodId=0",
+                                          "host": [
+                                            "{{baseUrl}}"
+                                          ],
+                                          "path": [
+                                            "apis",
+                                            "v3",
+                                            "games",
+                                            "ffl",
+                                            "seasons",
+                                            ":year",
+                                            "players"
+                                          ],
+                                          "query": [
+                                            {
+                                              "description": "The data view to retrieve",
+                                              "key": "view",
+                                              "value": "kona_player_info"
+                                            },
+                                            {
+                                              "description": "The scoring period (week) to get player data for.\nUse 0 for preseason/current data. Used with players_wl view to get ownership percentages.\n",
+                                              "key": "scoringPeriodId",
+                                              "value": "0"
+                                            }
+                                          ],
+                                          "variable": [
+                                            {
+                                              "key": "year"
+                                            }
+                                          ]
+                                        }
+                                      },
+                                      "status": "Bad Request",
+                                      "code": 400,
+                                      "_postman_previewlanguage": "json",
+                                      "header": [
+                                        {
+                                          "key": "Content-Type",
+                                          "value": "application/json"
+                                        }
+                                      ],
+                                      "cookie": [],
+                                      "body": "{\n  \"error\": {\n    \"code\": 9198,\n    \"message\": \"string\"\n  }\n}"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "name": "Get Fantasy Football Season Data",
+                              "request": {
+                                "method": "GET",
+                                "header": [
+                                  {
+                                    "key": "Accept",
+                                    "value": "application/json"
+                                  }
+                                ],
+                                "url": {
+                                  "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year?view=proTeamSchedules_wl",
+                                  "host": [
+                                    "{{baseUrl}}"
+                                  ],
+                                  "path": [
+                                    "apis",
+                                    "v3",
+                                    "games",
+                                    "ffl",
+                                    "seasons",
+                                    ":year"
+                                  ],
+                                  "query": [
+                                    {
+                                      "key": "view",
+                                      "value": "proTeamSchedules_wl",
+                                      "description": "The data view to retrieve"
+                                    }
+                                  ],
+                                  "variable": [
+                                    {
+                                      "key": "year",
+                                      "value": "2024",
+                                      "description": "(Required) The season year"
+                                    }
+                                  ]
+                                },
+                                "description": "Retrieve season-level data for fantasy football, including pro team schedules and bye weeks"
+                              },
+                              "response": [
+                                {
+                                  "name": "Successful response",
+                                  "originalRequest": {
+                                    "method": "GET",
+                                    "header": [
+                                      {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year?view=proTeamSchedules_wl",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "apis",
+                                        "v3",
+                                        "games",
+                                        "ffl",
+                                        "seasons",
+                                        ":year"
+                                      ],
+                                      "query": [
+                                        {
+                                          "description": "The data view to retrieve",
+                                          "key": "view",
+                                          "value": "proTeamSchedules_wl"
+                                        }
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "year"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "OK",
+                                  "code": 200,
+                                  "_postman_previewlanguage": "json",
+                                  "header": [
+                                    {
+                                      "key": "Content-Type",
+                                      "value": "application/json"
+                                    }
+                                  ],
+                                  "cookie": [],
+                                  "body": "{\n  \"display\": false,\n  \"settings\": {\n    \"defaultDraftPosition\": 1338,\n    \"draftLobbyMinimumLeagueCount\": 6684,\n    \"gameNotificationSettings\": {\n      \"availabilityNotificationsEnabled\": true,\n      \"draftNotificationsEnabled\": true,\n      \"injuryNotificationsEnabled\": true,\n      \"lineupNotificationsEnabled\": true,\n      \"positionEligibilityNotificationsEnabled\": true,\n      \"rosterNewsNotificationsEnabled\": true,\n      \"startBenchNotificationsEnabled\": true,\n      \"tradeNotificationsEnabled\": true\n    },\n    \"gated\": true,\n    \"playerOwnershipSettings\": {\n      \"key_0\": true,\n      \"key_1\": true\n    },\n    \"proTeams\": [\n      {\n        \"abbrev\": \"st\",\n        \"byeWeek\": 9098,\n        \"id\": 4604,\n        \"location\": \"string\",\n        \"name\": \"string\",\n        \"proGamesByScoringPeriod\": {\n          \"key_0\": [\n            {\n              \"awayProTeamId\": 54,\n              \"date\": 8329,\n              \"homeProTeamId\": 4152,\n              \"id\": 4347,\n              \"scoringPeriodId\": 4622,\n              \"startTimeTBD\": true,\n              \"statsOfficial\": true,\n              \"validForLocking\": true\n            },\n            {\n              \"awayProTeamId\": 328,\n              \"date\": 3188,\n              \"homeProTeamId\": 4378,\n              \"id\": 8604,\n              \"scoringPeriodId\": 4353,\n              \"startTimeTBD\": true,\n              \"statsOfficial\": true,\n              \"validForLocking\": false\n            }\n          ]\n        },\n        \"teamPlayersByPosition\": {\n          \"key_0\": 7963,\n          \"key_1\": 3667\n        },\n        \"universeId\": 7421\n      },\n      {\n        \"abbrev\": \"string\",\n        \"byeWeek\": 960,\n        \"id\": 1154,\n        \"location\": \"string\",\n        \"name\": \"string\",\n        \"proGamesByScoringPeriod\": {\n          \"key_0\": [\n            {\n              \"awayProTeamId\": 3220,\n              \"date\": 7302,\n              \"homeProTeamId\": 1832,\n              \"id\": 275,\n              \"scoringPeriodId\": 4161,\n              \"startTimeTBD\": true,\n              \"statsOfficial\": false,\n              \"validForLocking\": false\n            },\n            {\n              \"awayProTeamId\": 1782,\n              \"date\": 92,\n              \"homeProTeamId\": 3860,\n              \"id\": 7470,\n              \"scoringPeriodId\": 5107,\n              \"startTimeTBD\": true,\n              \"statsOfficial\": false,\n              \"validForLocking\": false\n            }\n          ],\n          \"key_1\": [\n            {\n              \"awayProTeamId\": 7121,\n              \"date\": 6455,\n              \"homeProTeamId\": 4337,\n              \"id\": 7726,\n              \"scoringPeriodId\": 4576,\n              \"startTimeTBD\": false,\n              \"statsOfficial\": false,\n              \"validForLocking\": false\n            },\n            {\n              \"awayProTeamId\": 2523,\n              \"date\": 8144,\n              \"homeProTeamId\": 3609,\n              \"id\": 4119,\n              \"scoringPeriodId\": 509,\n              \"startTimeTBD\": true,\n              \"statsOfficial\": true,\n              \"validForLocking\": false\n            }\n          ],\n          \"key_2\": [\n            {\n              \"awayProTeamId\": 3311,\n              \"date\": 9720,\n              \"homeProTeamId\": 3423,\n              \"id\": 5775,\n              \"scoringPeriodId\": 5862,\n              \"startTimeTBD\": false,\n              \"statsOfficial\": true,\n              \"validForLocking\": true\n            },\n            {\n              \"awayProTeamId\": 4144,\n              \"date\": 3676,\n              \"homeProTeamId\": 4622,\n              \"id\": 3352,\n              \"scoringPeriodId\": 1248,\n              \"startTimeTBD\": false,\n              \"statsOfficial\": false,\n              \"validForLocking\": false\n            }\n          ],\n          \"key_3\": [\n            {\n              \"awayProTeamId\": 3747,\n              \"date\": 5254,\n              \"homeProTeamId\": 2454,\n              \"id\": 7094,\n              \"scoringPeriodId\": 2321,\n              \"startTimeTBD\": true,\n              \"statsOfficial\": true,\n              \"validForLocking\": true\n            },\n            {\n              \"awayProTeamId\": 9522,\n              \"date\": 145,\n              \"homeProTeamId\": 8521,\n              \"id\": 5397,\n              \"scoringPeriodId\": 958,\n              \"startTimeTBD\": false,\n              \"statsOfficial\": false,\n              \"validForLocking\": false\n            }\n          ],\n          \"key_4\": [\n            {\n              \"awayProTeamId\": 4090,\n              \"date\": 9961,\n              \"homeProTeamId\": 1283,\n              \"id\": 5523,\n              \"scoringPeriodId\": 7730,\n              \"startTimeTBD\": false,\n              \"statsOfficial\": false,\n              \"validForLocking\": true\n            },\n            {\n              \"awayProTeamId\": 9833,\n              \"date\": 3871,\n              \"homeProTeamId\": 3443,\n              \"id\": 1755,\n              \"scoringPeriodId\": 6561,\n              \"startTimeTBD\": false,\n              \"statsOfficial\": false,\n              \"validForLocking\": false\n            }\n          ]\n        },\n        \"teamPlayersByPosition\": {\n          \"key_0\": 3264,\n          \"key_1\": 954,\n          \"key_2\": 4767,\n          \"key_3\": 1125\n        },\n        \"universeId\": 4385\n      }\n    ],\n    \"readOnly\": true,\n    \"statIdToOverridePosition\": {\n      \"key_0\": true\n    },\n    \"teamActivityEnabled\": true,\n    \"typeNames\": {\n      \"key_0\": \"string\",\n      \"key_1\": \"string\"\n    }\n  }\n}"
+                                },
+                                {
+                                  "name": "Bad request",
+                                  "originalRequest": {
+                                    "method": "GET",
+                                    "header": [
+                                      {
+                                        "key": "Accept",
+                                        "value": "application/json"
+                                      }
+                                    ],
+                                    "url": {
+                                      "raw": "{{baseUrl}}/apis/v3/games/ffl/seasons/:year?view=proTeamSchedules_wl",
+                                      "host": [
+                                        "{{baseUrl}}"
+                                      ],
+                                      "path": [
+                                        "apis",
+                                        "v3",
+                                        "games",
+                                        "ffl",
+                                        "seasons",
+                                        ":year"
+                                      ],
+                                      "query": [
+                                        {
+                                          "description": "The data view to retrieve",
+                                          "key": "view",
+                                          "value": "proTeamSchedules_wl"
+                                        }
+                                      ],
+                                      "variable": [
+                                        {
+                                          "key": "year"
+                                        }
+                                      ]
+                                    }
+                                  },
+                                  "status": "Bad Request",
+                                  "code": 400,
+                                  "_postman_previewlanguage": "json",
+                                  "header": [
+                                    {
+                                      "key": "Content-Type",
+                                      "value": "application/json"
+                                    }
+                                  ],
+                                  "cookie": [],
+                                  "body": "{\n  \"error\": {\n    \"code\": 9198,\n    \"message\": \"string\"\n  }\n}"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://lm-api-reads.fantasy.espn.com"
+    }
+  ]
+}

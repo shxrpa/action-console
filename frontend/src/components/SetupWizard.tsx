@@ -133,12 +133,17 @@ export function SetupWizard({ action, missingVariables, onComplete, onCancel }: 
                 const varRef = getVariableRef(varName);
                 return (
                   <li key={varName}>
-                    <strong>{generateLabel(varName)}</strong>
-                    {varRef && (
-                      <span className="variable-locations">
-                        Used in: {varRef.locations.join(', ')}
-                      </span>
-                    )}
+                    <div className="variable-info">
+                      <strong>{generateLabel(varName)}</strong>
+                      {varRef?.description && (
+                        <p className="variable-description">{varRef.description}</p>
+                      )}
+                      {varRef && (
+                        <span className="variable-locations">
+                          Used in: {varRef.locations.join(', ')}
+                        </span>
+                      )}
+                    </div>
                   </li>
                 );
               })}
@@ -167,6 +172,9 @@ export function SetupWizard({ action, missingVariables, onComplete, onCancel }: 
                       {generateLabel(varName)}
                       {getVariableRef(varName)?.required && <span className="required">*</span>}
                     </label>
+                    {getVariableRef(varName)?.description && (
+                      <p className="field-description">{getVariableRef(varName)?.description}</p>
+                    )}
                     <div className="input-with-toggle">
                       <input
                         id={`var-${varName}`}

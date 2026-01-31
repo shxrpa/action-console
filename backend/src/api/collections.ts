@@ -4,7 +4,7 @@ import { CollectionModel, FolderModel, RequestModel } from '../models/Collection
 import { PostmanParser } from '../services/postmanParser';
 import { CollectionAnalyzer } from '../services/collectionAnalyzer';
 import { VariableModel } from '../models/Variable';
-import type { PostmanCollection } from '../types';
+import type { PostmanCollection, PostmanItem } from '../types';
 
 const router = Router();
 const upload = multer({
@@ -74,6 +74,10 @@ router.post('/import', upload.single('file'), (req, res) => {
       schemaVersion: metadata.schemaVersion,
       workspaceId,
     });
+
+    // Build a map of variable descriptions from the full collection
+    // Descriptions may only appear once, so we collect them from all requests/folders
+    const variableDescriptions = this.extractVariableDescriptions(collection);
 
     // Parse folders and requests (using temp IDs)
     const { folders: foldersWithTempIds, requests: requestsWithTempIds } = PostmanParser.parseItems(
@@ -170,7 +174,7 @@ router.post('/import', upload.single('file'), (req, res) => {
     // Run analysis on all requests
     for (const request of createdRequests) {
       try {
-        const analysis = CollectionAnalyzer.analyzeRequest(request, request.rawJson);
+        const analysis = CollectionAnalyzer.analyzeRequest(request, request.rawJson, variableDescriptions);
         // Ensure risk is always set (analysis should always return a risk)
         if (!analysis.risk) {
           analysis.risk = 'Write'; // Fallback default
@@ -276,5 +280,46 @@ router.delete('/:id', (req, res) => {
     res.status(500).json({ error: 'Failed to delete collection' });
   }
 });
+
+/**
+ * Extracts variable descriptions from the full collection
+ * Descriptions may only appear once, so we collect them from all requests/folders
+ */
+function extractVariableDescriptions(collection: PostmanCollection): Map<string, string> {
+  const descriptions = new Map<string, string>();
+
+  function extractFromItems(items: PostmanItem[]) {
+    items.forEach((item) => {
+      // Check if this item has a request with URL variables
+      if (item.request?.url && typeof item.request.url === 'object' && item.request.url.variable) {
+        item.request.url.variable.forEach((varDef: { key: string; description?: string }) => {
+          if (varDef.description && !descriptions.has(varDef.key)) {
+            descriptions.set(varDef.key, varDef.description);
+          }
+        });
+      }
+
+      // Check if this item (folder) has variables defined
+      if ((item as any).variable && Array.isArray((item as any).variable)) {
+        (item as any).variable.forEach((varDef: { key: string; description?: string }) => {
+          if (varDef.description && !descriptions.has(varDef.key)) {
+            descriptions.set(varDef.key, varDef.description);
+          }
+        });
+      }
+
+      // Recursively check nested items
+      if (item.item && Array.isArray(item.item)) {
+        extractFromItems(item.item);
+      }
+    });
+  }
+
+  if (collection.item) {
+    extractFromItems(collection.item);
+  }
+
+  return descriptions;
+}
 
 export default router;
