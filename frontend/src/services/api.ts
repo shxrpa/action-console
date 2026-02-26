@@ -304,6 +304,36 @@ export interface ExecutionResult {
   executionDuration: number;
 }
 
+export interface ResolvedPreview {
+  method: string;
+  url: string;
+  headersCount: number;
+  headers: Record<string, string>;
+  bodyPreview: string | null;
+}
+
+export async function getResolvedPreview(
+  actionId: string,
+  workspaceId: string,
+  environmentId: string | null,
+  formValues: Record<string, string>
+): Promise<ResolvedPreview> {
+  const response = await fetch(`${API_BASE_URL}/execute/${actionId}/preview`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      workspaceId,
+      environmentId,
+      formValues,
+    }),
+  });
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({ error: 'Failed to preview' }));
+    throw new Error(errorData.error || 'Failed to preview request');
+  }
+  return response.json();
+}
+
 export async function executeAction(
   actionId: string,
   workspaceId: string,
