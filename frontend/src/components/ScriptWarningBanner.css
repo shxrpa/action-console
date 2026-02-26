@@ -1,0 +1,21 @@
+.script-warning-banner {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: #fffbeb;
+  border: 1px solid #fcd34d;
+  border-radius: 6px;
+  color: #92400e;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.script-warning-banner__icon {
+  flex-shrink: 0;
+}
+
+.script-warning-banner__text {
+  flex: 1;
+}

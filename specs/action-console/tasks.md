@@ -496,62 +496,62 @@ Each Linear story maps to atomic implementation tasks. Tasks should be completed
 
 ### Tasks
 
-- [ ] **Task 8.1:** Create dangerous action confirmation modal
+- [x] **Task 8.1:** Create dangerous action confirmation modal
   - Check action.risk === "Dangerous" before execution
   - Show confirmation modal component
   - Display action name prominently
   - Require user to type action name exactly (input field)
   - Add "Cancel" and "Confirm" buttons
 
-- [ ] **Task 8.2:** Implement typed confirmation validation
+- [x] **Task 8.2:** Implement typed confirmation validation
   - Compare user input with action name (case-sensitive or case-insensitive)
   - Disable "Confirm" button if input doesn't match
   - Show validation message if mismatch
   - Enable "Confirm" button only on match
 
-- [ ] **Task 8.3:** Implement double confirmation for DELETE methods
+- [x] **Task 8.3:** Implement double confirmation for DELETE methods
   - First modal: "This is a DELETE request. Are you sure?"
   - Show action name and URL
   - "Cancel" and "Continue" buttons
   - On "Continue", show second modal (typed confirmation)
 
-- [ ] **Task 8.4:** Create EnvironmentBadge component
+- [x] **Task 8.4:** Create EnvironmentBadge component
   - Component: `<EnvironmentBadge environment={currentEnv} />`
   - Display environment name prominently
   - Color coding: Green (Sandbox/Dev), Red (Production), Yellow (Other)
   - Position: Top-right of header or above action form
 
-- [ ] **Task 8.5:** Implement environment confirmation in dangerous action flow
+- [x] **Task 8.5:** Implement environment confirmation in dangerous action flow
   - Show environment selection in confirmation modal
   - Display current environment prominently
   - Lock environment once confirmed (prevent changes mid-flow)
   - Require explicit environment confirmation checkbox
 
-- [ ] **Task 8.6:** Create ScriptWarningBanner component
+- [x] **Task 8.6:** Create ScriptWarningBanner component
   - Component: `<ScriptWarningBanner hasScripts={true} />`
   - Display warning message: "⚠️ This request contains Postman scripts that cannot be executed. The request may not behave exactly as it does in Postman."
   - Style with warning colors (yellow/amber)
   - Dismissible or always visible (prefer always visible)
 
-- [ ] **Task 8.7:** Integrate script warning banner into action form
+- [x] **Task 8.7:** Integrate script warning banner into action form
   - Check action.hasScripts === true
   - Display banner above action form
   - Keep banner visible during execution flow
   - Hide banner if hasScripts === false
 
-- [ ] **Task 8.8:** Add confirmation dialogs for write operations
+- [x] **Task 8.8:** Add confirmation dialogs for write operations
   - Show confirmation for POST requests
   - Show confirmation for PUT requests
   - Show confirmation for PATCH requests
   - Display "Undo is not possible" warning in dialog
 
-- [ ] **Task 8.9:** Implement resolved request preview
+- [x] **Task 8.9:** Implement resolved request preview
   - Before execution, show resolved request summary
   - Display: Method, URL, headers count, body preview
   - Mask secrets in preview
   - Allow user to review before confirming
 
-- [ ] **Task 8.10:** Implement clear action buttons
+- [x] **Task 8.10:** Implement clear action buttons
   - "Run Action" button (primary, colored)
   - "Cancel" button (secondary, outlined)
   - Disable buttons during execution

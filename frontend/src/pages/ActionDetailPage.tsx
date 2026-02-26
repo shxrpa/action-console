@@ -1,18 +1,26 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getActionDetails, executeAction, getCollection } from '../services/api';
+import { getActionDetails, executeAction, getCollection, getResolvedPreview } from '../services/api';
+import type { Action, ExecutionResult as ExecutionResultType, ResolvedPreview } from '../services/api';
 import { useWorkspace } from '../contexts/WorkspaceContext';
 import { useEnvironment } from '../contexts/EnvironmentContext';
 import { SetupWizard } from '../components/SetupWizard';
 import { ActionForm } from '../components/ActionForm';
 import { ExecutionResult } from '../components/ExecutionResult';
-import type { Action, ExecutionResult as ExecutionResultType } from '../services/api';
+import { EnvironmentBadge } from '../components/EnvironmentBadge';
+import { ScriptWarningBanner } from '../components/ScriptWarningBanner';
+import { ResolvedRequestPreviewModal } from '../components/ResolvedRequestPreviewModal';
+import { DangerousConfirmModal } from '../components/DangerousConfirmModal';
+import { DeleteFirstConfirmModal } from '../components/DeleteFirstConfirmModal';
+import { WriteConfirmModal } from '../components/WriteConfirmModal';
+
+type ConfirmStep = 'preview' | 'delete-first' | 'typed' | 'write' | null;
 
 function ActionDetailPage() {
   const { actionId, collectionId } = useParams<{ actionId: string; collectionId: string }>();
   const navigate = useNavigate();
   const { selectedWorkspaceId, setSelectedWorkspaceId } = useWorkspace();
-  const { selectedEnvironmentId } = useEnvironment();
+  const { selectedEnvironmentId, environments } = useEnvironment();
   const [action, setAction] = useState<Action | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -20,6 +28,14 @@ function ActionDetailPage() {
   const [showForm, setShowForm] = useState(false);
   const [isExecuting, setIsExecuting] = useState(false);
   const [executionResult, setExecutionResult] = useState<ExecutionResultType | null>(null);
+  const [pendingFormValues, setPendingFormValues] = useState<Record<string, string> | null>(null);
+  const [resolvedPreview, setResolvedPreview] = useState<ResolvedPreview | null>(null);
+  const [confirmStep, setConfirmStep] = useState<ConfirmStep>(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
+
+  const currentEnvironment = selectedEnvironmentId
+    ? environments.find((e) => e.id === selectedEnvironmentId) ?? null
+    : null;
 
   useEffect(() => {
     if (actionId) {
@@ -73,26 +89,87 @@ function ActionDetailPage() {
     }
   };
 
-  const handleFormSubmit = async (values: Record<string, string>) => {
-    if (!action || !selectedWorkspaceId) return;
-
+  const doExecute = async () => {
+    if (!action || !selectedWorkspaceId || !pendingFormValues) return;
+    setConfirmStep(null);
+    setResolvedPreview(null);
     setIsExecuting(true);
     setError(null);
-
     try {
       const result = await executeAction(
         action.id,
         selectedWorkspaceId,
         selectedEnvironmentId ?? null,
-        values
+        pendingFormValues
       );
       setExecutionResult(result);
       setShowForm(false);
+      setPendingFormValues(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to execute action');
     } finally {
       setIsExecuting(false);
     }
+  };
+
+  const handleFormSubmit = async (values: Record<string, string>) => {
+    if (!action || !selectedWorkspaceId) return;
+
+    setPreviewLoading(true);
+    setError(null);
+    try {
+      const preview = await getResolvedPreview(
+        action.id,
+        selectedWorkspaceId,
+        selectedEnvironmentId ?? null,
+        values
+      );
+      setResolvedPreview(preview);
+      setPendingFormValues(values);
+      setConfirmStep('preview');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to load preview');
+    } finally {
+      setPreviewLoading(false);
+    }
+  };
+
+  const handlePreviewContinue = () => {
+    if (!action || !resolvedPreview) return;
+    const method = resolvedPreview.method.toUpperCase();
+    const risk = action.risk || 'Write';
+
+    if (method === 'DELETE') {
+      setConfirmStep('delete-first');
+      return;
+    }
+    if (risk === 'Dangerous') {
+      setConfirmStep('typed');
+      return;
+    }
+    if (['POST', 'PUT', 'PATCH'].includes(method)) {
+      setConfirmStep('write');
+      return;
+    }
+    doExecute();
+  };
+
+  const handlePreviewCancel = () => {
+    setConfirmStep(null);
+    setResolvedPreview(null);
+    setPendingFormValues(null);
+  };
+
+  const handleDeleteFirstContinue = () => {
+    setConfirmStep('typed');
+  };
+
+  const handleTypedConfirm = () => {
+    doExecute();
+  };
+
+  const handleWriteConfirm = () => {
+    doExecute();
   };
 
   const handleWizardComplete = () => {
@@ -146,14 +223,49 @@ function ActionDetailPage() {
         />
       )}
 
+      {confirmStep === 'preview' && resolvedPreview && (
+        <ResolvedRequestPreviewModal
+          preview={resolvedPreview}
+          onConfirm={handlePreviewContinue}
+          onCancel={handlePreviewCancel}
+        />
+      )}
+      {confirmStep === 'delete-first' && resolvedPreview && action && (
+        <DeleteFirstConfirmModal
+          actionName={action.name}
+          url={resolvedPreview.url}
+          onContinue={handleDeleteFirstContinue}
+          onCancel={handlePreviewCancel}
+        />
+      )}
+      {confirmStep === 'typed' && action && (
+        <DangerousConfirmModal
+          actionName={action.name}
+          environmentName={currentEnvironment?.name ?? null}
+          requireEnvConfirmation={true}
+          onConfirm={handleTypedConfirm}
+          onCancel={handlePreviewCancel}
+        />
+      )}
+      {confirmStep === 'write' && resolvedPreview && (
+        <WriteConfirmModal
+          method={resolvedPreview.method}
+          onConfirm={handleWriteConfirm}
+          onCancel={handlePreviewCancel}
+        />
+      )}
+
       <div className="detail-header">
-        <button
-          className="back-button"
-          onClick={() => navigate(collectionId ? `/collections/${collectionId}/actions` : '/collections')}
-        >
-          ← Back to Catalog
-        </button>
-        <h2>{action.name}</h2>
+        <div className="detail-header__left">
+          <button
+            className="back-button"
+            onClick={() => navigate(collectionId ? `/collections/${collectionId}/actions` : '/collections')}
+          >
+            ← Back to Catalog
+          </button>
+          <h2>{action.name}</h2>
+        </div>
+        <EnvironmentBadge environment={currentEnvironment} />
       </div>
 
       <div className="detail-content">
@@ -260,12 +372,18 @@ function ActionDetailPage() {
 
         {showForm && !executionResult && (
           <div className="detail-section">
+            {action.hasScripts && <ScriptWarningBanner hasScripts={true} />}
             <ActionForm
               actionId={action.id}
               onSubmit={handleFormSubmit}
               onCancel={() => setShowForm(false)}
-              disabled={isExecuting}
+              disabled={isExecuting || previewLoading}
             />
+            {previewLoading && (
+              <div className="execution-loading">
+                <p>Loading preview...</p>
+              </div>
+            )}
             {isExecuting && (
               <div className="execution-loading">
                 <p>Executing action...</p>
