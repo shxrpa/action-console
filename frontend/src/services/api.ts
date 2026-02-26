@@ -70,6 +70,26 @@ export async function fetchCollections(workspaceId: string): Promise<Collection[
   return response.json();
 }
 
+export async function getCollection(collectionId: string): Promise<Collection & { folders?: unknown; requests?: unknown }> {
+  const response = await fetch(`${API_BASE_URL}/collections/${collectionId}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch collection');
+  }
+  return response.json();
+}
+
+export async function deleteCollection(collectionId: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/collections/${collectionId}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error('Collection not found');
+    }
+    throw new Error('Failed to delete collection');
+  }
+}
+
 // Variable Wallet API
 import type {
   Variable,
@@ -208,6 +228,7 @@ export interface VariableRef {
   name: string;
   required: boolean;
   locations: Array<'url' | 'header' | 'body'>;
+  description?: string;
 }
 
 export async function getActionDetails(
@@ -235,6 +256,7 @@ export async function getActionDetails(
 export interface FormField {
   variableName: string;
   label: string;
+  description?: string;
   inputType: 'text' | 'password' | 'number';
   defaultValue: string;
   required: boolean;

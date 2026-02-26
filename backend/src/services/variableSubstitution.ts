@@ -14,14 +14,15 @@ export function substituteVariables(
   return template.replace(/\{\{([^}]+)\}\}/g, (match, varName) => {
     const trimmedVarName = varName.trim();
     const value = variables.get(trimmedVarName);
-    
-    if (value === undefined) {
-      // Variable not found - return empty string or throw error?
-      // For now, return empty string to allow partial substitution
-      console.warn(`Variable ${trimmedVarName} not found in variables map`);
+
+    // Never send unresolved placeholders (missing or value still "{{x}}")
+    if (value === undefined || (typeof value === 'string' && value.includes('{{') && value.includes('}}'))) {
+      if (value === undefined) {
+        console.warn(`Variable ${trimmedVarName} not found in variables map`);
+      }
       return '';
     }
-    
+
     return value;
   });
 }

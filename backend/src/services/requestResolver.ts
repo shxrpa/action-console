@@ -34,8 +34,10 @@ export class RequestResolver {
     const headers = request.headers ? JSON.parse(request.headers) : [];
     
     // Substitute variables in URL
-    const resolvedUrl = substituteVariables(request.url, variables);
-    
+    let resolvedUrl = substituteVariables(request.url, variables);
+    // Strip empty query params so APIs don't receive e.g. resource=&metrics= (Postman API returns 400 for those)
+    resolvedUrl = this.stripEmptyQueryParams(resolvedUrl);
+
     // Substitute variables in headers
     const resolvedHeaders: Record<string, string> = {};
     for (const header of headers) {
@@ -100,10 +102,10 @@ export class RequestResolver {
       variables.set(walletVar.name, value);
     }
     
-    // Override with form values (form values take precedence)
+    // Override with form values (form values take precedence). Include all keys so every form field is substituted (empty string if blank).
     for (const [key, value] of Object.entries(context.formValues)) {
-      if (value !== undefined && value !== null) {
-        variables.set(key, value);
+      if (key !== undefined && key !== null && key !== '') {
+        variables.set(key, value !== undefined && value !== null ? String(value) : '');
       }
     }
     
@@ -139,6 +141,26 @@ export class RequestResolver {
     if (username && password) {
       const credentials = Buffer.from(`${username}:${password}`).toString('base64');
       headers['Authorization'] = `Basic ${credentials}`;
+    }
+  }
+
+  /**
+   * Removes query parameters with empty values from the URL.
+   * Avoids sending e.g. ?resource=&metrics= which some APIs reject (e.g. Postman API 400).
+   */
+  private static stripEmptyQueryParams(url: string): string {
+    try {
+      const parsed = new URL(url);
+      const search = parsed.searchParams;
+      const toDelete: string[] = [];
+      search.forEach((value, key) => {
+        if (value === '' || value === undefined) toDelete.push(key);
+      });
+      toDelete.forEach((key) => search.delete(key));
+      parsed.search = search.toString();
+      return parsed.toString();
+    } catch {
+      return url;
     }
   }
 

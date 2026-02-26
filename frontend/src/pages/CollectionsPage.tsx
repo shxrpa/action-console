@@ -1,5 +1,5 @@
 import { useState, useEffect, useContext } from 'react';
-import { fetchCollections, type Collection } from '../services/api';
+import { fetchCollections, deleteCollection, type Collection } from '../services/api';
 import { WorkspaceContext } from '../contexts/WorkspaceContext';
 import CollectionTree from '../components/CollectionTree';
 
@@ -29,6 +29,22 @@ function CollectionsPage() {
       setError(err instanceof Error ? err.message : 'Failed to load collections');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleDelete = async (e: React.MouseEvent, collection: Collection) => {
+    e.stopPropagation();
+    if (!window.confirm(`Delete collection "${collection.name}"? This will remove all its requests and cannot be undone.`)) {
+      return;
+    }
+    try {
+      await deleteCollection(collection.id);
+      if (selectedCollection?.id === collection.id) {
+        setSelectedCollection(null);
+      }
+      await loadCollections();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to delete collection');
     }
   };
 
@@ -80,6 +96,14 @@ function CollectionsPage() {
                       }}
                     >
                       View Actions
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-delete-collection"
+                      onClick={(e) => handleDelete(e, collection)}
+                      title="Delete collection"
+                    >
+                      Delete
                     </button>
                   </div>
                   <div className="collection-item-header">

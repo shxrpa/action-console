@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getActionDetails, executeAction } from '../services/api';
+import { getActionDetails, executeAction, getCollection } from '../services/api';
 import { useWorkspace } from '../contexts/WorkspaceContext';
 import { useEnvironment } from '../contexts/EnvironmentContext';
 import { SetupWizard } from '../components/SetupWizard';
@@ -11,7 +11,7 @@ import type { Action, ExecutionResult as ExecutionResultType } from '../services
 function ActionDetailPage() {
   const { actionId, collectionId } = useParams<{ actionId: string; collectionId: string }>();
   const navigate = useNavigate();
-  const { selectedWorkspaceId } = useWorkspace();
+  const { selectedWorkspaceId, setSelectedWorkspaceId } = useWorkspace();
   const { selectedEnvironmentId } = useEnvironment();
   const [action, setAction] = useState<Action | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -33,9 +33,22 @@ function ActionDetailPage() {
     try {
       setIsLoading(true);
       setError(null);
+      // If no workspace selected but we have a collection, set workspace from collection so Run Action is enabled
+      let effectiveWorkspaceId = selectedWorkspaceId;
+      if (!effectiveWorkspaceId && collectionId) {
+        try {
+          const col = await getCollection(collectionId);
+          if (col?.workspaceId) {
+            setSelectedWorkspaceId(col.workspaceId);
+            effectiveWorkspaceId = col.workspaceId;
+          }
+        } catch {
+          // ignore; we'll just have no workspace
+        }
+      }
       const actionData = await getActionDetails(
         actionId,
-        selectedWorkspaceId || undefined,
+        effectiveWorkspaceId || undefined,
         selectedEnvironmentId ?? undefined
       );
       setAction(actionData);

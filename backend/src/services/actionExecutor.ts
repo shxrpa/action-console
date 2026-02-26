@@ -12,6 +12,26 @@ export interface ExecutionResult {
 
 const DEFAULT_TIMEOUT = 30000; // 30 seconds
 
+const SENSITIVE_HEADER_NAMES = [
+  'authorization',
+  'x-api-key',
+  'api-key',
+  'x-auth-token',
+  'cookie',
+  'set-cookie',
+  'proxy-authorization',
+];
+
+function maskSensitiveHeaders(headers: Record<string, string>): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [key, value] of Object.entries(headers)) {
+    const lower = key.toLowerCase();
+    const isSensitive = SENSITIVE_HEADER_NAMES.some((h) => lower === h || lower.includes(h));
+    out[key] = isSensitive && value ? '••••••' : value;
+  }
+  return out;
+}
+
 /**
  * Executes an HTTP request and returns the result
  */
@@ -39,7 +59,7 @@ export class ActionExecutor {
       // Execute request
       const response = await fetch(request.url, fetchOptions);
       
-      // Capture response
+      // Capture response and mask sensitive headers so API keys etc. are never shown in UI
       const responseBody = await response.text();
       const responseHeaders: Record<string, string> = {};
       response.headers.forEach((value, key) => {
@@ -50,9 +70,12 @@ export class ActionExecutor {
       const success = response.status >= 200 && response.status < 300;
 
       return {
-        resolvedRequest,
+        resolvedRequest: {
+          ...resolvedRequest,
+          headers: maskSensitiveHeaders(resolvedRequest.headers),
+        },
         responseStatus: response.status,
-        responseHeaders,
+        responseHeaders: maskSensitiveHeaders(responseHeaders),
         responseBody,
         success,
         error: success ? null : `HTTP ${response.status}: ${response.statusText}`,
@@ -73,7 +96,10 @@ export class ActionExecutor {
       }
 
       return {
-        resolvedRequest,
+        resolvedRequest: {
+          ...resolvedRequest,
+          headers: maskSensitiveHeaders(resolvedRequest.headers),
+        },
         responseStatus: 0,
         responseHeaders: {},
         responseBody: '',

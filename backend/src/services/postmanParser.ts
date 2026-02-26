@@ -1,4 +1,51 @@
 import type { PostmanCollection, PostmanItem, PostmanRequest } from '../types';
+import type { QueryParamDef } from '../types';
+
+export type CollectionAuthHeaders = Array<{ key: string; value: string }>;
+
+export interface BuildUrlResult {
+  url: string;
+  queryParams: QueryParamDef[];
+}
+
+/**
+ * Resolves collection-level auth to a list of headers (with variable placeholders like {{postman-api-key}}).
+ * These should be merged into each request so variable extraction and execution get the required auth vars.
+ */
+export function resolveCollectionAuth(collection: PostmanCollection): CollectionAuthHeaders {
+  const auth = collection.auth;
+  if (!auth || !auth.type || auth.type === 'noauth') return [];
+
+  if (auth.type === 'apikey' && Array.isArray(auth.apikey)) {
+    let headerName = 'Authorization';
+    let headerValue = '';
+    for (const entry of auth.apikey) {
+      if (entry.key === 'key') headerName = entry.value;
+      if (entry.key === 'value') headerValue = entry.value;
+    }
+    if (headerName && headerValue) return [{ key: headerName, value: headerValue }];
+  }
+
+  if (auth.type === 'bearer' && Array.isArray(auth.bearer)) {
+    let token = '';
+    for (const entry of auth.bearer) {
+      if (entry.key === 'token') token = entry.value;
+    }
+    if (token) return [{ key: 'Authorization', value: `Bearer ${token}` }];
+  }
+
+  if (auth.type === 'basic' && Array.isArray(auth.basic)) {
+    let username = '';
+    let password = '';
+    for (const entry of auth.basic) {
+      if (entry.key === 'username') username = entry.value;
+      if (entry.key === 'password') password = entry.value;
+    }
+    if (username || password) return [{ key: 'Authorization', value: `Basic {{base64(${username}:${password})}}` }];
+  }
+
+  return [];
+}
 
 export class PostmanParser {
   /**
@@ -50,20 +97,22 @@ export class PostmanParser {
   }
 
   /**
-   * Recursively parses items to extract folders and requests
-   * Returns folders with temporary IDs that need to be replaced with actual DB IDs
+   * Recursively parses items to extract folders and requests.
+   * Collection auth headers are merged into each request so variables like {{postman-api-key}} are extracted and required.
+   * Returns folders with temporary IDs that need to be replaced with actual DB IDs.
    */
   static parseItems(
     items: PostmanItem[],
     collectionId: string,
     parentFolderId: string | null = null,
-    order: number = 0
+    order: number = 0,
+    collectionAuthHeaders: CollectionAuthHeaders = []
   ): {
     folders: Array<{ tempId: string; name: string; parentTempId: string | null; collectionId: string; order: number }>;
-    requests: Array<{ name: string; method: string; url: string; headers: string; body: string | null; parentFolderTempId: string | null; collectionId: string; rawJson: string }>;
+    requests: Array<{ name: string; method: string; url: string; headers: string; body: string | null; parentFolderTempId: string | null; collectionId: string; rawJson: string; queryParams: string }>;
   } {
     const folders: Array<{ tempId: string; name: string; parentTempId: string | null; collectionId: string; order: number }> = [];
-    const requests: Array<{ name: string; method: string; url: string; headers: string; body: string | null; parentFolderTempId: string | null; collectionId: string; rawJson: string }> = [];
+    const requests: Array<{ name: string; method: string; url: string; headers: string; body: string | null; parentFolderTempId: string | null; collectionId: string; rawJson: string; queryParams: string }> = [];
 
     items.forEach((item, index) => {
       const currentOrder = order + index;
@@ -79,15 +128,17 @@ export class PostmanParser {
           order: currentOrder,
         });
 
-        // Recursively parse folder contents
-        const nested = this.parseItems(item.item, collectionId, folderTempId, currentOrder * 1000);
+        // Recursively parse folder contents (inherit collection auth)
+        const nested = this.parseItems(item.item, collectionId, folderTempId, currentOrder * 1000, collectionAuthHeaders);
         folders.push(...nested.folders);
         requests.push(...nested.requests);
       } else if (item.request) {
-        // This is a request
+        // This is a request: merge collection-level auth into headers so API key etc. are extracted
         const request = item.request;
-        const url = this.buildUrl(request.url);
-        const headers = JSON.stringify(request.header || []);
+        const { url, queryParams } = this.buildUrl(request.url);
+        const requestHeaders = request.header || [];
+        const mergedHeaders = this.mergeAuthHeaders(requestHeaders, collectionAuthHeaders);
+        const headers = JSON.stringify(mergedHeaders);
         const body = this.extractBody(request.body);
 
         requests.push({
@@ -99,6 +150,7 @@ export class PostmanParser {
           parentFolderTempId: parentFolderId,
           collectionId,
           rawJson: JSON.stringify(item),
+          queryParams: JSON.stringify(queryParams),
         });
       }
     });
@@ -106,34 +158,82 @@ export class PostmanParser {
     return { folders, requests };
   }
 
+  /** Collection auth headers first; request headers override by key and add extra. */
+  private static mergeAuthHeaders(
+    requestHeaders: Array<{ key: string; value: string }>,
+    collectionAuthHeaders: CollectionAuthHeaders
+  ): Array<{ key: string; value: string }> {
+    const byKey = new Map<string, { key: string; value: string }>();
+    for (const h of collectionAuthHeaders) {
+      if (h.key) byKey.set(h.key.toLowerCase(), { key: h.key, value: h.value });
+    }
+    for (const h of requestHeaders) {
+      if (h.key) byKey.set(h.key.toLowerCase(), { key: h.key, value: h.value });
+    }
+    return Array.from(byKey.values());
+  }
+
   /**
-   * Builds URL string from Postman URL object
+   * Converts Postman path params (:paramName) to {{paramName}} so they are extracted as variables and substituted.
+   * Only replaces :word when it appears as a path segment (after /) to avoid touching : in protocol.
    */
-  private static buildUrl(urlObj: PostmanRequest['url']): string {
+  private static convertPathParamsToVariables(url: string): string {
+    return url.replace(/\/(:[a-zA-Z0-9_]+)(?=\/|$|\?)/g, (_, param) => `/{{${param.slice(1)}}}`);
+  }
+
+  /**
+   * Builds URL string from Postman URL object. Empty query param values become {{key}} so they show as form variables.
+   * Path params like :apiId are converted to {{apiId}}. Returns query param definitions for form labels/descriptions.
+   */
+  private static buildUrl(urlObj: PostmanRequest['url']): BuildUrlResult {
+    const emptyQueryParams: QueryParamDef[] = [];
+
     if (typeof urlObj === 'string') {
-      return urlObj;
+      return { url: this.convertPathParamsToVariables(urlObj), queryParams: [] };
+    }
+
+    // Postman: query params with disabled: true are not sent; only include enabled params
+    const enabledQuery = Array.isArray(urlObj.query)
+      ? urlObj.query.filter((q) => !q.disabled)
+      : [];
+    const hasQueryWithDescriptions = enabledQuery.length > 0;
+    if (hasQueryWithDescriptions) {
+      // Build from components so we can use {{key}} for empty params and collect descriptions
+      const host = urlObj.host?.join('.') || '';
+      const path = urlObj.path?.join('/') || '';
+      const queryParts = enabledQuery.map((q: { key: string; value?: string; description?: string }) => {
+        const value = q.value?.trim() ?? '';
+        const useVariable = !value || value.startsWith('{{');
+        const paramValue = useVariable ? `{{${q.key}}}` : value;
+        const desc = typeof q.description === 'string' ? q.description : (q.description && typeof q.description === 'object' && 'content' in q.description) ? (q.description as { content?: string }).content : undefined;
+        if (useVariable) {
+          emptyQueryParams.push({ key: q.key, value: paramValue, description: desc });
+        }
+        // Keep {{variable}} unencoded so substitution can find and replace them; only encode literal values
+        const encodedValue = useVariable ? paramValue : encodeURIComponent(value);
+        return `${encodeURIComponent(q.key)}=${encodedValue}`;
+      });
+      const query = queryParts.join('&');
+      let url = host;
+      if (path) url += '/' + path;
+      if (query) url += '?' + query;
+      return { url: this.convertPathParamsToVariables(url || ''), queryParams: emptyQueryParams };
     }
 
     if (urlObj.raw) {
-      return urlObj.raw;
+      return { url: this.convertPathParamsToVariables(urlObj.raw), queryParams: [] };
     }
 
-    // Build from components
+    // Build from components (no query or no descriptions)
     const host = urlObj.host?.join('.') || '';
     const path = urlObj.path?.join('/') || '';
     const query = urlObj.query
-      ?.map((q: { key: string; value?: string }) => `${encodeURIComponent(q.key)}=${encodeURIComponent(q.value || '')}`)
+      ?.map((q: { key: string; value?: string }) => `${encodeURIComponent(q.key)}=${encodeURIComponent(q.value ?? '')}`)
       .join('&');
-
     let url = host;
-    if (path) {
-      url += '/' + path;
-    }
-    if (query) {
-      url += '?' + query;
-    }
-
-    return url || '';
+    if (path) url += '/' + path;
+    if (query) url += '?' + query;
+    return { url: this.convertPathParamsToVariables(url || ''), queryParams: [] };
   }
 
   /**

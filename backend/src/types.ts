@@ -47,12 +47,21 @@ export interface Request {
   risk: 'Safe' | 'Write' | 'Dangerous'; // Always required
   hasScripts?: boolean;
   warnings?: string; // JSON string of string[]
+  queryParams?: string; // JSON string of QueryParamDef[] (key, description) for form labels/descriptions
+}
+
+/** Query parameter definition from Postman (for form fields and descriptions) */
+export interface QueryParamDef {
+  key: string;
+  value?: string;
+  description?: string;
 }
 
 export interface VariableRef {
   name: string;
   required: boolean;
   locations: Array<'url' | 'header' | 'body'>;
+  description?: string; // From Postman query/header/body description when available
 }
 
 // Postman Collection types
@@ -65,6 +74,15 @@ export interface PostmanCollection {
   };
   item: PostmanItem[];
   variable?: PostmanVariable[];
+  auth?: PostmanAuth;
+}
+
+/** Collection- or folder-level auth (inherited by requests with empty auth) */
+export interface PostmanAuth {
+  type: string;
+  apikey?: Array<{ key: string; value: string; type?: string }>;
+  bearer?: Array<{ key: string; value: string; type?: string }>;
+  basic?: Array<{ key: string; value: string; type?: string }>;
 }
 
 export interface PostmanItem {
@@ -87,7 +105,7 @@ export interface PostmanRequest {
     raw?: string;
     host?: string[];
     path?: string[];
-    query?: Array<{ key: string; value: string }>;
+    query?: Array<{ key: string; value?: string; description?: string; disabled?: boolean }>;
   };
 }
 

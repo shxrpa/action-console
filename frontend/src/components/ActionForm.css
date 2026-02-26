@@ -58,6 +58,15 @@
   margin-left: 0.25rem;
 }
 
+.field-description {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--text-secondary, #64748b);
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
 .label-edit-btn {
   background: none;
   border: none;
@@ -101,6 +110,19 @@
   color: #ef4444;
   font-size: 0.75rem;
   margin-top: -0.25rem;
+}
+
+.blank-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--text-secondary, #64748b);
+  margin-top: 0.35rem;
+}
+
+.blank-checkbox input[type="checkbox"] {
+  margin: 0;
 }
 
 .field-locations {

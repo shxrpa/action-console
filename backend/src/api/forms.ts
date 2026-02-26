@@ -1,8 +1,8 @@
 import { Router } from 'express';
-import { RequestModel, FolderModel } from '../models/Collection';
-import { ActionTransformer } from '../services/actionTransformer';
+import { RequestModel } from '../models/Collection';
 import { FormGenerator } from '../services/formGenerator';
 import { VariableModel } from '../models/Variable';
+import type { VariableRef, QueryParamDef } from '../types';
 
 const router = Router();
 
@@ -20,11 +20,21 @@ router.get('/:actionId', (req, res) => {
     }
 
     // Parse variables from request
-    const variables = request.variables ? JSON.parse(request.variables) : [];
-    console.log(`Form generation for action ${actionId}: Found ${variables.length} variables:`, variables);
-    
-    if (variables.length === 0) {
-      console.log('No variables found in request, returning empty form');
+    const variables: VariableRef[] = request.variables ? JSON.parse(request.variables) : [];
+    const requestRow = request as unknown as { query_params?: string; queryParams?: string };
+    const rawQueryParams = requestRow.query_params ?? requestRow.queryParams;
+    const queryParams: QueryParamDef[] = rawQueryParams && typeof rawQueryParams === 'string' ? JSON.parse(rawQueryParams) : [];
+    const descriptionByKey = new Map<string, string>();
+    for (const q of queryParams) {
+      if (q.key && q.description) descriptionByKey.set(q.key, q.description);
+    }
+    const variablesWithDescriptions = variables.map((v) => ({
+      ...v,
+      description: v.description ?? descriptionByKey.get(v.name),
+    }));
+
+    console.log(`Form generation for action ${actionId}: Found ${variablesWithDescriptions.length} variables`);
+    if (variablesWithDescriptions.length === 0) {
       return res.json({ fields: [] });
     }
 
@@ -33,16 +43,13 @@ router.get('/:actionId', (req, res) => {
     if (workspaceId) {
       const walletVariables = VariableModel.findByWorkspace(workspaceId, environmentId || null);
       for (const walletVar of walletVariables) {
-        // Only use non-secret values as defaults (secrets should be re-entered)
         if (!walletVar.isSecret) {
           variableDefaults.set(walletVar.name, walletVar.value);
         }
       }
     }
 
-    // Generate form schema
-    const schema = FormGenerator.generateFormSchema(variables, variableDefaults);
-
+    const schema = FormGenerator.generateFormSchema(variablesWithDescriptions, variableDefaults);
     res.json(schema);
   } catch (error) {
     console.error('Error generating form schema:', error);

@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import { CollectionModel, FolderModel, RequestModel } from '../models/Collection';
-import { PostmanParser } from '../services/postmanParser';
+import { PostmanParser, resolveCollectionAuth } from '../services/postmanParser';
 import { CollectionAnalyzer } from '../services/collectionAnalyzer';
 import { VariableModel } from '../models/Variable';
 import type { PostmanCollection } from '../types';
@@ -75,10 +75,14 @@ router.post('/import', upload.single('file'), (req, res) => {
       workspaceId,
     });
 
-    // Parse folders and requests (using temp IDs)
+    // Parse folders and requests (using temp IDs). Merge collection-level auth into each request so API key etc. are extracted.
+    const collectionAuthHeaders = resolveCollectionAuth(collection);
     const { folders: foldersWithTempIds, requests: requestsWithTempIds } = PostmanParser.parseItems(
       collection.item,
-      collectionRecord.id
+      collectionRecord.id,
+      null,
+      0,
+      collectionAuthHeaders
     );
 
     // Create folder ID mapping (tempId -> actual DB ID)
@@ -130,6 +134,7 @@ router.post('/import', upload.single('file'), (req, res) => {
         folderId,
         collectionId: req.collectionId,
         rawJson: req.rawJson,
+        queryParams: req.queryParams,
       };
     });
 

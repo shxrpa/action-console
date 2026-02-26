@@ -3,6 +3,7 @@ import type { VariableRef } from '../types';
 export interface FormField {
   variableName: string;
   label: string;
+  description?: string;
   inputType: 'text' | 'password' | 'number';
   defaultValue: string;
   required: boolean;
@@ -35,6 +36,7 @@ export class FormGenerator {
       return {
         variableName: variable.name,
         label,
+        description: variable.description,
         inputType,
         defaultValue,
         required: variable.required,
@@ -89,16 +91,13 @@ export class FormGenerator {
       return 'password';
     }
 
-    // Check for number keywords
+    // Check for numeric value keywords only (not identifiers like collectionId, apiId, schemaId)
     if (
-      lower.includes('id') ||
       lower.includes('count') ||
       lower.includes('number') ||
       lower.includes('size') ||
       lower.includes('quantity') ||
-      lower.includes('amount') ||
-      lower.endsWith('_id') ||
-      lower.endsWith('id')
+      lower.includes('amount')
     ) {
       return 'number';
     }
