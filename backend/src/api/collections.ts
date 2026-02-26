@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import multer from 'multer';
 import { CollectionModel, FolderModel, RequestModel } from '../models/Collection';
-import { PostmanParser } from '../services/postmanParser';
+import { PostmanParser, resolveCollectionAuth } from '../services/postmanParser';
 import { CollectionAnalyzer } from '../services/collectionAnalyzer';
 import { VariableModel } from '../models/Variable';
 import type { PostmanCollection, PostmanItem } from '../types';
@@ -75,14 +75,17 @@ router.post('/import', upload.single('file'), (req, res) => {
       workspaceId,
     });
 
-    // Build a map of variable descriptions from the full collection
-    // Descriptions may only appear once, so we collect them from all requests/folders
-    const variableDescriptions = this.extractVariableDescriptions(collection);
+    // Parse folders and requests (using temp IDs). Merge collection-level auth into each request so API key etc. are extracted.
+    const collectionAuthHeaders = resolveCollectionAuth(collection);
+    // Build a map of variable descriptions from the full collection (for analyzer)
+    const variableDescriptions = extractVariableDescriptions(collection);
 
-    // Parse folders and requests (using temp IDs)
     const { folders: foldersWithTempIds, requests: requestsWithTempIds } = PostmanParser.parseItems(
       collection.item,
-      collectionRecord.id
+      collectionRecord.id,
+      null,
+      0,
+      collectionAuthHeaders
     );
 
     // Create folder ID mapping (tempId -> actual DB ID)
@@ -134,6 +137,7 @@ router.post('/import', upload.single('file'), (req, res) => {
         folderId,
         collectionId: req.collectionId,
         rawJson: req.rawJson,
+        queryParams: req.queryParams,
       };
     });
 
@@ -175,13 +179,19 @@ router.post('/import', upload.single('file'), (req, res) => {
     for (const request of createdRequests) {
       try {
         const analysis = CollectionAnalyzer.analyzeRequest(request, request.rawJson, variableDescriptions);
+        console.log(`Analysis for request "${request.name}" (${request.id}):`, {
+          variableCount: analysis.variables.length,
+          variables: analysis.variables.map(v => ({ name: v.name, required: v.required, locations: v.locations })),
+          risk: analysis.risk,
+          hasScripts: analysis.hasScripts,
+        });
         // Ensure risk is always set (analysis should always return a risk)
         if (!analysis.risk) {
           analysis.risk = 'Write'; // Fallback default
         }
         RequestModel.updateAnalysis(request.id, analysis);
       } catch (error) {
-        console.error(`Error analyzing request ${request.id}:`, error);
+        console.error(`Error analyzing request ${request.id} (${request.name}):`, error);
         // If analysis fails, set default risk
         RequestModel.updateAnalysis(request.id, {
           variables: [],

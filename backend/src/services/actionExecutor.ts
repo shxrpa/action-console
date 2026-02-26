@@ -1,149 +1,112 @@
-import { RequestResolver, type ResolvedRequest } from './requestResolver';
-import type { Request as DBRequest } from '../types';
+import type { ResolvedRequest } from './requestResolver';
 
 export interface ExecutionResult {
-  success: boolean;
   resolvedRequest: ResolvedRequest;
   responseStatus: number;
   responseHeaders: Record<string, string>;
   responseBody: string;
-  executionDuration: number;
+  success: boolean;
   error: string | null;
+  executionDuration: number; // milliseconds
+}
+
+const DEFAULT_TIMEOUT = 30000; // 30 seconds
+
+const SENSITIVE_HEADER_NAMES = [
+  'authorization',
+  'x-api-key',
+  'api-key',
+  'x-auth-token',
+  'cookie',
+  'set-cookie',
+  'proxy-authorization',
+];
+
+function maskSensitiveHeaders(headers: Record<string, string>): Record<string, string> {
+  const out: Record<string, string> = {};
+  for (const [key, value] of Object.entries(headers)) {
+    const lower = key.toLowerCase();
+    const isSensitive = SENSITIVE_HEADER_NAMES.some((h) => lower === h || lower.includes(h));
+    out[key] = isSensitive && value ? '••••••' : value;
+  }
+  return out;
 }
 
 /**
- * Executes HTTP requests
+ * Executes an HTTP request and returns the result
  */
 export class ActionExecutor {
-  private static readonly DEFAULT_TIMEOUT = 30000; // 30 seconds
-
   /**
-   * Executes an action request
+   * Executes a resolved HTTP request
    */
-  static async execute(
-    request: DBRequest,
-    formVariables: Record<string, string>,
-    workspaceId: string,
-    environmentId: string | null
-  ): Promise<ExecutionResult> {
+  static async execute(request: ResolvedRequest): Promise<ExecutionResult> {
     const startTime = Date.now();
+    const resolvedRequest = { ...request };
 
     try {
-      // Resolve the request (substitute variables, inject auth)
-      const resolvedRequest = await RequestResolver.resolve(
-        request,
-        formVariables,
-        workspaceId,
-        environmentId
-      );
-
-      // Execute the HTTP request
-      const response = await this.executeHttpRequest(resolvedRequest);
-
-      const executionDuration = Date.now() - startTime;
-
-      return {
-        success: response.status >= 200 && response.status < 300,
-        resolvedRequest,
-        responseStatus: response.status,
-        responseHeaders: this.headersToObject(response.headers),
-        responseBody: await response.text(),
-        executionDuration,
-        error: null,
-      };
-    } catch (error) {
-      const executionDuration = Date.now() - startTime;
-
-      // Resolve request even on error for debugging
-      let resolvedRequest: ResolvedRequest | null = null;
-      try {
-        resolvedRequest = await RequestResolver.resolve(
-          request,
-          formVariables,
-          workspaceId,
-          environmentId
-        );
-      } catch {
-        // If resolution fails, create a minimal resolved request
-        resolvedRequest = {
-          method: request.method,
-          url: request.url,
-          headers: [],
-          body: request.body,
-        };
-      }
-
-      return {
-        success: false,
-        resolvedRequest,
-        responseStatus: 0,
-        responseHeaders: {},
-        responseBody: '',
-        executionDuration,
-        error: this.formatError(error),
-      };
-    }
-  }
-
-  /**
-   * Executes an HTTP request with timeout
-   */
-  private static async executeHttpRequest(request: ResolvedRequest): Promise<Response> {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), this.DEFAULT_TIMEOUT);
-
-    try {
-      const headers: Record<string, string> = {};
-      request.headers.forEach((h) => {
-        headers[h.key] = h.value;
-      });
-
+      // Build fetch options
       const fetchOptions: RequestInit = {
         method: request.method,
-        headers,
-        signal: controller.signal,
+        headers: request.headers,
+        signal: AbortSignal.timeout(DEFAULT_TIMEOUT),
       };
 
-      if (request.body && ['POST', 'PUT', 'PATCH'].includes(request.method)) {
+      // Add body for methods that support it
+      if (request.body && ['POST', 'PUT', 'PATCH'].includes(request.method.toUpperCase())) {
         fetchOptions.body = request.body;
       }
 
+      // Execute request
       const response = await fetch(request.url, fetchOptions);
-      return response;
-    } finally {
-      clearTimeout(timeoutId);
-    }
-  }
+      
+      // Capture response and mask sensitive headers so API keys etc. are never shown in UI
+      const responseBody = await response.text();
+      const responseHeaders: Record<string, string> = {};
+      response.headers.forEach((value, key) => {
+        responseHeaders[key] = value;
+      });
 
-  /**
-   * Converts Headers object to plain object
-   */
-  private static headersToObject(headers: Headers): Record<string, string> {
-    const result: Record<string, string> = {};
-    headers.forEach((value, key) => {
-      result[key] = value;
-    });
-    return result;
-  }
+      const executionDuration = Date.now() - startTime;
+      const success = response.status >= 200 && response.status < 300;
 
-  /**
-   * Formats error messages for user display
-   */
-  private static formatError(error: unknown): string {
-    if (error instanceof Error) {
-      // Handle AbortError (timeout)
-      if (error.name === 'AbortError') {
-        return 'Request timeout: The request took longer than 30 seconds to complete';
+      return {
+        resolvedRequest: {
+          ...resolvedRequest,
+          headers: maskSensitiveHeaders(resolvedRequest.headers),
+        },
+        responseStatus: response.status,
+        responseHeaders: maskSensitiveHeaders(responseHeaders),
+        responseBody,
+        success,
+        error: success ? null : `HTTP ${response.status}: ${response.statusText}`,
+        executionDuration,
+      };
+    } catch (error) {
+      const executionDuration = Date.now() - startTime;
+      
+      let errorMessage = 'Unknown error';
+      if (error instanceof Error) {
+        if (error.name === 'AbortError' || error.message.includes('timeout')) {
+          errorMessage = 'Request timeout';
+        } else if (error.message.includes('fetch')) {
+          errorMessage = 'Connection failed';
+        } else {
+          errorMessage = error.message;
+        }
       }
 
-      // Handle network errors
-      if (error.message.includes('fetch')) {
-        return `Connection failed: ${error.message}`;
-      }
-
-      return error.message;
+      return {
+        resolvedRequest: {
+          ...resolvedRequest,
+          headers: maskSensitiveHeaders(resolvedRequest.headers),
+        },
+        responseStatus: 0,
+        responseHeaders: {},
+        responseBody: '',
+        success: false,
+        error: errorMessage,
+        executionDuration,
+      };
     }
-
-    return 'An unknown error occurred during request execution';
   }
 }

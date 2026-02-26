@@ -3,6 +3,7 @@ import { RequestModel, FolderModel } from '../models/Collection';
 import { ActionTransformer } from '../services/actionTransformer';
 import { detectMissingVariables } from '../services/variableDetector';
 import type { Action } from '../services/actionTransformer';
+import type { VariableRef, QueryParamDef } from '../types';
 
 const router = Router();
 
@@ -44,8 +45,20 @@ router.get('/:id', (req, res) => {
     const folderMap = new Map(folders.map((f) => [f.id, f]));
     const action = ActionTransformer.transformRequest(request, folders, folderMap);
 
-    // Parse variables for response
-    const variables = request.variables ? JSON.parse(request.variables) : [];
+    // Parse variables for response and merge query param descriptions (for SetupWizard and form)
+    const variables: VariableRef[] = request.variables ? JSON.parse(request.variables) : [];
+    const requestRow = request as unknown as { query_params?: string; queryParams?: string };
+    const rawQueryParams = requestRow.query_params ?? requestRow.queryParams;
+    const queryParams: QueryParamDef[] = rawQueryParams && typeof rawQueryParams === 'string' ? JSON.parse(rawQueryParams) : [];
+    const descriptionByKey = new Map<string, string>();
+    for (const q of queryParams) {
+      if (q.key && q.description) descriptionByKey.set(q.key, q.description);
+    }
+    const variablesWithDescriptions = variables.map((v) => ({
+      ...v,
+      description: v.description ?? descriptionByKey.get(v.name),
+    }));
+
     const warnings = request.warnings ? JSON.parse(request.warnings) : [];
 
     // Optionally include missing variables info
@@ -54,7 +67,7 @@ router.get('/:id', (req, res) => {
 
     const response: any = {
       ...action,
-      variables,
+      variables: variablesWithDescriptions,
       warnings,
       headers: request.headers ? JSON.parse(request.headers) : [],
       body: request.body,

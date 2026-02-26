@@ -1,25 +1,25 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { getActionDetails, executeAction, type ExecutionResult } from '../services/api';
+import { getActionDetails, executeAction, getCollection } from '../services/api';
 import { useWorkspace } from '../contexts/WorkspaceContext';
 import { useEnvironment } from '../contexts/EnvironmentContext';
 import { SetupWizard } from '../components/SetupWizard';
 import { ActionForm } from '../components/ActionForm';
-import { ExecutionResult as ExecutionResultComponent } from '../components/ExecutionResult';
-import type { Action } from '../services/api';
+import { ExecutionResult } from '../components/ExecutionResult';
+import type { Action, ExecutionResult as ExecutionResultType } from '../services/api';
 
 function ActionDetailPage() {
   const { actionId, collectionId } = useParams<{ actionId: string; collectionId: string }>();
   const navigate = useNavigate();
-  const { selectedWorkspaceId } = useWorkspace();
+  const { selectedWorkspaceId, setSelectedWorkspaceId } = useWorkspace();
   const { selectedEnvironmentId } = useEnvironment();
   const [action, setAction] = useState<Action | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showWizard, setShowWizard] = useState(false);
   const [showForm, setShowForm] = useState(false);
-  const [executionResult, setExecutionResult] = useState<ExecutionResult | null>(null);
   const [isExecuting, setIsExecuting] = useState(false);
+  const [executionResult, setExecutionResult] = useState<ExecutionResultType | null>(null);
 
   useEffect(() => {
     if (actionId) {
@@ -33,9 +33,22 @@ function ActionDetailPage() {
     try {
       setIsLoading(true);
       setError(null);
+      // If no workspace selected but we have a collection, set workspace from collection so Run Action is enabled
+      let effectiveWorkspaceId = selectedWorkspaceId;
+      if (!effectiveWorkspaceId && collectionId) {
+        try {
+          const col = await getCollection(collectionId);
+          if (col?.workspaceId) {
+            setSelectedWorkspaceId(col.workspaceId);
+            effectiveWorkspaceId = col.workspaceId;
+          }
+        } catch {
+          // ignore; we'll just have no workspace
+        }
+      }
       const actionData = await getActionDetails(
         actionId,
-        selectedWorkspaceId || undefined,
+        effectiveWorkspaceId || undefined,
         selectedEnvironmentId ?? undefined
       );
       setAction(actionData);
@@ -61,9 +74,7 @@ function ActionDetailPage() {
   };
 
   const handleFormSubmit = async (values: Record<string, string>) => {
-    if (!action || !selectedWorkspaceId) {
-      return;
-    }
+    if (!action || !selectedWorkspaceId) return;
 
     setIsExecuting(true);
     setError(null);
@@ -71,9 +82,9 @@ function ActionDetailPage() {
     try {
       const result = await executeAction(
         action.id,
-        values,
         selectedWorkspaceId,
-        selectedEnvironmentId
+        selectedEnvironmentId ?? null,
+        values
       );
       setExecutionResult(result);
       setShowForm(false);
@@ -247,28 +258,40 @@ function ActionDetailPage() {
           </div>
         )}
 
-        {showForm && (
+        {showForm && !executionResult && (
           <div className="detail-section">
             <ActionForm
               actionId={action.id}
               onSubmit={handleFormSubmit}
               onCancel={() => setShowForm(false)}
+              disabled={isExecuting}
             />
+            {isExecuting && (
+              <div className="execution-loading">
+                <p>Executing action...</p>
+              </div>
+            )}
+            {error && (
+              <div className="error-message">
+                {error}
+              </div>
+            )}
           </div>
         )}
 
         {executionResult && (
           <div className="detail-section">
-            <ExecutionResultComponent result={executionResult} />
-            <button
-              className="btn btn-secondary"
-              onClick={() => {
+            <ExecutionResult
+              result={executionResult}
+              onClose={() => {
                 setExecutionResult(null);
                 setShowForm(false);
               }}
-            >
-              Run Again
-            </button>
+              onRunAgain={() => {
+                setExecutionResult(null);
+                setShowForm(true);
+              }}
+            />
           </div>
         )}
 

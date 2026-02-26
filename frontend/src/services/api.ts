@@ -70,6 +70,26 @@ export async function fetchCollections(workspaceId: string): Promise<Collection[
   return response.json();
 }
 
+export async function getCollection(collectionId: string): Promise<Collection & { folders?: unknown; requests?: unknown }> {
+  const response = await fetch(`${API_BASE_URL}/collections/${collectionId}`);
+  if (!response.ok) {
+    throw new Error('Failed to fetch collection');
+  }
+  return response.json();
+}
+
+export async function deleteCollection(collectionId: string): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/collections/${collectionId}`, {
+    method: 'DELETE',
+  });
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error('Collection not found');
+    }
+    throw new Error('Failed to delete collection');
+  }
+}
+
 // Variable Wallet API
 import type {
   Variable,
@@ -236,6 +256,7 @@ export async function getActionDetails(
 export interface FormField {
   variableName: string;
   label: string;
+  description?: string;
   inputType: 'text' | 'password' | 'number';
   defaultValue: string;
   required: boolean;
@@ -269,34 +290,33 @@ export async function getFormSchema(
 
 // Execution API
 export interface ExecutionResult {
-  success: boolean;
   resolvedRequest: {
     method: string;
     url: string;
-    headers: Array<{ key: string; value: string }>;
+    headers: Record<string, string>;
     body: string | null;
   };
   responseStatus: number;
   responseHeaders: Record<string, string>;
   responseBody: string;
-  executionDuration: number;
+  success: boolean;
   error: string | null;
+  executionDuration: number;
 }
 
 export async function executeAction(
-  requestId: string,
-  variables: Record<string, string>,
+  actionId: string,
   workspaceId: string,
-  environmentId?: string | null
+  environmentId: string | null,
+  formValues: Record<string, string>
 ): Promise<ExecutionResult> {
-  const response = await fetch(`${API_BASE_URL}/execute`, {
+  const response = await fetch(`${API_BASE_URL}/execute/${actionId}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      requestId,
-      variables,
       workspaceId,
-      environmentId: environmentId || null,
+      environmentId,
+      formValues,
     }),
   });
 

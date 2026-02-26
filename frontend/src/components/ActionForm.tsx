@@ -9,9 +9,10 @@ interface ActionFormProps {
   actionId: string;
   onSubmit: (values: Record<string, string>) => void;
   onCancel?: () => void;
+  disabled?: boolean;
 }
 
-export function ActionForm({ actionId, onSubmit, onCancel }: ActionFormProps) {
+export function ActionForm({ actionId, onSubmit, onCancel, disabled = false }: ActionFormProps) {
   const { selectedWorkspaceId } = useWorkspace();
   const { selectedEnvironmentId } = useEnvironment();
   const [schema, setSchema] = useState<FormSchema | null>(null);
@@ -19,6 +20,7 @@ export function ActionForm({ actionId, onSubmit, onCancel }: ActionFormProps) {
   const [formValues, setFormValues] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [editingLabels, setEditingLabels] = useState<Record<string, string>>({});
+  const [blankFields, setBlankFields] = useState<Record<string, boolean>>({});
 
   useEffect(() => {
     loadFormSchema();
@@ -34,6 +36,7 @@ export function ActionForm({ actionId, onSubmit, onCancel }: ActionFormProps) {
         selectedWorkspaceId || undefined,
         selectedEnvironmentId
       );
+      console.log('Loaded form schema:', formSchema);
       setSchema(formSchema);
 
       // Initialize form values with defaults
@@ -93,12 +96,13 @@ export function ActionForm({ actionId, onSubmit, onCancel }: ActionFormProps) {
 
     const newErrors: Record<string, string> = {};
     for (const field of schema.fields) {
-      if (field.required && !formValues[field.variableName]?.trim()) {
+      const isBlank = blankFields[field.variableName];
+      if (field.required && !isBlank && !formValues[field.variableName]?.trim()) {
         newErrors[field.variableName] = 'This field is required';
       }
 
-      // Validate number type
-      if (field.inputType === 'number' && formValues[field.variableName]) {
+      // Validate number type (skip if blank)
+      if (!isBlank && field.inputType === 'number' && formValues[field.variableName]) {
         const numValue = Number(formValues[field.variableName]);
         if (isNaN(numValue)) {
           newErrors[field.variableName] = 'Must be a valid number';
@@ -110,9 +114,22 @@ export function ActionForm({ actionId, onSubmit, onCancel }: ActionFormProps) {
     return Object.keys(newErrors).length === 0;
   };
 
+  const handleBlankToggle = (variableName: string, checked: boolean) => {
+    setBlankFields((prev) => ({ ...prev, [variableName]: checked }));
+    if (checked) {
+      setFormValues((prev) => ({ ...prev, [variableName]: '' }));
+      setErrors((prev) => {
+        const next = { ...prev };
+        delete next[variableName];
+        return next;
+      });
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
+      // Submit with current values (blank fields are '' and will be stripped by backend)
       onSubmit(formValues);
     }
   };
@@ -170,15 +187,29 @@ export function ActionForm({ actionId, onSubmit, onCancel }: ActionFormProps) {
                   ✏️
                 </button>
               </div>
+              {field.description && (
+                <p className="field-description" title={field.description}>
+                  {field.description}
+                </p>
+              )}
               <input
                 id={`field-${field.variableName}`}
                 type={field.inputType}
                 value={formValues[field.variableName] || ''}
                 onChange={(e) => handleInputChange(field.variableName, e.target.value)}
-                placeholder={`Enter ${displayLabel.toLowerCase()}`}
-                required={field.required}
+                placeholder={blankFields[field.variableName] ? '(leave blank)' : `Enter ${displayLabel.toLowerCase()}`}
+                required={field.required && !blankFields[field.variableName]}
+                disabled={blankFields[field.variableName]}
                 className={hasError ? 'error' : ''}
               />
+              <label className="blank-checkbox">
+                <input
+                  type="checkbox"
+                  checked={!!blankFields[field.variableName]}
+                  onChange={(e) => handleBlankToggle(field.variableName, e.target.checked)}
+                />
+                Leave blank
+              </label>
               {hasError && <span className="field-error">{errors[field.variableName]}</span>}
               {field.locations.length > 0 && (
                 <span className="field-locations">
@@ -191,11 +222,11 @@ export function ActionForm({ actionId, onSubmit, onCancel }: ActionFormProps) {
       </div>
 
       <div className="form-actions">
-        <button type="submit" className="btn btn-primary">
-          Run Action
+        <button type="submit" className="btn btn-primary" disabled={disabled}>
+          {disabled ? 'Executing...' : 'Run Action'}
         </button>
         {onCancel && (
-          <button type="button" className="btn btn-secondary" onClick={onCancel}>
+          <button type="button" className="btn btn-secondary" onClick={onCancel} disabled={disabled}>
             Cancel
           </button>
         )}

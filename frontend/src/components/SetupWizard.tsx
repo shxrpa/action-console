@@ -17,6 +17,7 @@ export function SetupWizard({ action, missingVariables, onComplete, onCancel }: 
   const { selectedEnvironmentId } = useEnvironment();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState<Record<string, { value: string; isSecret: boolean }>>({});
+  const [blankFields, setBlankFields] = useState<Record<string, boolean>>({});
   const [scope, setScope] = useState<'workspace' | 'environment'>('workspace');
   const [saving, setSaving] = useState(false);
 
@@ -65,6 +66,16 @@ export function SetupWizard({ action, missingVariables, onComplete, onCancel }: 
     }));
   };
 
+  const handleBlankToggle = (varName: string, checked: boolean) => {
+    setBlankFields((prev) => ({ ...prev, [varName]: checked }));
+    if (checked) {
+      setFormData((prev) => ({
+        ...prev,
+        [varName]: { ...prev[varName], value: '' },
+      }));
+    }
+  };
+
   const handleNext = () => {
     if (step === 1) {
       // Step 1 is just a review - no validation needed, just proceed to step 2
@@ -78,20 +89,22 @@ export function SetupWizard({ action, missingVariables, onComplete, onCancel }: 
       return;
     }
 
-    // Validate all fields are filled before saving
-    const allFilled = missingVariables.every((name) => formData[name]?.value?.trim());
+    // Validate: each field is either filled or marked blank
+    const allFilled = missingVariables.every(
+      (name) => blankFields[name] || formData[name]?.value?.trim()
+    );
     if (!allFilled) {
-      alert('Please fill in all required variables');
+      alert('Please fill in all required variables or check "Leave blank" for optional ones.');
       return;
     }
 
     setSaving(true);
     try {
-      // Create all variables
+      // Create all variables (blank ones get empty string)
       const promises = missingVariables.map((varName) => {
         const data: CreateVariableRequest = {
           name: varName,
-          value: formData[varName].value,
+          value: blankFields[varName] ? '' : formData[varName].value,
           isSecret: formData[varName].isSecret,
           scope,
           environmentId: scope === 'environment' ? (selectedEnvironmentId ?? null) : null,
@@ -133,17 +146,15 @@ export function SetupWizard({ action, missingVariables, onComplete, onCancel }: 
                 const varRef = getVariableRef(varName);
                 return (
                   <li key={varName}>
-                    <div className="variable-info">
-                      <strong>{generateLabel(varName)}</strong>
-                      {varRef?.description && (
-                        <p className="variable-description">{varRef.description}</p>
-                      )}
-                      {varRef && (
-                        <span className="variable-locations">
-                          Used in: {varRef.locations.join(', ')}
-                        </span>
-                      )}
-                    </div>
+                    <strong>{generateLabel(varName)}</strong>
+                    {varRef?.description && (
+                      <p className="variable-description">{varRef.description}</p>
+                    )}
+                    {varRef && (
+                      <span className="variable-locations">
+                        Used in: {varRef.locations.join(', ')}
+                      </span>
+                    )}
                   </li>
                 );
               })}
@@ -164,16 +175,18 @@ export function SetupWizard({ action, missingVariables, onComplete, onCancel }: 
             <h3>Configure Variable Values</h3>
             <div className="wizard-form">
               {missingVariables.map((varName) => {
+                const varRef = getVariableRef(varName);
                 const inputType = detectInputType(varName);
                 const isSecret = formData[varName]?.isSecret || inputType === 'password';
+                const isBlank = blankFields[varName];
                 return (
                   <div key={varName} className="form-group">
                     <label htmlFor={`var-${varName}`}>
                       {generateLabel(varName)}
-                      {getVariableRef(varName)?.required && <span className="required">*</span>}
+                      {varRef?.required && !isBlank && <span className="required">*</span>}
                     </label>
-                    {getVariableRef(varName)?.description && (
-                      <p className="field-description">{getVariableRef(varName)?.description}</p>
+                    {varRef?.description && (
+                      <p className="variable-description">{varRef.description}</p>
                     )}
                     <div className="input-with-toggle">
                       <input
@@ -181,8 +194,9 @@ export function SetupWizard({ action, missingVariables, onComplete, onCancel }: 
                         type={isSecret ? 'password' : 'text'}
                         value={formData[varName]?.value || ''}
                         onChange={(e) => handleInputChange(varName, e.target.value)}
-                        required
-                        placeholder={`Enter ${generateLabel(varName).toLowerCase()}`}
+                        required={!isBlank}
+                        disabled={isBlank}
+                        placeholder={isBlank ? '(leave blank)' : `Enter ${generateLabel(varName).toLowerCase()}`}
                       />
                       <label className="secret-toggle">
                         <input
@@ -191,6 +205,14 @@ export function SetupWizard({ action, missingVariables, onComplete, onCancel }: 
                           onChange={() => handleSecretToggle(varName)}
                         />
                         Secret
+                      </label>
+                      <label className="blank-toggle">
+                        <input
+                          type="checkbox"
+                          checked={isBlank}
+                          onChange={(e) => handleBlankToggle(varName, e.target.checked)}
+                        />
+                        Leave blank
                       </label>
                     </div>
                   </div>

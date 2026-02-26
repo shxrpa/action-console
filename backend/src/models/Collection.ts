@@ -100,11 +100,12 @@ export class RequestModel {
       folderId: string | null;
       collectionId: string;
       rawJson: string;
+      queryParams?: string;
     }>
   ): Request[] {
     const insert = db.prepare(
-      `INSERT INTO requests (id, name, method, url, headers, body, folderId, collectionId, rawJson, risk) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+      `INSERT INTO requests (id, name, method, url, headers, body, folderId, collectionId, rawJson, risk, query_params) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     );
 
     const created: Request[] = [];
@@ -121,7 +122,8 @@ export class RequestModel {
           request.folderId,
           request.collectionId,
           request.rawJson,
-          'Write' // Default risk, will be updated by analysis
+          'Write', // Default risk, will be updated by analysis
+          request.queryParams ?? null
         );
         created.push({
           id,
@@ -133,8 +135,9 @@ export class RequestModel {
           folderId: request.folderId,
           collectionId: request.collectionId,
           rawJson: request.rawJson,
-          risk: 'Write', // Default risk, will be updated by analysis
-        });
+          risk: 'Write',
+          queryParams: request.queryParams,
+        } as Request);
       }
     });
 

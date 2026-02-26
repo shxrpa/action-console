@@ -109,17 +109,13 @@
   margin-bottom: 0.25rem;
 }
 
-.variable-info {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
 .variable-description {
-  font-size: 0.875rem;
+  margin: 0.25rem 0 0.5rem 0;
+  font-size: 0.8125rem;
   color: var(--text-secondary, #64748b);
-  font-style: italic;
-  margin: 0.25rem 0;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
 }
 
 .variable-locations {
@@ -149,6 +145,10 @@
   font-size: 0.875rem;
 }
 
+.wizard-form .variable-description {
+  margin-bottom: 0.5rem;
+}
+
 .wizard-form .required {
   color: #ef4444;
   margin-left: 0.25rem;
@@ -156,8 +156,22 @@
 
 .input-with-toggle {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.5rem;
   align-items: center;
+}
+
+.blank-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  white-space: nowrap;
+  color: var(--text-secondary, #64748b);
+}
+
+.blank-toggle input[type="checkbox"] {
+  margin: 0;
 }
 
 .input-with-toggle input[type="text"],

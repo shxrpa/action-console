@@ -3,6 +3,7 @@ import type { VariableRef } from '../types';
 export interface FormField {
   variableName: string;
   label: string;
+  description?: string;
   inputType: 'text' | 'password' | 'number';
   defaultValue: string;
   required: boolean;
@@ -24,14 +25,18 @@ export class FormGenerator {
     variables: VariableRef[],
     variableDefaults: Map<string, string> = new Map()
   ): FormSchema {
+    console.log(`Generating form schema for ${variables.length} variables`);
     const fields: FormField[] = variables.map((variable) => {
       const defaultValue = variableDefaults.get(variable.name) || '';
       const label = this.generateLabel(variable.name);
       const inputType = this.detectInputType(variable.name);
 
+      console.log(`  - ${variable.name}: required=${variable.required}, defaultValue=${defaultValue ? '***' : '(empty)'}, locations=${variable.locations.join(',')}`);
+
       return {
         variableName: variable.name,
         label,
+        description: variable.description,
         inputType,
         defaultValue,
         required: variable.required,
@@ -39,6 +44,7 @@ export class FormGenerator {
       };
     });
 
+    console.log(`Generated ${fields.length} form fields`);
     return { fields };
   }
 
@@ -85,16 +91,13 @@ export class FormGenerator {
       return 'password';
     }
 
-    // Check for number keywords
+    // Check for numeric value keywords only (not identifiers like collectionId, apiId, schemaId)
     if (
-      lower.includes('id') ||
       lower.includes('count') ||
       lower.includes('number') ||
       lower.includes('size') ||
       lower.includes('quantity') ||
-      lower.includes('amount') ||
-      lower.endsWith('_id') ||
-      lower.endsWith('id')
+      lower.includes('amount')
     ) {
       return 'number';
     }

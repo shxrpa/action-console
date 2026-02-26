@@ -119,6 +119,9 @@ export function runMigrations() {
     if (!columnNames.includes('warnings')) {
       db.exec(`ALTER TABLE requests ADD COLUMN warnings TEXT`);
     }
+    if (!columnNames.includes('query_params')) {
+      db.exec(`ALTER TABLE requests ADD COLUMN query_params TEXT`);
+    }
   } catch (error) {
     console.error('Error adding analysis columns:', error);
     // Continue anyway - columns might already exist
