@@ -4,6 +4,7 @@ interface VariableRef {
   name: string;
   required: boolean;
   locations: Array<'url' | 'header' | 'body'>;
+  description?: string;
 }
 
 interface RequestDetailPanelProps {

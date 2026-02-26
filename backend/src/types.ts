@@ -106,6 +106,7 @@ export interface PostmanRequest {
     host?: string[];
     path?: string[];
     query?: Array<{ key: string; value?: string; description?: string; disabled?: boolean }>;
+    variable?: Array<{ key: string; value?: string; description?: string }>;
   };
 }
 

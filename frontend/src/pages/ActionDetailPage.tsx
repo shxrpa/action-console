@@ -83,10 +83,9 @@ function ActionDetailPage() {
       const result = await executeAction(
         action.id,
         selectedWorkspaceId,
-        selectedEnvironmentId,
+        selectedEnvironmentId ?? null,
         values
       );
-
       setExecutionResult(result);
       setShowForm(false);
     } catch (err) {
@@ -296,15 +295,15 @@ function ActionDetailPage() {
           </div>
         )}
 
-        {!showForm && (
+        {!showForm && !executionResult && (
           <div className="detail-section">
             <button
               className="btn-run-action"
               onClick={handleRunAction}
-              disabled={!selectedWorkspaceId}
+              disabled={!selectedWorkspaceId || isExecuting}
               title={!selectedWorkspaceId ? 'Please select a workspace first' : undefined}
             >
-              Run Action
+              {isExecuting ? 'Executing...' : 'Run Action'}
             </button>
             {action.missingVariables && action.missingVariables.length > 0 && (
               <p className="missing-vars-hint">

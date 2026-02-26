@@ -4,7 +4,7 @@ import { CollectionModel, FolderModel, RequestModel } from '../models/Collection
 import { PostmanParser, resolveCollectionAuth } from '../services/postmanParser';
 import { CollectionAnalyzer } from '../services/collectionAnalyzer';
 import { VariableModel } from '../models/Variable';
-import type { PostmanCollection } from '../types';
+import type { PostmanCollection, PostmanItem } from '../types';
 
 const router = Router();
 const upload = multer({
@@ -77,6 +77,9 @@ router.post('/import', upload.single('file'), (req, res) => {
 
     // Parse folders and requests (using temp IDs). Merge collection-level auth into each request so API key etc. are extracted.
     const collectionAuthHeaders = resolveCollectionAuth(collection);
+    // Build a map of variable descriptions from the full collection (for analyzer)
+    const variableDescriptions = extractVariableDescriptions(collection);
+
     const { folders: foldersWithTempIds, requests: requestsWithTempIds } = PostmanParser.parseItems(
       collection.item,
       collectionRecord.id,
@@ -175,7 +178,7 @@ router.post('/import', upload.single('file'), (req, res) => {
     // Run analysis on all requests
     for (const request of createdRequests) {
       try {
-        const analysis = CollectionAnalyzer.analyzeRequest(request, request.rawJson);
+        const analysis = CollectionAnalyzer.analyzeRequest(request, request.rawJson, variableDescriptions);
         console.log(`Analysis for request "${request.name}" (${request.id}):`, {
           variableCount: analysis.variables.length,
           variables: analysis.variables.map(v => ({ name: v.name, required: v.required, locations: v.locations })),
@@ -287,5 +290,46 @@ router.delete('/:id', (req, res) => {
     res.status(500).json({ error: 'Failed to delete collection' });
   }
 });
+
+/**
+ * Extracts variable descriptions from the full collection
+ * Descriptions may only appear once, so we collect them from all requests/folders
+ */
+function extractVariableDescriptions(collection: PostmanCollection): Map<string, string> {
+  const descriptions = new Map<string, string>();
+
+  function extractFromItems(items: PostmanItem[]) {
+    items.forEach((item) => {
+      // Check if this item has a request with URL variables
+      if (item.request?.url && typeof item.request.url === 'object' && item.request.url.variable) {
+        item.request.url.variable.forEach((varDef: { key: string; description?: string }) => {
+          if (varDef.description && !descriptions.has(varDef.key)) {
+            descriptions.set(varDef.key, varDef.description);
+          }
+        });
+      }
+
+      // Check if this item (folder) has variables defined
+      if ((item as any).variable && Array.isArray((item as any).variable)) {
+        (item as any).variable.forEach((varDef: { key: string; description?: string }) => {
+          if (varDef.description && !descriptions.has(varDef.key)) {
+            descriptions.set(varDef.key, varDef.description);
+          }
+        });
+      }
+
+      // Recursively check nested items
+      if (item.item && Array.isArray(item.item)) {
+        extractFromItems(item.item);
+      }
+    });
+  }
+
+  if (collection.item) {
+    extractFromItems(collection.item);
+  }
+
+  return descriptions;
+}
 
 export default router;

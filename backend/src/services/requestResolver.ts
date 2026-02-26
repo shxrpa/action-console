@@ -41,7 +41,7 @@ export class RequestResolver {
     // Substitute variables in headers
     const resolvedHeaders: Record<string, string> = {};
     for (const header of headers) {
-      const key = header.key || header.name || '';
+      const key = header.key || (header as { name?: string }).name || '';
       const value = substituteVariables(header.value || '', variables);
       if (key && value) {
         resolvedHeaders[key] = value;
