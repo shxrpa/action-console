@@ -564,36 +564,36 @@ Each Linear story maps to atomic implementation tasks. Tasks should be completed
 
 ### Tasks
 
-- [ ] **Task 9.1:** Create raw response viewer component
+- [x] **Task 9.1:** Create raw response viewer component
   - Display response body as formatted text
   - Attempt JSON parsing for formatting
   - Apply syntax highlighting for JSON (use library like Prism, highlight.js)
   - Fallback to plain text for non-JSON
 
-- [ ] **Task 9.2:** Implement collapsible sections for large responses
+- [x] **Task 9.2:** Implement collapsible sections for large responses
   - Add expand/collapse functionality for large JSON objects/arrays
   - Default to collapsed for objects/arrays > 10 items
   - Show "Show more" / "Show less" buttons
   - Preserve scroll position when expanding
 
-- [ ] **Task 9.3:** Implement interactive JSON tree view
+- [x] **Task 9.3:** Implement interactive JSON tree view
   - Use JSON tree viewer library (react-json-view, vue-json-pretty, etc.)
   - Render expandable/collapsible nodes
   - Highlight node on hover
   - Show JSON path on hover (e.g., `data.user.email`)
 
-- [ ] **Task 9.4:** Implement click-to-select value functionality
+- [x] **Task 9.4:** Implement click-to-select value functionality
   - Add click handler on JSON tree nodes
   - On click, select value and JSON path
   - Highlight selected node visually
   - Store selected value and path in state
 
-- [ ] **Task 9.5:** Create "Save as Variable" button
+- [x] **Task 9.5:** Create "Save as Variable" button
   - Show button when value is selected
   - Position button near selected value or in toolbar
   - Enable/disable based on selection state
 
-- [ ] **Task 9.6:** Create save-to-variable modal/form
+- [x] **Task 9.6:** Create save-to-variable modal/form
   - Modal component with form:
     - Variable name input (pre-filled with JSON path, editable)
     - Environment selection (workspace-level or current environment)
@@ -601,26 +601,26 @@ Each Linear story maps to atomic implementation tasks. Tasks should be completed
     - "Save" and "Cancel" buttons
   - Validate variable name (no spaces, valid characters)
 
-- [ ] **Task 9.7:** Implement save-to-variable logic
+- [x] **Task 9.7:** Implement save-to-variable logic
   - Extract selected value (string, number, boolean)
   - Convert value to string if needed
   - Create new variable or update existing in Variable Wallet
   - Encrypt value if marked as secret
   - Store with selected environment scope
 
-- [ ] **Task 9.8:** Implement immediate Variable Wallet UI update
+- [x] **Task 9.8:** Implement immediate Variable Wallet UI update
   - Refresh Variable Wallet sidebar after save
   - Add new variable to list immediately
   - Highlight newly added variable
   - No page refresh required (reactive update)
 
-- [ ] **Task 9.9:** Implement immediate reuse in forms
+- [x] **Task 9.9:** Implement immediate reuse in forms
   - After saving, check if any open action forms use saved variable name
   - Pre-populate form fields with saved value
   - Update form UI reactively
   - Show success message: "Variable saved and added to form"
 
-- [ ] **Task 9.10:** Handle non-JSON responses gracefully
+- [x] **Task 9.10:** Handle non-JSON responses gracefully
   - Detect response content type
   - If not JSON, show as plain text
   - Provide "Copy" button for text responses

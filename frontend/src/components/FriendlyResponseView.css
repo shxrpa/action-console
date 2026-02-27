@@ -1,0 +1,141 @@
+.friendly-response-view {
+  padding: 0.5rem 0;
+  color: var(--text-color, #1e293b);
+}
+
+.friendly-empty {
+  margin: 0;
+  color: var(--text-secondary, #64748b);
+  font-style: italic;
+}
+
+.friendly-summary {
+  margin: 0 0 0.75rem 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary, #64748b);
+}
+
+.friendly-root {
+  background: var(--bg-color, #fff);
+}
+
+.friendly-dl {
+  margin: 0;
+  display: grid;
+  gap: 0;
+}
+
+.friendly-row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 1rem;
+  align-items: baseline;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--border-color, #f1f5f9);
+  min-height: 2rem;
+}
+
+.friendly-row:last-child {
+  border-bottom: none;
+}
+
+.friendly-dt {
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-secondary, #64748b);
+  flex-shrink: 0;
+}
+
+.friendly-dd {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+.friendly-value {
+  font-size: 0.9375rem;
+}
+
+.friendly-value--empty {
+  color: var(--text-secondary, #64748b);
+  font-style: italic;
+}
+
+.friendly-value--true {
+  color: #166534;
+  font-weight: 500;
+}
+
+.friendly-value--false {
+  color: #991b1b;
+}
+
+.friendly-value--number {
+  font-variant-numeric: tabular-nums;
+}
+
+.friendly-value--string {
+  color: var(--text-color, #1e293b);
+}
+
+.friendly-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.friendly-card {
+  padding: 0.75rem 1rem;
+  background: var(--sidebar-bg, #f8fafc);
+  border-radius: 6px;
+  border: 1px solid var(--border-color, #e2e8f0);
+  font-size: 0.875rem;
+}
+
+.friendly-card .friendly-dl {
+  gap: 0.25rem;
+}
+
+.friendly-card .friendly-row {
+  padding: 0.35rem 0;
+  grid-template-columns: 140px 1fr;
+}
+
+.friendly-card .friendly-dt {
+  font-size: 0.8125rem;
+}
+
+.friendly-more {
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--text-secondary, #64748b);
+  font-style: italic;
+  padding: 0.25rem 0;
+}
+
+.friendly-list {
+  margin: 0;
+  padding-left: 1.25rem;
+  list-style: disc;
+}
+
+.friendly-list--inline {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
+  padding-left: 0;
+  list-style: none;
+}
+
+.friendly-list-item {
+  font-size: 0.9375rem;
+}
+
+/* Nested blocks inside cards */
+.friendly-card .friendly-card {
+  background: var(--bg-color, #fff);
+  border-color: var(--border-color, #e2e8f0);
+}
