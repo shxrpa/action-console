@@ -8,6 +8,7 @@ import {
   deleteVariable,
 } from '../services/api';
 import type { Variable, CreateVariableRequest } from '../types';
+import { VARIABLE_WALLET_REFRESH_EVENT } from './ResponseViewer';
 import './VariableWallet.css';
 
 export function VariableWallet() {
@@ -29,6 +30,12 @@ export function VariableWallet() {
     if (selectedWorkspaceId) {
       loadVariables();
     }
+  }, [selectedWorkspaceId, selectedEnvironmentId]);
+
+  useEffect(() => {
+    const handler = () => loadVariables();
+    window.addEventListener(VARIABLE_WALLET_REFRESH_EVENT, handler);
+    return () => window.removeEventListener(VARIABLE_WALLET_REFRESH_EVENT, handler);
   }, [selectedWorkspaceId, selectedEnvironmentId]);
 
   const loadVariables = async () => {

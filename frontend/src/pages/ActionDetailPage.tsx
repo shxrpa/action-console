@@ -401,6 +401,7 @@ function ActionDetailPage() {
           <div className="detail-section">
             <ExecutionResult
               result={executionResult}
+              workspaceId={selectedWorkspaceId}
               onClose={() => {
                 setExecutionResult(null);
                 setShowForm(false);
