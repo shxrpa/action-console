@@ -75,7 +75,9 @@ export function ExecutionResult({ result, workspaceId, onClose, onRunAgain }: Ex
         <h4>Resolved Request</h4>
         <div className="resolved-request">
           <div className="request-method">{result.resolvedRequest.method}</div>
-          <div className="request-url">{result.resolvedRequest.url}</div>
+          <div className="request-url" title={result.resolvedRequest.url}>
+            {result.resolvedRequest.url}
+          </div>
         </div>
 
         {Object.keys(result.resolvedRequest.headers).length > 0 && (
