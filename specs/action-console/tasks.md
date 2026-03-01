@@ -778,19 +778,19 @@ Each Linear story maps to atomic implementation tasks. Tasks should be completed
   - Extract variables from responses
   - Verify complete workflow works
 
-- [ ] **Task 11.7:** UX polish for import flow
+- [x] **Task 11.7:** UX polish for import flow
   - Add loading states during import
   - Show progress indicator for large collections
   - Display success message after import
   - Handle import errors gracefully with clear messages
 
-- [ ] **Task 11.8:** UX polish for action execution flow
+- [x] **Task 11.8:** UX polish for action execution flow
   - Add loading spinner during execution
   - Show progress: "Executing request..."
   - Display success/error messages clearly
   - Add smooth transitions between states
 
-- [ ] **Task 11.9:** Handle edge cases - malformed JSON
+- [x] **Task 11.9:** Handle edge cases - malformed JSON
   - Test with invalid JSON files
   - Show clear error message
   - Provide guidance on fixing JSON
@@ -802,7 +802,7 @@ Each Linear story maps to atomic implementation tasks. Tasks should be completed
   - Use virtualization where needed
   - Add pagination if necessary
 
-- [ ] **Task 11.11:** Handle edge cases - missing optional fields
+- [x] **Task 11.11:** Handle edge cases - missing optional fields
   - Handle requests without descriptions
   - Handle requests without names
   - Handle empty folders
@@ -836,7 +836,7 @@ Each Linear story maps to atomic implementation tasks. Tasks should be completed
   - Repeat with Shopify collection
   - Verify no blocking issues
 
-- [ ] **Task 11.16:** Document any known limitations
+- [x] **Task 11.16:** Document any known limitations
   - List features not supported in MVP
   - Document edge cases that may not work perfectly
   - Create troubleshooting guide

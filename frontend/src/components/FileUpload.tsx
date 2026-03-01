@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react';
 
 interface FileUploadProps {
-  onFileSelect: (file: File) => void;
+  onFileSelect: (file: File) => void | Promise<void>;
   accept?: string;
   maxSize?: number; // in bytes
 }
@@ -24,7 +24,7 @@ function FileUpload({ onFileSelect, accept = '.json', maxSize = 10 * 1024 * 1024
     return null;
   };
 
-  const handleFile = (file: File) => {
+  const handleFile = async (file: File) => {
     setError(null);
     const validationError = validateFile(file);
     if (validationError) {
@@ -34,9 +34,9 @@ function FileUpload({ onFileSelect, accept = '.json', maxSize = 10 * 1024 * 1024
 
     setIsUploading(true);
     try {
-      onFileSelect(file);
+      await Promise.resolve(onFileSelect(file));
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to process file');
+      setError(err instanceof Error ? err.message : 'Failed to import collection');
     } finally {
       setIsUploading(false);
     }
@@ -92,8 +92,9 @@ function FileUpload({ onFileSelect, accept = '.json', maxSize = 10 * 1024 * 1024
         <div className="file-upload-content">
           {isUploading ? (
             <>
-              <div className="file-upload-spinner"></div>
-              <p>Processing file...</p>
+              <div className="file-upload-spinner" aria-hidden />
+              <p>Importing collection...</p>
+              <p className="file-upload-hint">This may take a moment for large collections.</p>
             </>
           ) : (
             <>

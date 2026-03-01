@@ -203,7 +203,26 @@
 }
 
 .execution-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
   text-align: center;
   padding: 1rem;
   color: var(--text-secondary, #64748b);
+}
+
+.execution-spinner {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border-color, #e2e8f0);
+  border-top-color: var(--primary-color, #3b82f6);
+  border-radius: 50%;
+  animation: execution-spin 0.8s linear infinite;
+}
+
+@keyframes execution-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }

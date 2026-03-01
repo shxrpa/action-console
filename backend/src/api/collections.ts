@@ -46,7 +46,10 @@ router.post('/import', upload.single('file'), (req, res) => {
       console.log('JSON parsed successfully, validating collection...');
     } catch (error) {
       console.error('JSON parse error:', error);
-      return res.status(400).json({ error: `Invalid JSON file: ${error instanceof Error ? error.message : 'Parse error'}` });
+      const msg = error instanceof Error ? error.message : 'Parse error';
+      return res.status(400).json({
+        error: `Invalid JSON file. ${msg} Check that the file is valid JSON (matching braces and quotes, no trailing commas). You can validate at jsonlint.com or use a code editor.`,
+      });
     }
 
     // Validate Postman Collection

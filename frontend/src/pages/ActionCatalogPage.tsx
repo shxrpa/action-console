@@ -92,6 +92,10 @@ function ActionCatalogPage() {
     navigate(`/collections/${collectionId}/actions/${actionId}`);
   };
 
+  const MAX_ACTION_NAME_LENGTH = 56;
+  const truncateName = (name: string) =>
+    name.length > MAX_ACTION_NAME_LENGTH ? `${name.slice(0, MAX_ACTION_NAME_LENGTH)}…` : name;
+
   if (isLoading) {
     return (
       <div className="action-catalog-page">
@@ -171,7 +175,11 @@ function ActionCatalogPage() {
 
       <div className="actions-list">
         {groupedActions.size === 0 ? (
-          <div className="empty-actions">No actions found</div>
+          <div className="empty-actions">
+            {actions.length === 0
+              ? 'This collection has no requests. Add requests in Postman and re-export, or import a different collection.'
+              : 'No actions match your filters.'}
+          </div>
         ) : (
           Array.from(groupedActions.entries()).map(([folderPath, folderActions]) => (
             <div key={folderPath} className="folder-group">
@@ -184,7 +192,9 @@ function ActionCatalogPage() {
                     onClick={() => handleActionClick(action.id)}
                   >
                     <div className="action-card-header">
-                      <h4 className="action-name">{action.name}</h4>
+                      <h4 className="action-name" title={action.name}>
+                        {truncateName(action.name)}
+                      </h4>
                       <span className={`method-badge method-${action.method.toLowerCase()}`}>
                         {action.method}
                       </span>

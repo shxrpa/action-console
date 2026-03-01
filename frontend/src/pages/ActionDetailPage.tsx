@@ -386,7 +386,8 @@ function ActionDetailPage() {
             )}
             {isExecuting && (
               <div className="execution-loading">
-                <p>Executing action...</p>
+                <div className="execution-spinner" aria-hidden />
+                <p>Executing request...</p>
               </div>
             )}
             {error && (
