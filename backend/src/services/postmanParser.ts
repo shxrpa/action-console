@@ -118,11 +118,11 @@ export class PostmanParser {
       const currentOrder = order + index;
 
       if (item.item && Array.isArray(item.item)) {
-        // This is a folder
+        // This is a folder (allow empty folders)
         const folderTempId = crypto.randomUUID();
         folders.push({
           tempId: folderTempId,
-          name: item.name,
+          name: item.name ?? 'Unnamed folder',
           parentTempId: parentFolderId,
           collectionId,
           order: currentOrder,
@@ -135,16 +135,16 @@ export class PostmanParser {
       } else if (item.request) {
         // This is a request: merge collection-level auth into headers so API key etc. are extracted
         const request = item.request;
-        const { url, queryParams } = this.buildUrl(request.url);
-        const requestHeaders = request.header || [];
+        const { url, queryParams } = request.url != null ? this.buildUrl(request.url) : { url: '', queryParams: [] };
+        const requestHeaders = Array.isArray(request.header) ? request.header : [];
         const mergedHeaders = this.mergeAuthHeaders(requestHeaders, collectionAuthHeaders);
         const headers = JSON.stringify(mergedHeaders);
         const body = this.extractBody(request.body);
 
         requests.push({
-          name: item.name,
-          method: request.method || 'GET',
-          url,
+          name: item.name ?? 'Unnamed request',
+          method: (request.method && String(request.method).toUpperCase()) || 'GET',
+          url: url || '',
           headers,
           body,
           parentFolderTempId: parentFolderId,
@@ -188,6 +188,9 @@ export class PostmanParser {
   private static buildUrl(urlObj: PostmanRequest['url']): BuildUrlResult {
     const emptyQueryParams: QueryParamDef[] = [];
 
+    if (urlObj == null) {
+      return { url: '', queryParams: [] };
+    }
     if (typeof urlObj === 'string') {
       return { url: this.convertPathParamsToVariables(urlObj), queryParams: [] };
     }

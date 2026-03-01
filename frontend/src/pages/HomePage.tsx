@@ -60,8 +60,16 @@ function HomePage() {
         </p>
         <div className="import-section">
           <FileUpload onFileSelect={handleFileSelect} />
-          {uploadError && <div className="error-message">{uploadError}</div>}
-          {uploadSuccess && <div className="success-message">{uploadSuccess}</div>}
+          {uploadError && (
+            <div className="error-message" role="alert">
+              {uploadError}
+            </div>
+          )}
+          {uploadSuccess && (
+            <div className="success-message" role="status">
+              {uploadSuccess}
+            </div>
+          )}
         </div>
       </div>
     </div>
