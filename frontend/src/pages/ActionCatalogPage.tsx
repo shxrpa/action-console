@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useVirtualizer } from '@tanstack/react-virtual';
 
 interface Action {
   id: string;
@@ -112,14 +113,33 @@ function ActionCatalogPage() {
     );
   }
 
-  // Group actions by folder
-  const groupedActions = new Map<string, Action[]>();
-  filteredActions.forEach((action) => {
-    const key = action.folderPath || 'Root';
-    if (!groupedActions.has(key)) {
-      groupedActions.set(key, []);
-    }
-    groupedActions.get(key)!.push(action);
+  // Group actions by folder, then flatten for virtualization (header row + action rows)
+  const groupedActions = useMemo(() => {
+    const map = new Map<string, Action[]>();
+    filteredActions.forEach((action) => {
+      const key = action.folderPath || 'Root';
+      if (!map.has(key)) map.set(key, []);
+      map.get(key)!.push(action);
+    });
+    return map;
+  }, [filteredActions]);
+
+  type CatalogRow = { type: 'header'; folderPath: string } | { type: 'action'; action: Action };
+  const catalogRows = useMemo((): CatalogRow[] => {
+    const rows: CatalogRow[] = [];
+    Array.from(groupedActions.entries()).forEach(([folderPath, folderActions]) => {
+      rows.push({ type: 'header', folderPath });
+      folderActions.forEach((action) => rows.push({ type: 'action', action }));
+    });
+    return rows;
+  }, [groupedActions]);
+
+  const listRef = useRef<HTMLDivElement>(null);
+  const rowVirtualizer = useVirtualizer({
+    count: catalogRows.length,
+    getScrollElement: () => listRef.current,
+    estimateSize: (index) => (catalogRows[index]?.type === 'header' ? 44 : 110),
+    overscan: 5,
   });
 
   return (
@@ -173,7 +193,11 @@ function ActionCatalogPage() {
         </div>
       </div>
 
-      <div className="actions-list">
+      <div
+        ref={listRef}
+        className="actions-list actions-list-virtual"
+        style={{ maxHeight: '65vh', overflow: 'auto' }}
+      >
         {groupedActions.size === 0 ? (
           <div className="empty-actions">
             {actions.length === 0
@@ -181,45 +205,77 @@ function ActionCatalogPage() {
               : 'No actions match your filters.'}
           </div>
         ) : (
-          Array.from(groupedActions.entries()).map(([folderPath, folderActions]) => (
-            <div key={folderPath} className="folder-group">
-              {folderPath && <h3 className="folder-header">{folderPath}</h3>}
-              <div className="actions-grid">
-                {folderActions.map((action) => (
+          <div
+            style={{
+              height: `${rowVirtualizer.getTotalSize()}px`,
+              width: '100%',
+              position: 'relative',
+            }}
+          >
+            {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+              const row = catalogRows[virtualRow.index];
+              if (!row) return null;
+              if (row.type === 'header') {
+                return (
                   <div
-                    key={action.id}
-                    className="action-card"
-                    onClick={() => handleActionClick(action.id)}
+                    key={`header-${row.folderPath}`}
+                    className="folder-header-virtual"
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      height: `${virtualRow.size}px`,
+                      transform: `translateY(${virtualRow.start}px)`,
+                    }}
                   >
-                    <div className="action-card-header">
-                      <h4 className="action-name" title={action.name}>
-                        {truncateName(action.name)}
-                      </h4>
-                      <span className={`method-badge method-${action.method.toLowerCase()}`}>
-                        {action.method}
-                      </span>
-                    </div>
-                    <p className="action-description">{action.description}</p>
-                    <div className="action-meta">
-                      <span className={`risk-badge risk-${action.risk.toLowerCase()}`}>
-                        {action.risk}
-                      </span>
-                      {action.hasScripts && (
-                        <span className="script-badge" title="Contains scripts">
-                          ⚠️ Scripts
-                        </span>
-                      )}
-                      {action.totalVariablesCount > 0 && (
-                        <span className="variables-badge">
-                          {action.requiredVariablesCount}/{action.totalVariablesCount} variables
-                        </span>
-                      )}
-                    </div>
+                    <h3 className="folder-header">{row.folderPath || 'Root'}</h3>
                   </div>
-                ))}
-              </div>
-            </div>
-          ))
+                );
+              }
+              const action = row.action;
+              return (
+                <div
+                  key={action.id}
+                  className="action-card action-card-virtual"
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: `${virtualRow.size}px`,
+                    transform: `translateY(${virtualRow.start}px)`,
+                  }}
+                  onClick={() => handleActionClick(action.id)}
+                >
+                  <div className="action-card-header">
+                    <h4 className="action-name" title={action.name}>
+                      {truncateName(action.name)}
+                    </h4>
+                    <span className={`method-badge method-${action.method.toLowerCase()}`}>
+                      {action.method}
+                    </span>
+                  </div>
+                  <p className="action-description">{action.description}</p>
+                  <div className="action-meta">
+                    <span className={`risk-badge risk-${action.risk.toLowerCase()}`}>
+                      {action.risk}
+                    </span>
+                    {action.hasScripts && (
+                      <span className="script-badge" title="Contains scripts">
+                        ⚠️ Scripts
+                      </span>
+                    )}
+                    {action.totalVariablesCount > 0 && (
+                      <span className="variables-badge">
+                        {action.requiredVariablesCount}/{action.totalVariablesCount} variables
+                      </span>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         )}
       </div>
     </div>

@@ -796,7 +796,7 @@ Each Linear story maps to atomic implementation tasks. Tasks should be completed
   - Provide guidance on fixing JSON
   - Prevent app crash
 
-- [ ] **Task 11.10:** Handle edge cases - extremely large collections
+- [x] **Task 11.10:** Handle edge cases - extremely large collections
   - Test with collection containing 100+ requests
   - Ensure performance is acceptable
   - Use virtualization where needed
@@ -808,19 +808,19 @@ Each Linear story maps to atomic implementation tasks. Tasks should be completed
   - Handle empty folders
   - Handle missing optional headers
 
-- [ ] **Task 11.12:** Handle edge cases - Unicode characters
+- [x] **Task 11.12:** Handle edge cases - Unicode characters
   - Test with Unicode in collection names
   - Test with Unicode in request names
   - Test with Unicode in variable names
   - Ensure proper encoding/display
 
-- [ ] **Task 11.13:** Handle edge cases - very long names/values
+- [x] **Task 11.13:** Handle edge cases - very long names/values
   - Truncate very long variable names in UI (with tooltip for full name)
   - Handle very long variable values
   - Handle very long URLs (wrap or truncate)
   - Ensure UI doesn't break
 
-- [ ] **Task 11.14:** Handle edge cases - empty collections
+- [x] **Task 11.14:** Handle edge cases - empty collections
   - Handle collections with no requests
   - Show helpful empty state message
   - Prevent errors when navigating empty collection
@@ -860,11 +860,11 @@ Each Linear story maps to atomic implementation tasks. Tasks should be completed
 
 ### Documentation Tasks
 
-- [ ] **Doc Task:** Update README with setup instructions
-- [ ] **Doc Task:** Document API endpoints (if backend)
-- [ ] **Doc Task:** Document data models
-- [ ] **Doc Task:** Create user guide for basic workflows
-- [ ] **Doc Task:** Document troubleshooting common issues
+- [x] **Doc Task:** Update README with setup instructions
+- [x] **Doc Task:** Document API endpoints (if backend)
+- [x] **Doc Task:** Document data models
+- [x] **Doc Task:** Create user guide for basic workflows
+- [x] **Doc Task:** Document troubleshooting common issues
 
 ### Deployment Tasks
 

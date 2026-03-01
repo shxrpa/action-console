@@ -241,6 +241,12 @@ export function VariableWallet() {
   );
 }
 
+const MAX_VARIABLE_NAME_LEN = 40;
+const MAX_VARIABLE_VALUE_LEN = 60;
+function truncate(str: string, max: number) {
+  return str.length > max ? `${str.slice(0, max)}…` : str;
+}
+
 function VariableList({
   variables,
   onEdit,
@@ -256,12 +262,14 @@ function VariableList({
         <div key={variable.id} className="variable-item">
           <div className="variable-info">
             <div className="variable-name-row">
-              <span className="variable-name">{variable.name}</span>
+              <span className="variable-name" title={variable.name}>
+                {truncate(variable.name, MAX_VARIABLE_NAME_LEN)}
+              </span>
               {variable.isSecret && <span className="secret-badge">🔒</span>}
               <span className={`status-dot ${variable.value ? 'has-value' : 'empty'}`} />
             </div>
-            <div className="variable-value">
-              {variable.isSecret ? '••••••' : variable.value || '(empty)'}
+            <div className="variable-value" title={variable.isSecret ? undefined : (variable.value || '')}>
+              {variable.isSecret ? '••••••' : (variable.value ? truncate(variable.value, MAX_VARIABLE_VALUE_LEN) : '(empty)')}
             </div>
             <div className="variable-meta">
               {variable.scope === 'environment' && <span className="env-badge">Environment</span>}
