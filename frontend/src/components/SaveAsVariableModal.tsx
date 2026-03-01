@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useWorkspace } from '../contexts/WorkspaceContext';
 import { useEnvironment } from '../contexts/EnvironmentContext';
 import { createVariable } from '../services/api';
 import type { JsonSelection } from './JsonTreeView';

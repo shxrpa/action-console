@@ -102,6 +102,46 @@ export function runMigrations() {
     CREATE INDEX IF NOT EXISTS idx_variables_name ON variables(name);
   `);
 
+  // Runs table (execution history / audit log)
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS runs (
+      id TEXT PRIMARY KEY,
+      timestamp TEXT NOT NULL,
+      actionId TEXT NOT NULL,
+      actionName TEXT NOT NULL,
+      collectionId TEXT NOT NULL,
+      environmentId TEXT NOT NULL,
+      environmentName TEXT NOT NULL,
+      workspaceId TEXT NOT NULL,
+      resolvedRequest TEXT NOT NULL,
+      responseStatus INTEGER NOT NULL,
+      responseHeaders TEXT NOT NULL,
+      responseBody TEXT NOT NULL,
+      responseBodyTruncated INTEGER NOT NULL DEFAULT 0,
+      success INTEGER NOT NULL,
+      error TEXT,
+      executionDuration INTEGER NOT NULL,
+      FOREIGN KEY (workspaceId) REFERENCES workspaces(id) ON DELETE CASCADE
+    )
+  `);
+  db.exec(`
+    CREATE INDEX IF NOT EXISTS idx_runs_timestamp ON runs(timestamp);
+    CREATE INDEX IF NOT EXISTS idx_runs_actionId ON runs(actionId);
+    CREATE INDEX IF NOT EXISTS idx_runs_environmentId ON runs(environmentId);
+    CREATE INDEX IF NOT EXISTS idx_runs_workspaceId ON runs(workspaceId);
+  `);
+
+  // Add collectionId to runs if table existed from before (migration)
+  try {
+    const runsInfo = db.prepare('PRAGMA table_info(runs)').all() as Array<{ name: string }>;
+    const runsColumns = runsInfo.map((c) => c.name);
+    if (!runsColumns.includes('collectionId')) {
+      db.exec(`ALTER TABLE runs ADD COLUMN collectionId TEXT NOT NULL DEFAULT ''`);
+    }
+  } catch {
+    // ignore
+  }
+
   // Add analysis columns to existing requests table if they don't exist
   try {
     const tableInfo = db.prepare("PRAGMA table_info(requests)").all() as Array<{ name: string }>;

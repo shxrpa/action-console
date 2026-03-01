@@ -1,7 +1,12 @@
 import { Router } from 'express';
-import { RequestModel } from '../models/Collection';
+import { RequestModel, CollectionModel } from '../models/Collection';
+import { EnvironmentModel } from '../models/Environment';
+import { VariableModel } from '../models/Variable';
+import { RunModel } from '../models/Run';
 import { RequestResolver } from '../services/requestResolver';
 import { ActionExecutor } from '../services/actionExecutor';
+import { maskSecrets } from '../services/secretMasker';
+import { decryptSecret } from '../services/encryption';
 import type { ExecutionContext } from '../services/requestResolver';
 
 const router = Router();
@@ -119,7 +124,47 @@ router.post('/:actionId', async (req, res) => {
     // Execute the request
     const result = await ActionExecutor.execute(resolvedRequest);
 
-    res.json(result);
+    // Persist run for audit log (with secret masking and optional response truncation)
+    const collection = CollectionModel.findById(request.collectionId);
+    const runWorkspaceId = collection?.workspaceId ?? workspaceId;
+    const runEnvironmentId = context.environmentId ?? '';
+    const environment = runEnvironmentId ? EnvironmentModel.findById(runEnvironmentId) : null;
+    const environmentName = environment?.name ?? '';
+
+    const secretValues: string[] = [];
+    try {
+      const variables = VariableModel.findByWorkspace(runWorkspaceId, context.environmentId);
+      for (const v of variables) {
+        if (v.isSecret && (v as { value: string }).value) {
+          try {
+            secretValues.push(decryptSecret((v as { value: string }).value));
+          } catch {
+            // skip if decrypt fails
+          }
+        }
+      }
+    } catch {
+      // ignore
+    }
+    const maskedRequest = maskSecrets(result.resolvedRequest, secretValues);
+
+    const run = RunModel.create({
+      actionId: request.id,
+      actionName: request.name,
+      collectionId: request.collectionId,
+      environmentId: runEnvironmentId || 'none',
+      environmentName: environmentName || 'None',
+      workspaceId: runWorkspaceId,
+      resolvedRequest: maskedRequest,
+      responseStatus: result.responseStatus,
+      responseHeaders: result.responseHeaders,
+      responseBody: result.responseBody,
+      success: result.success,
+      error: result.error,
+      executionDuration: result.executionDuration,
+    });
+
+    res.json({ ...result, runId: run.id });
   } catch (error) {
     console.error('Error executing action:', error);
     if (error instanceof Error) {

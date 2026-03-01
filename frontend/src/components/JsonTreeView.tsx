@@ -38,7 +38,10 @@ interface NodeProps {
 }
 
 function JsonNode({ path, keyLabel, value, selectedPath, onSelect, depth, defaultCollapsed }: NodeProps) {
-  const [collapsed, setCollapsed] = useState(defaultCollapsed);
+  const isArray = Array.isArray(value);
+  const entries = isArray ? (value as unknown[]).map((v, i) => ({ key: i, value: v })) : Object.entries(value as object).map(([k, v]) => ({ key: k, value: v }));
+  const shouldDefaultCollapse = defaultCollapsed || entries.length > COLLAPSE_THRESHOLD;
+  const [collapsed, setCollapsed] = useState(shouldDefaultCollapse);
   const [hovered, setHovered] = useState(false);
   const type = getValueType(value);
   const isPrimitive = type === 'string' || type === 'number' || type === 'boolean' || type === 'null';
@@ -69,10 +72,6 @@ function JsonNode({ path, keyLabel, value, selectedPath, onSelect, depth, defaul
       </div>
     );
   }
-
-  const isArray = Array.isArray(value);
-  const entries = isArray ? (value as unknown[]).map((v, i) => ({ key: i, value: v })) : Object.entries(value as object).map(([k, v]) => ({ key: k, value: v }));
-  const shouldDefaultCollapse = defaultCollapsed || entries.length > COLLAPSE_THRESHOLD;
 
   return (
     <div

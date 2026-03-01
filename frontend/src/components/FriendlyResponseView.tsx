@@ -156,7 +156,6 @@ export function FriendlyResponseView({ data }: FriendlyResponseViewProps) {
   }
 
   if (typeof data === 'object') {
-    const keys = Object.keys(data);
     return (
       <div className="friendly-response-view">
         <div className="friendly-root">

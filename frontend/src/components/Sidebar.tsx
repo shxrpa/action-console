@@ -20,6 +20,11 @@ function Sidebar() {
               Variable Wallet
             </Link>
           </li>
+          <li>
+            <Link to="/runs" className="nav-link">
+              Run History
+            </Link>
+          </li>
         </ul>
       </nav>
     </aside>
