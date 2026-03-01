@@ -633,7 +633,7 @@ Each Linear story maps to atomic implementation tasks. Tasks should be completed
 
 ### Tasks
 
-- [ ] **Task 10.1:** Create Run data model
+- [x] **Task 10.1:** Create Run data model
   - Define Run schema:
     - id: UUID
     - timestamp: ISO 8601
@@ -651,50 +651,50 @@ Each Linear story maps to atomic implementation tasks. Tasks should be completed
   - Create database table/collection for runs
   - Add indexes (timestamp, actionId, environmentId, workspaceId)
 
-- [ ] **Task 10.2:** Implement secret masking in resolved request
+- [x] **Task 10.2:** Implement secret masking in resolved request
   - Function: `maskSecrets(request: object, secrets: string[]): object`
   - Replace secret values with `***MASKED***` in headers and body
   - Preserve structure and formatting
   - Store masked request in Run entity
 
-- [ ] **Task 10.3:** Implement run creation after execution
+- [x] **Task 10.3:** Implement run creation after execution
   - After each action execution (success or failure), create Run record
   - Store all execution metadata
   - Store masked resolved request
   - Store full response (consider size limits)
   - Return run ID
 
-- [ ] **Task 10.4:** Create recent runs list view
+- [x] **Task 10.4:** Create recent runs list view
   - Display last 50 runs in table/list format
   - Columns: Timestamp, Action, Environment, Status, Duration
   - Sort by timestamp DESC (default)
   - Paginate for older runs (page size: 50)
 
-- [ ] **Task 10.5:** Implement sorting in runs list
+- [x] **Task 10.5:** Implement sorting in runs list
   - Sortable columns: Timestamp, Action, Status, Duration
   - Toggle sort direction on column header click
   - Update list when sort changes
   - Show sort indicator (arrow up/down)
 
-- [ ] **Task 10.6:** Implement filtering in runs list
+- [x] **Task 10.6:** Implement filtering in runs list
   - Filter by action (dropdown with all actions)
   - Filter by environment (dropdown with all environments)
   - Filter by outcome (Success/Failure/All)
   - Apply filters simultaneously (AND logic)
   - Show active filter badges
 
-- [ ] **Task 10.7:** Implement virtualized list for runs
+- [x] **Task 10.7:** Implement virtualized list for runs
   - Use virtualization library for performance
   - Render only visible rows
   - Handle large run history (100+ runs)
   - Smooth scrolling
 
-- [ ] **Task 10.8:** Create per-run detail view route
+- [x] **Task 10.8:** Create per-run detail view route
   - Route: `/runs/:runId`
   - Load run data by ID
   - Display full run details
 
-- [ ] **Task 10.9:** Implement run detail view sections
+- [x] **Task 10.9:** Implement run detail view sections
   - Section 1: Run metadata
     - Timestamp (formatted)
     - Action name (link to action)
@@ -713,19 +713,19 @@ Each Linear story maps to atomic implementation tasks. Tasks should be completed
     - Error message
     - Stack trace (if available)
 
-- [ ] **Task 10.10:** Add "View Raw" functionality
+- [x] **Task 10.10:** Add "View Raw" functionality
   - "View Raw Request" button (show full request JSON)
   - "View Raw Response" button (show full response text)
   - Display in modal or expandable section
   - Add "Copy" button for raw content
 
-- [ ] **Task 10.11:** Add copy functionality
+- [x] **Task 10.11:** Add copy functionality
   - "Copy Request" button (copy resolved request as JSON)
   - "Copy Response" button (copy response body)
   - Show success toast on copy
   - Handle large content (truncate or stream)
 
-- [ ] **Task 10.12:** Implement response body size management
+- [x] **Task 10.12:** Implement response body size management
   - Truncate very large response bodies in storage (e.g., > 1MB)
   - Store truncated flag
   - Show "Response too large, truncated" message

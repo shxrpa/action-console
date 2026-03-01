@@ -156,3 +156,23 @@ export interface UpdateVariableRequest {
 export interface CreateEnvironmentRequest {
   name: string;
 }
+
+// Run (execution history / audit log)
+export interface Run {
+  id: string;
+  timestamp: string; // ISO 8601
+  actionId: string;
+  actionName: string;
+  collectionId: string;
+  environmentId: string;
+  environmentName: string;
+  workspaceId: string;
+  resolvedRequest: string; // JSON: { method, url, headers, body } (secrets masked)
+  responseStatus: number;
+  responseHeaders: string; // JSON
+  responseBody: string;
+  responseBodyTruncated: number; // 0 or 1
+  success: number; // 0 or 1
+  error: string | null;
+  executionDuration: number; // milliseconds
+}

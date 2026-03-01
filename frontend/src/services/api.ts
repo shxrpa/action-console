@@ -78,6 +78,20 @@ export async function getCollection(collectionId: string): Promise<Collection & 
   return response.json();
 }
 
+/** Fetch all actions across all collections in a workspace (for run history filters) */
+export async function fetchActionsForWorkspace(workspaceId: string): Promise<Action[]> {
+  const collections = await fetchCollections(workspaceId);
+  const allActions: Action[] = [];
+  for (const c of collections) {
+    const response = await fetch(`${API_BASE_URL}/actions?collectionId=${c.id}`);
+    if (response.ok) {
+      const actions: Action[] = await response.json();
+      allActions.push(...actions);
+    }
+  }
+  return allActions;
+}
+
 export async function deleteCollection(collectionId: string): Promise<void> {
   const response = await fetch(`${API_BASE_URL}/collections/${collectionId}`, {
     method: 'DELETE',
@@ -302,6 +316,62 @@ export interface ExecutionResult {
   success: boolean;
   error: string | null;
   executionDuration: number;
+  runId?: string;
+}
+
+// Runs (execution history) API
+export interface Run {
+  id: string;
+  timestamp: string;
+  actionId: string;
+  actionName: string;
+  collectionId: string;
+  environmentId: string;
+  environmentName: string;
+  workspaceId: string;
+  resolvedRequest: string; // JSON string
+  responseStatus: number;
+  responseHeaders: string; // JSON string
+  responseBody: string;
+  responseBodyTruncated: number;
+  success: number;
+  error: string | null;
+  executionDuration: number;
+}
+
+export interface ListRunsParams {
+  workspaceId: string;
+  page?: number;
+  limit?: number;
+  sort?: 'timestamp' | 'actionName' | 'success' | 'executionDuration';
+  order?: 'asc' | 'desc';
+  actionId?: string;
+  environmentId?: string;
+  success?: boolean;
+}
+
+export async function listRuns(params: ListRunsParams): Promise<{ runs: Run[]; total: number; page: number; limit: number }> {
+  const sp = new URLSearchParams();
+  sp.set('workspaceId', params.workspaceId);
+  if (params.page != null) sp.set('page', String(params.page));
+  if (params.limit != null) sp.set('limit', String(params.limit));
+  if (params.sort) sp.set('sort', params.sort);
+  if (params.order) sp.set('order', params.order);
+  if (params.actionId) sp.set('actionId', params.actionId);
+  if (params.environmentId) sp.set('environmentId', params.environmentId);
+  if (params.success !== undefined) sp.set('success', String(params.success));
+  const response = await fetch(`${API_BASE_URL}/runs?${sp}`);
+  if (!response.ok) throw new Error('Failed to fetch runs');
+  return response.json();
+}
+
+export async function getRun(runId: string): Promise<Run> {
+  const response = await fetch(`${API_BASE_URL}/runs/${runId}`);
+  if (!response.ok) {
+    if (response.status === 404) throw new Error('Run not found');
+    throw new Error('Failed to fetch run');
+  }
+  return response.json();
 }
 
 export interface ResolvedPreview {
